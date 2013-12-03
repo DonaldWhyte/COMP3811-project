@@ -1,0 +1,10 @@
+# Binary output
+bin/*
+obj/*
+*.o
+# Image output
+*.tga
+# Code::Blocks metadata
+*.depend
+*.layout
+*.cbTemp

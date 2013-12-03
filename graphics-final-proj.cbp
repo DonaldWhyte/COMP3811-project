@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="graphics-final-proj" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="bin/Debug/graphics-final-proj" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="bin/Release/graphics-final-proj" prefix_auto="1" extension_auto="1" />
+				<Option object_output="obj/Release/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add directory="include/" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="include" />
+		</Compiler>
+		<Unit filename="include/Colour.h" />
+		<Unit filename="include/Image.h" />
+		<Unit filename="include/Ray.h" />
+		<Unit filename="include/Shape.h" />
+		<Unit filename="include/Sphere.h" />
+		<Unit filename="include/Vector3.h" />
+		<Unit filename="src/Colour.cpp" />
+		<Unit filename="src/Image.cpp" />
+		<Unit filename="src/Ray.cpp" />
+		<Unit filename="src/Sphere.cpp" />
+		<Unit filename="src/Vector3.cpp" />
+		<Unit filename="src/graphics-final-project.cpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>
