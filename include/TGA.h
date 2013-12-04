@@ -6,7 +6,7 @@
 
 namespace tga
 {
-    Image readTGAFile(const std::string& filename);
+    Image* readTGAFile(const std::string& filename);
     void writeTGAFile(const std::string& filename, const Image& image);
 }
 

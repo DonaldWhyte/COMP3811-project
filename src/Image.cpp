@@ -2,8 +2,6 @@
 #include <cmath>
 #include <fstream>
 
-
-
 Image::Image(int width, int height, const Colour& background)
     : width(width), height(height)
 {
@@ -13,6 +11,7 @@ Image::Image(int width, int height, const Colour& background)
     {
         pixels[i].resize(height); // number of columns
     }
+    clear(background);
 }
 
 void Image::clear(const Colour& colour)

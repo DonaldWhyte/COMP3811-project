@@ -71,6 +71,9 @@ int main(int argc, char** argv)
     }
 
     tga::writeTGAFile("output.tga", output);
+    Image* test = tga::readTGAFile("output.tga");
+    tga::writeTGAFile("read_test.tga", *test);
+    delete test;
 
     return 0;
 }
