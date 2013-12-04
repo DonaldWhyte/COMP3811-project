@@ -20,13 +20,11 @@ class Camera
 
 public:
     Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-        float aperture, const Rectangle& viewingRectangle, float distance = DEFAULT_DISTANCE);
+        float aperture, const Rectangle& viewingRectangle, float distance);
 
     Ray getRayToPixel(float pixelX, float pixelY, float xi1, float xi2);
 
 private:
-    static const float DEFAULT_DISTANCE = 1.0;
-
     /* Rebuild orthonormal basis vectors for camera based on
      * direction and up vector (third basis vector be computed
      * from those two vectors. */
@@ -38,7 +36,7 @@ private:
     // Computed from camera's direction and up vectors
     Vector3 u, v, w;
     // Distance from viewing rectangle
-    float s; // typically just 1.0
+    float distance;
 
     // Radius of lens (used for perspective)
     float lensRadius;
