@@ -57,7 +57,7 @@ float Vector3::minMagnitudeComponent() const
     if (fabs(z) < temp) temp = fabs(z);
     return temp;
 }
-    
+
 float Vector3::maxMagnitudeComponent() const
 {
     float temp = fabs(x);
@@ -107,7 +107,7 @@ Vector3 Vector3::cross(const Vector3& vec) const
     return Vector3(
         y * vec.z - z * vec.y,
         z * vec.x - x * vec.z,
-        x - vec.y - y * vec.y
+        x * vec.y - y * vec.x
     );
 }
 
