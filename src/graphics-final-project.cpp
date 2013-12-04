@@ -1,6 +1,7 @@
 #include <iostream>
 #include "Image.h"
 #include "Sphere.h"
+#include "Triangle.h"
 
 int main(int argc, char** argv)
 {
@@ -9,9 +10,17 @@ int main(int argc, char** argv)
     shapes.push_back( new Sphere(
         Vector3(250, 250, -1000), 150, Colour(0.2f, 0.2f, 0.8f)
     ));
+    shapes.push_back( new Triangle(
+        Vector3(300, 600, -800),
+        Vector3(0, 100, -1000),
+        Vector3(450, 20, -1000),
+        Colour(0.8f, 0.2f, 0.2f)
+    ));
 
     // Create object to store image output
+    Colour backgroundColour(0.2f, 0.2f, 0.2f);
     Image output(500, 500);
+    output.clear(backgroundColour);
 
     // Perofrm raytrace
     HitRecord record;
@@ -40,7 +49,9 @@ int main(int argc, char** argv)
             // If an object was hit by the ray, then set the pixel's
             // colour to the colour of the object's surface
             if (isAHit)
+            {
                 output.set(i, j, record.colour);
+            }
         }
     }
 

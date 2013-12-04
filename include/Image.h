@@ -11,6 +11,7 @@ class Image
 public:
     Image(int width, int height, const Colour& background = Colour(0.0f, 0.0f, 0.0f));
 
+    void clear(const Colour& colour);
     bool set(int x, int y, const Colour& colour);
     void gammaCorrect(float gamma);
 
