@@ -5,9 +5,11 @@ Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3&
     position(position), s(distance), lensRadius(aperture / 2.0f), viewingRect(viewingRectangle)
 {
     updateBasisVectors(direction, up);
-    acrossVec = (viewingRect.left - viewingRect.right) * u;
-    upVec = (viewingRect.bottom - viewingRect.top) * v;
+    acrossVec = (viewingRect.right - viewingRect.left) * u;
+    upVec = (viewingRect.top - viewingRect.bottom) * v;
     cornerPoint = position + (viewingRect.left * u) + (viewingRect.bottom * v) - (s * w);
+
+    std::cout << acrossVec << " " << upVec << " " << cornerPoint << std::endl;
 }
 
 Ray Camera::getRayToPixel(float pixelX, float pixelY, float xi1, float xi2)
