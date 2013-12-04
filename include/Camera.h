@@ -20,7 +20,7 @@ class Camera
 
 public:
     Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-        float aperture, const Rectangle& viewingRectangle, float distance);
+        const Rectangle& viewingRectangle, float distance);
 
     Ray getRayToPixel(float pixelX, float pixelY, float xi1, float xi2);
 
@@ -37,9 +37,6 @@ private:
     Vector3 u, v, w;
     // Distance from viewing rectangle
     float distance;
-
-    // Radius of lens (used for perspective)
-    float lensRadius;
 
     // Coordinates of viewing rectangle
     Rectangle viewingRect;

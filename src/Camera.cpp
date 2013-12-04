@@ -1,8 +1,8 @@
 #include "Camera.h"
 
 Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-    float aperture, const Rectangle& viewingRectangle, float distance) :
-    position(position), distance(distance), lensRadius(aperture / 2.0f), viewingRect(viewingRectangle)
+    const Rectangle& viewingRectangle, float distance) :
+    position(position), distance(distance), viewingRect(viewingRectangle)
 {
     updateBasisVectors(direction, up);
     acrossVec = (viewingRect.right - viewingRect.left) * u;

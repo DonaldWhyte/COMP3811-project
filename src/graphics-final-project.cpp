@@ -10,7 +10,7 @@ int main(int argc, char** argv)
 {
     // Define scene
     ShapeList shapes;
-    /*shapes.push_back( new Sphere(
+    shapes.push_back( new Sphere(
         Vector3(250, 250, -1000), 150, Colour(0.2f, 0.2f, 0.8f)
     ));
     shapes.push_back( new Triangle(
@@ -20,19 +20,18 @@ int main(int argc, char** argv)
         Colour(0.8f, 0.2f, 0.2f)
     ));
     Camera camera(
-        Vector3(0, 0, 0), // position
+        Vector3(0, 300, 0), // position
         Vector3(0, 0, -1), // direction
         Vector3(0, 1, 0), // up
-        30.0f, // lens radius
-        // viewing rectangle
-        Rectangle(0, 500, 500, 0)
-    );*/
+        Rectangle(-400, 400, -400, 400), // viewing rectangle
+        500
+    );
 
-    shapes.push_back( new Sphere(
+    /*shapes.push_back( new Sphere(
         Vector3(0, 0, 0), sqrt(2), Colour(0.2f, 0.2f, 0.8f)
     ));
     Camera camera(Vector3(0, 0, 2), Vector3(0, 0, -2), Vector3(0, 1, 0),
-        1.0f, Rectangle(-2, 2, -2, 2), 2);
+        1.0f, Rectangle(-2, 2, -2, 2), 2);*/
 
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
