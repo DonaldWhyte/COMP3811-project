@@ -27,12 +27,6 @@ int main(int argc, char** argv)
         500
     );
 
-    /*shapes.push_back( new Sphere(
-        Vector3(0, 0, 0), sqrt(2), Colour(0.2f, 0.2f, 0.8f)
-    ));
-    Camera camera(Vector3(0, 0, 2), Vector3(0, 0, -2), Vector3(0, 1, 0),
-        1.0f, Rectangle(-2, 2, -2, 2), 2);*/
-
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
     Image output(500, 500);
