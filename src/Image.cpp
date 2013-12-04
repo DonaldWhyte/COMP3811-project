@@ -90,3 +90,13 @@ void Image::toFile(const std::string& filename)
         }
     }
 }
+
+int Image::getWidth() const
+{
+    return width;
+}
+
+int Image::getHeight() const
+{
+    return height;
+}

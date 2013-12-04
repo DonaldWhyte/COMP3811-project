@@ -1,6 +1,7 @@
 #ifndef DW_RAYTRACER_SHAPE
-#define DW_RAYTRACER_SHAOE
+#define DW_RAYTRACER_SHAPE
 
+#include <vector>
 #include "Ray.h"
 #include "Vector3.h"
 #include "Colour.h"
@@ -20,5 +21,7 @@ public:
     virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const = 0;
 
 };
+
+typedef std::vector<Shape*> ShapeList;
 
 #endif

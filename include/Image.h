@@ -17,6 +17,9 @@ public:
     void toFile(const std::string& filename);
     void fromFile(const std::string& filename);
 
+    int getWidth() const;
+    int getHeight() const;
+
 private:
     std::vector<std::vector<Colour> > pixels; // accessed pixels[row][column]
     int width;

@@ -1,18 +1,50 @@
-#include "Image.h"
 #include <iostream>
+#include "Image.h"
+#include "Sphere.h"
 
 int main(int argc, char** argv)
 {
-    Image test(1920, 1080);
-    Colour colour1(1.0f, 0.0f, 0.0f);
-    Colour colour2(0.0f, 0.0f, 1.0f);
-    for (int i = 0; (i < 512); i++)
-        for (int j = 0; (j < 256); j++)
-            test.set(i, j, colour1);
-    for (int i = 0; (i < 512); i++)
-        for (int j = 256; (j < 512); j++)
-            test.set(i, j, colour2);
-    test.toFile("test.tga");
+    // Define scene
+    ShapeList shapes;
+    shapes.push_back( new Sphere(
+        Vector3(250, 250, -1000), 150, Colour(0.2f, 0.2f, 0.8f)
+    ));
+
+    // Create object to store image output
+    Image output(500, 500);
+
+    // Perofrm raytrace
+    HitRecord record;
+    bool isAHit = false;
+    float tMax;
+    Vector3 direction(0, 0, -1); // direction through screen
+    // Loop over the pixels of the image
+    for (int i = 0; (i < output.getWidth()); i++)
+    {
+        for (int j = 0; (j < output.getHeight()); j++)
+        {
+            // Reset properties for ray trace
+            tMax = 100000.0f;
+            isAHit = false;
+            // Construct ray to pass through pixel
+            Ray ray(Vector3(i, j, 0), direction);
+
+            for (int k = 0; (k < shapes.size()); k++)
+            {
+                if (shapes[k]->hit(ray, 0.00001f, tMax, 0.0f, record))
+                {
+                    tMax = record.t;
+                    isAHit = true;
+                }
+            }
+            // If an object was hit by the ray, then set the pixel's
+            // colour to the colour of the object's surface
+            if (isAHit)
+                output.set(i, j, record.colour);
+        }
+    }
+
+    output.toFile("output.tga");
 
     return 0;
 }
