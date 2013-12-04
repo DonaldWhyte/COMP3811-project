@@ -10,14 +10,13 @@ class Image
 
 public:
     Image(int width, int height, const Colour& background = Colour(0.0f, 0.0f, 0.0f));
+    static Image fromFile(const std::string& filename);
 
     void clear(const Colour& colour);
     bool set(int x, int y, const Colour& colour);
     void gammaCorrect(float gamma);
 
-    void toFile(const std::string& filename);
-    void fromFile(const std::string& filename);
-
+    const Colour& get(int x, int y) const;
     int getWidth() const;
     int getHeight() const;
 

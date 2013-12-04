@@ -3,6 +3,7 @@
 #include "Sphere.h"
 #include "Triangle.h"
 #include "Camera.h"
+#include "TGA.h"
 
 #include <cmath>
 
@@ -69,7 +70,7 @@ int main(int argc, char** argv)
         }
     }
 
-    output.toFile("output.tga");
+    tga::writeTGAFile("output.tga", output);
 
     return 0;
 }
