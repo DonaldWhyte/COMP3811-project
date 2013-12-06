@@ -2,6 +2,7 @@
 #define DW_RAYTRACER_RAYTRACER_H
 
 #include "Shape.h"
+#include "Light.h"
 #include "Camera.h"
 #include "Ray.h"
 
@@ -17,6 +18,7 @@ public:
 
     bool raytrace(float x, float y, Colour& result);
     void addShape(Shape* shape);
+    void addLight(const Light& light);
     Camera* getCamera();
 
 private:
@@ -24,6 +26,7 @@ private:
     bool recursiveTrace(const Ray& ray, HitRecord& record, int depth);
 
     ShapeList shapes;
+    LightList lights;
     Camera camera;
 
 };

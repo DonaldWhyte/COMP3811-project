@@ -6,6 +6,9 @@
 #include "TGA.h"
 #include "Raytracer.h"
 
+static const int IMAGE_WIDTH = 500;
+static const int IMAGE_HEIGHT = 500;
+
 int main(int argc, char** argv)
 {
     // Define scene
@@ -42,7 +45,7 @@ int main(int argc, char** argv)
 
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
-    Image output(500, 500);
+    Image output(IMAGE_WIDTH, IMAGE_HEIGHT);
     output.clear(backgroundColour);
 
     // Perform raytrace
@@ -53,6 +56,7 @@ int main(int argc, char** argv)
         for (int j = 0; (j < output.getHeight()); j++)
         {
             // Convert pixel coordinates (i, k) to viewing plane coordinates (x, y)
+            // Note that this gets the pixel CENTRE
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // n
             bool hit = raytracer.raytrace(x, y, resultantColour);
