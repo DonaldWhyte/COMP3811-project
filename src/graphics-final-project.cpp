@@ -6,10 +6,6 @@
 #include "TGA.h"
 #include "Raytracer.h"
 
-
-static const float MAX_DEPTH = 100000.0f;
-
-
 int main(int argc, char** argv)
 {
     // Define scene
@@ -20,7 +16,7 @@ int main(int argc, char** argv)
         Rectangle(-400, 400, -400, 400), // viewing rectangle
         500
     );
-    Raytracer raytracer(camera, MAX_DEPTH);
+    Raytracer raytracer(camera);
     raytracer.addShape( new Sphere(
         Vector3(250, 250, -1000), 150, Colour(0.2f, 0.2f, 0.8f)
     ));

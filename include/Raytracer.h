@@ -5,11 +5,13 @@
 #include "Camera.h"
 #include "Ray.h"
 
+static const float MAX_RAY_DISTANCE = 100000.0f;
+
 class Raytracer
 {
 
 public:
-    Raytracer(const Camera& camera, float tMax);
+    Raytracer(const Camera& camera);
     virtual ~Raytracer();
 
     bool raytrace(float x, float y, Colour& result);
@@ -22,9 +24,6 @@ private:
 
     ShapeList shapes;
     Camera camera;
-
-    float initialTMax;
-    float tMax;
 
 };
 
