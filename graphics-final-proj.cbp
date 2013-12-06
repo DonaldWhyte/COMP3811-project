@@ -33,16 +33,22 @@
 			<Add option="-Wall" />
 			<Add directory="include" />
 		</Compiler>
+		<Unit filename="include/Camera.h" />
 		<Unit filename="include/Colour.h" />
 		<Unit filename="include/Image.h" />
 		<Unit filename="include/Ray.h" />
 		<Unit filename="include/Shape.h" />
 		<Unit filename="include/Sphere.h" />
+		<Unit filename="include/TGA.h" />
+		<Unit filename="include/Triangle.h" />
 		<Unit filename="include/Vector3.h" />
+		<Unit filename="src/Camera.cpp" />
 		<Unit filename="src/Colour.cpp" />
 		<Unit filename="src/Image.cpp" />
 		<Unit filename="src/Ray.cpp" />
 		<Unit filename="src/Sphere.cpp" />
+		<Unit filename="src/TGA.cpp" />
+		<Unit filename="src/Triangle.cpp" />
 		<Unit filename="src/Vector3.cpp" />
 		<Unit filename="src/graphics-final-project.cpp" />
 		<Extensions>
