@@ -9,6 +9,7 @@
 struct HitRecord
 {
     float t;
+    Vector3 pointOfIntersection;
     Vector3 normal;
     Colour colour;
 };

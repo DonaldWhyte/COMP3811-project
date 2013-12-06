@@ -12,6 +12,7 @@ int main(int argc, char** argv)
     Camera camera(
         Vector3(0, 300, 0), // position
         Vector3(0, 0, -1), // direction
+        //Vector3(0.4f, 0.5f, -1), // direction
         Vector3(0, 1, 0), // up
         Rectangle(-400, 400, -400, 400), // viewing rectangle
         500
@@ -25,6 +26,18 @@ int main(int argc, char** argv)
         Vector3(0, 100, -1000),
         Vector3(450, 20, -1000),
         Colour(0.8f, 0.2f, 0.2f)
+    ));
+    raytracer.addShape( new Triangle(
+        Vector3(0, 100, -250),
+        Vector3(0, 200, -250),
+        Vector3(100, 200, -250),
+        Colour(0.8f, 0.7f, 0.2f)
+    ));
+    raytracer.addShape( new Triangle(
+        Vector3(100, 0, -100),
+        Vector3(100, 200, -100),
+        Vector3(300, 200, -100),
+        Colour(0.2f, 0.7f, 0)
     ));
 
     // Create object to store image output

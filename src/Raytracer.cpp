@@ -37,6 +37,9 @@ Camera* Raytracer::getCamera()
 
 bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
 {
+    // Ensure recursive raytracer does not exceed maximum depth
+    if (depth > MAX_TRACE_DEPTH) return false;
+
     bool isAHit = false;
     float tMax = MAX_RAY_DISTANCE;
     for (int i = 0; (i < shapes.size()); i++)
@@ -45,14 +48,33 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // of the CLOSEST point is considered at the end of the loop
         if (shapes[i]->hit(ray, 0.00001f, tMax, 0.0f, record))
         {
-            // New maximum allowed distance becomes distance of this shape)
+            // New maximum allowed distance becomes distance of this shape
             tMax = record.t;
             isAHit = true;
         }
     }
-    // NOTE: At this point, the colour of the hit shape should be in the hit record
-    float intensity = fabs( record.normal.dot(camera.getBasisY()) );
-    record.colour = record.colour * (0.5f * intensity);
+
+    if (isAHit)
+    {
+        // NOTE: At this point, the colour of the hit shape should be in the hit record
+        Colour localColour, reflectedColour;
+
+        // Compute intensity of light source at point of insesection
+        float intensity = fabs( record.normal.dot(camera.getBasisY()) );
+        // Compute LOCAL colour of pixel
+        localColour = (0.1f * record.colour) + (0.9f * intensity * record.colour);
+
+        // Handle reflection
+        Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);
+        HitRecord reflectRecord;
+        if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
+        {
+            reflectedColour = reflectRecord.colour;
+        }
+
+        // Combine computed colours into one
+        record.colour = localColour + (0.5f * reflectedColour);
+    }
 
     // TODO: lighting
 

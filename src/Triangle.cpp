@@ -44,7 +44,7 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
     float gamma = (i * akjb + h * jcal + g * blkc) / denominator;
     if (gamma <= 0.0f || (beta + gamma) >= 1.0f)
         return false;
-    // Compute 'time' that ray hits the triangle
+    // Compute distance from origin of ray to triangle
     float tVal = -(f * akjb + e * jcal + d*blkc) / denominator;
 
     // If ray hits triangle too late (i.e. it's too far!) then we
@@ -52,6 +52,10 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
     if (tVal >= tMin && tVal <= tMax)
     {
         record.t = tVal;
+        // Compute actual point of intersection given barycentric coordinayes
+        float alpha = 1.0f - beta - gamma;
+        record.pointOfIntersection = p1 * alpha + p2 * beta + p3 * gamma;
+
         record.normal = (p2 - p1).cross(p3 - p1).normalise();
         record.colour = colour;
         return true;
