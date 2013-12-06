@@ -24,6 +24,11 @@ public:
 
     Ray getRayToPixel(float pixelX, float pixelY, float xi1, float xi2);
 
+    /* Getters for camera's orthonormal basis vectors. */
+    const Vector3& getBasisX() const;
+    const Vector3& getBasisY() const;
+    const Vector3& getBasisZ() const;
+
 private:
     /* Rebuild orthonormal basis vectors for camera based on
      * direction and up vector (third basis vector be computed

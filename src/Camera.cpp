@@ -21,6 +21,21 @@ Ray Camera::getRayToPixel(float pixelX, float pixelY, float xi1, float xi2)
     return Ray(origin, direction);
 }
 
+const Vector3& Camera::getBasisX() const
+{
+    return u;
+}
+
+const Vector3& Camera::getBasisY() const
+{
+    return v;
+}
+
+const Vector3& Camera::getBasisZ() const
+{
+    return w;
+}
+
 void Camera::updateBasisVectors(const Vector3& direction, const Vector3& up)
 {
     // Construct orthonormal basis vectors for view coordinate system

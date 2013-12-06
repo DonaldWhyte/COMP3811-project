@@ -1,4 +1,5 @@
 #include "Raytracer.h"
+#include <cmath>
 
 Raytracer::Raytracer(const Camera& camera) : camera(camera)
 {
@@ -44,10 +45,14 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // of the CLOSEST point is considered at the end of the loop
         if (shapes[i]->hit(ray, 0.00001f, tMax, 0.0f, record))
         {
+            // New maximum allowed distance becomes distance of this shape)
             tMax = record.t;
             isAHit = true;
         }
     }
+    // NOTE: At this point, the colour of the hit shape should be in the hit record
+    float intensity = fabs( record.normal.dot(camera.getBasisY()) );
+    record.colour = record.colour * (0.5f * intensity);
 
     // TODO: lighting
 
