@@ -1,5 +1,6 @@
 #include "Raytracer.h"
 #include <cmath>
+#include <iostream>
 
 Raytracer::Raytracer(const Camera& camera) : camera(camera)
 {
@@ -30,11 +31,21 @@ void Raytracer::addShape(Shape* shape)
     shapes.push_back(shape);
 }
 
+void Raytracer::addLight(const PointLight& light)
+{
+    lights.push_back(light);
+}
+
 Camera* Raytracer::getCamera()
 {
     return &camera;
 }
 
+/* Help from following sources:
+ * http://www.baylee-online.net/Projects/Raytracing/Algorithms/Basic-Raytrace
+ * http://www.cs.jhu.edu/~cohen/RendTech99/Lectures/Ray_Tracing.bw.pdf
+ * https://github.com/jelmervdl/raytracer/blob/master/scene.cpp
+*/
 bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
 {
     // Ensure recursive raytracer does not exceed maximum depth
@@ -60,16 +71,25 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         Material* material = record.material;
 
         // Add illumination to object for each light source in the scene
+        // This is LOCAL ILLUMINATION
         for (int i = 0; (i < lights.size()); i++)
         {
             Vector3 lightDirection = (lights[i].getPosition() - record.pointOfIntersection).normalise();
             // Ambient lighting
-            localColour += (lights[i].getAmbient() * record.colour * material->ambientIntensity());
+            //std::cout << lights[i].getAmbient() << " " << material->getColour() << " " << material->ambientIntensity() << std::endl;
+            localColour += (lights[i].getAmbient() * material->getColour() * material->ambientIntensity());
+            // Diffuse lighting
+            float angle = lightDirection.dot(record.normal);
+            if (angle > 0.0f) // only diffuse light coming from FRONT will be considered
+                localColour += lights[i].getDiffuse() * material->getColour() * material->diffuseIntensity() * angle;
+            // Specular lighting
+            // Use lightDir DOT normal to compute reflection direction
+            Vector3 reflectionDirection = -(lightDirection - (2.0f * angle * record.normal));
+            float reflectionAngle = reflectionDirection.dot(lightDirection);
+            if (reflectionAngle > 0) // only specular light from FRONT will be considered
+                localColour += (lights[i].getSpecular() * material->specularIntensity()
+                    * pow(reflectionAngle, material->specularExponent()));
         }
-        // TODO: lighting
-        float intensity = fabs( record.normal.dot(camera.getBasisY()) );
-        // Compute LOCAL colour of pixel (takes diffuse and specular into account)
-        localColour = (0.1f * material->getColour()) + (0.9f * intensity * material->getColour());
 
         // Handle reflection
         Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);

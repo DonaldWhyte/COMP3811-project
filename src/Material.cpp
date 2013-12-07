@@ -1,8 +1,8 @@
 #include "Material.h"
 
-Material::Material(float ka, float kd, float ks,
+Material::Material(float ka, float kd, float ks, float n,
     const Colour& colour, Texture* texture) :
-    ka(ka), kd(kd), ks(ks), colour(colour), texture(texture)
+    ka(ka), kd(kd), ks(ks), n(n), colour(colour), texture(texture)
 {
 }
 
@@ -19,6 +19,11 @@ float Material::diffuseIntensity() const
 float Material::specularIntensity() const
 {
     return ks;
+}
+
+float Material::specularExponent() const
+{
+    return n;
 }
 
 const Colour& Material::getColour() const
@@ -44,6 +49,11 @@ void Material::setDiffuseIntensity(float newKD)
 void Material::setSpecularIntensity(float newKS)
 {
     ks = newKS;
+}
+
+void Material::setSpecularExponent(float newN)
+{
+    n = newN;
 }
 
 void Material::setColour(const Colour& newColour)

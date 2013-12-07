@@ -66,5 +66,38 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
 
 bool Triangle::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
 {
+    float a = p1.x - p2.x;
+    float b = p1.y - p2.y;
+    float c = p1.z - p2.z;
+    float d = p1.x - p3.x;
+    float e = p1.y - p3.y;
+    float f = p1.y - p3.z;
+    float g = ray.direction.x;
+    float h = ray.direction.y;
+    float i = ray.direction.z;
+    float j = p1.x - ray.origin.x;
+    float k = p1.y - ray.origin.y;
+    float l = p1.z - ray.origin.z;
 
+    float eihf = (e * i) - (h * f);
+    float gfdi = (g * f) - (d * i);
+    float dheg = (d * h) - (e * g);
+
+    float denominator = (a * eihf + b * gfdi + c * dheg);
+    float beta = (j * eihf + k * gfdi + l * dheg) / denominator;
+    if (beta <= 0.0f || beta >= 1.0f)
+        return false;
+
+    float akjb = (a * k) - (j * b);
+    float jcal = (j * c) - (a * l);
+    float blkc = (b * l) - (k * c);
+    float gamma = (i * akjb + h * jcal + g * blkc) / denominator;
+    if (gamma <= 0.0f || (beta + gamma) >= 1.0f)
+        return false;
+
+    float tVal = -(f * akjb + e * jcal + d*blkc) / denominator;
+    if (tVal >= tMin && tVal <= tMax)
+        return true;
+    else
+        return false;
 }
