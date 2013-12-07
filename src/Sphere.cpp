@@ -37,6 +37,7 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
             record.normal = ray.origin + (t * ray.direction) - centre;
             record.normal = record.normal.normalise(); // normalise unit vector to get just direction
             record.material = material;
+            record.texCoord = computeTexCoord(record.pointOfIntersection);
             return true;
         }
     }
@@ -71,4 +72,14 @@ bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
     {
         return false;
     }
+}
+
+Vector2 Sphere::computeTexCoord(const Vector3& posOnSphere) const
+{
+    // Compute vector from position on sphere to sphere's origin
+    Vector3 direction = (posOnSphere - centre).normalise();
+    // Normalised as we only carew about direction
+    float u = 0.5f + (atan2(direction.z, direction.x) / (2.0f * M_PI));
+    float v = 0.5f - (asin(direction.y) / M_PI);
+    return Vector2(u, v);
 }

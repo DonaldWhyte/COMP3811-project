@@ -6,8 +6,8 @@
 #include "TGA.h"
 #include "Raytracer.h"
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 3000;
+static const int IMAGE_HEIGHT = 3000;
 
 int main(int argc, char** argv)
 {

@@ -14,6 +14,9 @@ public:
     bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;
 
+private:
+    Vector2 computeTexCoord(const Vector3& posOnSphere) const;
+
     Vector3 centre;
     float radius;
 

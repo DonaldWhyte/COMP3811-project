@@ -3,15 +3,17 @@
 
 #include <vector>
 #include "Ray.h"
+#include "Vector2.h"
 #include "Vector3.h"
 #include "Material.h"
 #include "Colour.h"
 
 struct HitRecord
 {
-    float t;
+    float t; // distance from original ray
     Vector3 pointOfIntersection;
-    Vector3 normal;
+    Vector3 normal; // surface normal of point of intersection
+    Vector2 texCoord; // (U, V) coordinates of point of intersection
     Material* material;
     Colour colour;
 };
