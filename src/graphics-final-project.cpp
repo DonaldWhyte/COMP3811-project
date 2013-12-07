@@ -6,8 +6,8 @@
 #include "TGA.h"
 #include "Raytracer.h"
 
-static const int IMAGE_WIDTH = 3000;
-static const int IMAGE_HEIGHT = 3000;
+static const int IMAGE_WIDTH = 500;
+static const int IMAGE_HEIGHT = 500;
 
 int main(int argc, char** argv)
 {
@@ -26,7 +26,7 @@ int main(int argc, char** argv)
     );
     Raytracer raytracer(camera);
     raytracer.addShape(new Sphere(Vector3(250, 250, -1000), 150,
-        new Material(0.5f, 0.5f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
+        new Material(0.3f, 0.9f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
     raytracer.addShape( new Triangle(
         Vector3(300, 600, -800),
