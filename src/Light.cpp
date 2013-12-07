@@ -7,9 +7,9 @@ PointLight::PointLight(const Vector3& position, const Colour& ambient,
 {
 }
 
-bool PointLight::hit(const Ray& ray, float& intensity) const
+const Vector3& PointLight::getPosition() const
 {
-    // TODO
+    return position;
 }
 
 const Colour& PointLight::getAmbient() const
@@ -25,6 +25,11 @@ const Colour& PointLight::getDiffuse() const
 const Colour& PointLight::getSpecular() const
 {
     return specular;
+}
+
+void PointLight::setPosition(const Vector3& newPosition)
+{
+    position = newPosition;
 }
 
 void PointLight::setAmbient(const Colour& newAmbient)

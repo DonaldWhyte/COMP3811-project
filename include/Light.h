@@ -6,28 +6,18 @@
 #include "Vector3.h"
 #include "Ray.h"
 
-class Light
-{
-
-public:
-    virtual bool hit(const Ray& ray, float& intensity) const = 0;
-
-};
-
-typedef std::vector<Light*> LightList;
-
-class PointLight : public Light
+class PointLight
 {
 
 public:
     PointLight(const Vector3& position, const Colour& ambient,
         const Colour& diffuse, const Colour& specular);
 
-    bool hit(const Ray& ray, float& intensity) const;
-
+    const Vector3& getPosition() const;
     const Colour& getAmbient() const;
     const Colour& getDiffuse() const;
     const Colour& getSpecular() const;
+    void setPosition(const Vector3& position);
     void setAmbient(const Colour& newAmbient);
     void setDiffuse(const Colour& newDiffuse);
     void setSpecular(const Colour& newSpecular);
@@ -41,5 +31,7 @@ private:
     Colour specular;
 
 };
+
+typedef std::vector<PointLight> LightList;
 
 #endif

@@ -59,7 +59,13 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // NOTE: At this point, the colour of the hit shape should be in the hit record
         Colour localColour, reflectedColour;
 
-        // Compute intensity of light source at point of insesection
+        // Add illumination to object for each light source in the scene
+        for (int i = 0; (i < lights.size()); i++)
+        {
+            Vector3 lightDirection = (lights[i].getPosition() - record.pointOfIntersection).normalise();
+            // Ambient lighting
+            //localColour += (lights[i].getAmbient() * material
+        }
         // TODO: lighting
         float intensity = fabs( record.normal.dot(camera.getBasisY()) );
         // Compute LOCAL colour of pixel (takes diffuse and specular into account)
