@@ -11,6 +11,10 @@ static const int IMAGE_HEIGHT = 500;
 
 int main(int argc, char** argv)
 {
+    // Load resources
+    Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
+    Texture* worldMapTexture = new Texture(worldMapImage);
+
     // Define scene
     Camera camera(
         Vector3(0, 300, 0), // position
@@ -22,7 +26,7 @@ int main(int argc, char** argv)
     );
     Raytracer raytracer(camera);
     raytracer.addShape(new Sphere(Vector3(250, 250, -1000), 150,
-        new Material(0.5f, 0.5f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), NULL)
+        new Material(0.5f, 0.5f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
     raytracer.addShape( new Triangle(
         Vector3(300, 600, -800),
@@ -74,6 +78,10 @@ int main(int argc, char** argv)
     }
 
     tga::writeTGAFile("output.tga", output);
+
+    // Cleanup resources
+    delete worldMapImage;
+    delete worldMapTexture;
 
     return 0;
 }

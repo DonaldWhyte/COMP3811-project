@@ -76,7 +76,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         {
             // TODO: find UV
             float u = 0.5f;
-            float v = 0.5f;
+            float v = 0.7f;
             objectColour = material->getTexture()->getTexel(u, v);
         }
         else
