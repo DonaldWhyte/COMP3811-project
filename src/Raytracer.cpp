@@ -68,7 +68,21 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     if (isAHit)
     {
         Colour localColour, reflectedColour;
+
+        // Get hit object's material and derive source object colour from it
         Material* material = record.material;
+        Colour objectColour;
+        if (material->getTexture())
+        {
+            // TODO: find UV
+            float u = 0.5f;
+            float v = 0.5f;
+            objectColour = material->getTexture()->getTexel(u, v);
+        }
+        else
+        {
+            objectColour = material->getColour();
+        }
 
         // Add illumination to object for each light source in the scene
         // This is LOCAL ILLUMINATION
@@ -76,12 +90,11 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         {
             Vector3 lightDirection = (lights[i].getPosition() - record.pointOfIntersection).normalise();
             // Ambient lighting
-            //std::cout << lights[i].getAmbient() << " " << material->getColour() << " " << material->ambientIntensity() << std::endl;
-            localColour += (lights[i].getAmbient() * material->getColour() * material->ambientIntensity());
+            localColour += (lights[i].getAmbient() * objectColour * material->ambientIntensity());
             // Diffuse lighting
             float angle = lightDirection.dot(record.normal);
             if (angle > 0.0f) // only diffuse light coming from FRONT will be considered
-                localColour += lights[i].getDiffuse() * material->getColour() * material->diffuseIntensity() * angle;
+                localColour += lights[i].getDiffuse() * objectColour * material->diffuseIntensity() * angle;
             // Specular lighting
             // Use lightDir DOT normal to compute reflection direction
             Vector3 reflectionDirection = -(lightDirection - (2.0f * angle * record.normal));
