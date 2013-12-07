@@ -56,8 +56,8 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
 
     if (isAHit)
     {
-        // NOTE: At this point, the colour of the hit shape should be in the hit record
         Colour localColour, reflectedColour;
+        Material* material = record.material;
 
         // Add illumination to object for each light source in the scene
         for (int i = 0; (i < lights.size()); i++)

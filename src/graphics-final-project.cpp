@@ -21,8 +21,12 @@ int main(int argc, char** argv)
         500
     );
     Raytracer raytracer(camera);
-    raytracer.addShape( new Sphere(
-        Vector3(250, 250, -1000), 150, Colour(0.2f, 0.2f, 0.8f)
+    raytracer.addShape(new Sphere(Vector3(250, 250, -1000), 150,
+        Colour(0.2f, 0.2f, 0.8f), new Material(
+            Colour(1.0f, 0.0f, 0.0f),
+            Colour(0.0f, 1.0f, 0.0f),
+            Colour(0.0f, 0.0f, 1.0f)
+        )
     ));
     raytracer.addShape( new Triangle(
         Vector3(300, 600, -800),

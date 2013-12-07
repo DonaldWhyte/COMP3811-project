@@ -1,5 +1,9 @@
 #include "Material.h"
 
+Material::Material() : texture(NULL)
+{
+}
+
 Material::Material(const Colour& ambient, const Colour& diffuse,
     const Colour& specular, Texture* texture) :
     ambient(ambient), diffuse(diffuse), specular(specular), texture(texture)

@@ -1,9 +1,11 @@
 #include "Triangle.h"
 
-Triangle::Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, const Colour& colour) :
-    p1(p1), p2(p2), p3(p3), colour(colour)
+Triangle::Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3,
+    const Colour& colour, Material* material) :
+    p1(p1), p2(p2), p3(p3)
 {
-    //
+    this->colour = colour;
+    this->material = material;
 }
 
 bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
@@ -55,9 +57,10 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
         // Compute actual point of intersection given barycentric coordinayes
         float alpha = 1.0f - beta - gamma;
         record.pointOfIntersection = p1 * alpha + p2 * beta + p3 * gamma;
-
         record.normal = (p2 - p1).cross(p3 - p1).normalise();
+        record.material = material;
         record.colour = colour;
+
         return true;
     }
 

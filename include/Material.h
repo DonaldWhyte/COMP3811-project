@@ -9,6 +9,7 @@ class Material
 {
 
 public:
+    Material();
     Material(const Colour& ambient, const Colour& diffuse,
         const Colour& specular, Texture* texture = NULL);
 
