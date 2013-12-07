@@ -26,13 +26,10 @@ public:
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const = 0;
     virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const = 0;
 
-    const Colour& getColour() const { return colour; }
-    void setColour(const Colour& newColour) { colour = newColour; }
     Material* getMaterial() { return material; }
     void setMaterial(Material* newMaterial) { material = newMaterial; }
 
 protected:
-    Colour colour;
     Material* material;
 
 };

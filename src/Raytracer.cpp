@@ -64,12 +64,12 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         {
             Vector3 lightDirection = (lights[i].getPosition() - record.pointOfIntersection).normalise();
             // Ambient lighting
-            //localColour += (lights[i].getAmbient() * material
+            localColour += (lights[i].getAmbient() * record.colour * material->ambientIntensity());
         }
         // TODO: lighting
         float intensity = fabs( record.normal.dot(camera.getBasisY()) );
         // Compute LOCAL colour of pixel (takes diffuse and specular into account)
-        localColour = (0.1f * record.colour) + (0.9f * intensity * record.colour);
+        localColour = (0.1f * material->getColour()) + (0.9f * intensity * material->getColour());
 
         // Handle reflection
         Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);

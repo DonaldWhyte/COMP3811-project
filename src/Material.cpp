@@ -1,28 +1,29 @@
 #include "Material.h"
 
-Material::Material() : texture(NULL)
+Material::Material(float ka, float kd, float ks,
+    const Colour& colour, Texture* texture) :
+    ka(ka), kd(kd), ks(ks), colour(colour), texture(texture)
 {
 }
 
-Material::Material(const Colour& ambient, const Colour& diffuse,
-    const Colour& specular, Texture* texture) :
-    ambient(ambient), diffuse(diffuse), specular(specular), texture(texture)
+float Material::ambientIntensity() const
 {
+    return ka;
 }
 
-const Colour& Material::getAmbient() const
+float Material::diffuseIntensity() const
 {
-    return ambient;
+    return kd;
 }
 
-const Colour& Material::getDiffuse() const
+float Material::specularIntensity() const
 {
-    return diffuse;
+    return ks;
 }
 
-const Colour& Material::getSpecular() const
+const Colour& Material::getColour() const
 {
-    return specular;
+    return colour;
 }
 
 Texture* Material::getTexture() const
@@ -30,19 +31,24 @@ Texture* Material::getTexture() const
     return texture;
 }
 
-void Material::setAmbient(const Colour& newAmbient)
+void Material::setAmbientIntensity(float newKA)
 {
-    ambient = newAmbient;
+    ka = newKA;
 }
 
-void Material::setDiffuse(const Colour& newDiffuse)
+void Material::setDiffuseIntensity(float newKD)
 {
-    diffuse = newDiffuse;
+    kd = newKD;
 }
 
-void Material::setSpecular(const Colour& newSpecular)
+void Material::setSpecularIntensity(float newKS)
 {
-    specular = newSpecular;
+    ks = newKS;
+}
+
+void Material::setColour(const Colour& newColour)
+{
+    colour = newColour;
 }
 
 void Material::setTexture(Texture* newTexture)

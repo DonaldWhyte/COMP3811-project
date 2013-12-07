@@ -1,10 +1,9 @@
 #include "Sphere.h"
 #include <cmath>
 
-Sphere::Sphere(const Vector3& centre, float radius, const Colour& colour, Material* material) :
+Sphere::Sphere(const Vector3& centre, float radius, Material* material) :
     centre(centre), radius(radius)
 {
-    this->colour = colour;
     this->material = material;
 }
 
@@ -37,7 +36,6 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
             record.pointOfIntersection = ray.origin + (ray.direction * t);
             record.normal = ray.origin + (t * ray.direction) - centre;
             record.normal = record.normal.normalise(); // normalise unit vector to get just direction
-            record.colour = colour;
             record.material = material;
             return true;
         }

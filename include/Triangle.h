@@ -7,8 +7,7 @@ class Triangle : public Shape
 {
 
 public:
-    Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3,
-        const Colour& colour, Material* material = NULL);
+    Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, Material* material = NULL);
 
     bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;

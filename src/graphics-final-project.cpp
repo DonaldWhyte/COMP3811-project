@@ -22,29 +22,25 @@ int main(int argc, char** argv)
     );
     Raytracer raytracer(camera);
     raytracer.addShape(new Sphere(Vector3(250, 250, -1000), 150,
-        Colour(0.2f, 0.2f, 0.8f), new Material(
-            Colour(1.0f, 0.0f, 0.0f),
-            Colour(0.0f, 1.0f, 0.0f),
-            Colour(0.0f, 0.0f, 1.0f)
-        )
+        new Material(0.5f, 0.5f, 0.5f, Colour(0.2f, 0.2f, 0.8f), NULL)
     ));
     raytracer.addShape( new Triangle(
         Vector3(300, 600, -800),
         Vector3(0, 100, -1000),
         Vector3(450, 20, -1000),
-        Colour(0.8f, 0.2f, 0.2f)
+        new Material(0.5f, 0.5f, 0.5f, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     raytracer.addShape( new Triangle(
         Vector3(0, 100, -250),
         Vector3(0, 200, -250),
         Vector3(100, 200, -250),
-        Colour(0.8f, 0.7f, 0.2f)
+        new Material(0.5f, 0.5f, 0.5f, Colour(0.8f, 0.7f, 0.2f), NULL)
     ));
     raytracer.addShape( new Triangle(
         Vector3(100, 0, -100),
         Vector3(100, 200, -100),
         Vector3(300, 200, -100),
-        Colour(0.2f, 0.7f, 0)
+        new Material(0.5f, 0.5f, 0.5f, Colour(0.2f, 0.7f, 0), NULL)
     ));
 
     // Create object to store image output

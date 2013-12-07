@@ -9,23 +9,26 @@ class Material
 {
 
 public:
-    Material();
-    Material(const Colour& ambient, const Colour& diffuse,
-        const Colour& specular, Texture* texture = NULL);
+    Material(float ka, float kd, float ks,
+        const Colour& colour, Texture* texture = NULL);
 
-    const Colour& getAmbient() const;
-    const Colour& getDiffuse() const;
-    const Colour& getSpecular() const;
+    float ambientIntensity() const;
+    float diffuseIntensity() const;
+    float specularIntensity() const;
+    const Colour& getColour() const;
     Texture* getTexture() const;
-    void setAmbient(const Colour& newAmbient);
-    void setDiffuse(const Colour& newDiffuse);
-    void setSpecular(const Colour& newSpecular);
+    void setAmbientIntensity(float newKA);
+    void setDiffuseIntensity(float newKD);
+    void setSpecularIntensity(float newKS);
+    void setColour(const Colour& newAmbient);
     void setTexture(Texture* newTexture);
 
 private:
-    Colour ambient;
-    Colour diffuse;
-    Colour specular;
+    // Intensities for different lighting phenomena
+    float ka; // ambient
+    float kd; // diffuse
+    float ks; // specular
+    Colour colour;
     Texture* texture;
 
 };
