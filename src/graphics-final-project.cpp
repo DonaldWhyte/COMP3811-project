@@ -15,7 +15,7 @@ int main(int argc, char** argv)
     // Load resources
     Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
-    ShapeList mesh = fromOBJFile("resources/head.obj");
+    ShapeList mesh = fromOBJFile("resources/halberd.obj");
 
     // Define scene
     Camera camera(
