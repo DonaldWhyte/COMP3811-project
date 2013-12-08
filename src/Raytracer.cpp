@@ -2,16 +2,14 @@
 #include <cmath>
 #include <iostream>
 
-Raytracer::Raytracer(const Camera& camera) : camera(camera)
+Raytracer::Raytracer(const Camera& camera) : camera(camera), rootShape(NULL)
 {
 }
 
 Raytracer::~Raytracer()
 {
-    for (int i = 0; (i < shapes.size()); i++)
-        delete shapes[i];
+    delete rootShape;
 }
-
 
 bool Raytracer::raytrace(float x, float y, Colour& result)
 {
@@ -26,15 +24,10 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     return isAHit;
 }
 
-void Raytracer::addShape(Shape* shape)
+void Raytracer::setRootShape(Shape* newRoot)
 {
-    shapes.push_back(shape);
-}
-
-void Raytracer::addShapes(const ShapeList& newShapes)
-{
-    for (int i = 0; (i < newShapes.size()); i++)
-        shapes.push_back(newShapes[i]);
+    delete rootShape; // delete the old root shape!
+    rootShape = newRoot;
 }
 
 void Raytracer::addLight(const PointLight& light)
@@ -56,21 +49,9 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
 {
     // Ensure recursive raytracer does not exceed maximum depth
     if (depth > MAX_TRACE_DEPTH) return false;
+    if (!rootShape) return false;
 
-    bool isAHit = false;
-    float tMax = MAX_RAY_DISTANCE;
-    for (int i = 0; (i < shapes.size()); i++)
-    {
-        // Keeping tMax up-to-date ensures that that only the colour
-        // of the CLOSEST point is considered at the end of the loop
-        if (shapes[i]->hit(ray, 0.00001f, tMax, 0.0f, record))
-        {
-            // New maximum allowed distance becomes distance of this shape
-            tMax = record.t;
-            isAHit = true;
-        }
-    }
-
+    bool isAHit = rootShape->hit(ray, 0.00001f, MAX_RAY_DISTANCE, 0.0f, record);
     if (isAHit)
     {
         Colour localColour, reflectedColour;

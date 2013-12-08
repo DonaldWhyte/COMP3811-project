@@ -17,8 +17,7 @@ public:
     virtual ~Raytracer();
 
     bool raytrace(float x, float y, Colour& result);
-    void addShape(Shape* shape);
-    void addShapes(const ShapeList& newShapes);
+    void setRootShape(Shape* newRoot);
     void addLight(const PointLight& light);
     Camera* getCamera();
 
@@ -26,7 +25,7 @@ private:
     void reset();
     bool recursiveTrace(const Ray& ray, HitRecord& record, int depth);
 
-    ShapeList shapes;
+    Shape* rootShape;
     LightList lights;
     Camera camera;
 

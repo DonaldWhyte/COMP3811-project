@@ -27,10 +27,10 @@ int main(int argc, char** argv)
         500
     );
     Raytracer raytracer(camera);
-    raytracer.addShape(new Sphere(Vector3(250, 250, -1000), 150,
+    raytracer.setRootShape(new Sphere(Vector3(250, 250, -1000), 150,
         new Material(0.3f, 0.9f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    raytracer.addShape( new Triangle(
+    /*raytracer.addShape( new Triangle(
         Vector3(300, 600, -800),
         Vector3(0, 100, -1000),
         Vector3(450, 20, -1000),
@@ -48,13 +48,13 @@ int main(int argc, char** argv)
         Vector3(300, 200, -100),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.2f, 0.7f, 0), NULL)
     ));
+    raytracer.addShapes(mesh);*/
     raytracer.addLight(PointLight(
         Vector3(0, 0, 0),
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-    raytracer.addShapes(mesh);
 
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
