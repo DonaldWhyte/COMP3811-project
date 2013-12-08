@@ -1,5 +1,9 @@
 #include "Material.h"
 
+Material::Material() : ka(0), kd(0), ks(0), n(0), texture(NULL)
+{
+}
+
 Material::Material(float ka, float kd, float ks, float n,
     const Colour& colour, Texture* texture) :
     ka(ka), kd(kd), ks(ks), n(n), colour(colour), texture(texture)

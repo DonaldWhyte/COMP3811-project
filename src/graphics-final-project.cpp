@@ -5,6 +5,7 @@
 #include "Camera.h"
 #include "TGA.h"
 #include "Raytracer.h"
+#include "MeshTriangle.h"
 
 static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
@@ -14,6 +15,7 @@ int main(int argc, char** argv)
     // Load resources
     Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
+    ShapeList mesh = fromOBJFile("resources/head.obj");
 
     // Define scene
     Camera camera(
@@ -52,6 +54,7 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
+    raytracer.addShapes(mesh);
 
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
@@ -65,7 +68,9 @@ int main(int argc, char** argv)
     {
         for (int j = 0; (j < output.getHeight()); j++)
         {
-            // Convert pixel coordinates (i, k) to viewing plane coordinates (x, y)
+            std::cout << "Rendering pixel (" << i << ", " << j << ")\r";
+            std::cout.flush();
+            // Convert pixel coordinates (i, j) to viewing plane coordinates (x, y)
             // Note that this gets the pixel CENTRE
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // n

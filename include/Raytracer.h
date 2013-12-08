@@ -18,6 +18,7 @@ public:
 
     bool raytrace(float x, float y, Colour& result);
     void addShape(Shape* shape);
+    void addShapes(const ShapeList& newShapes);
     void addLight(const PointLight& light);
     Camera* getCamera();
 

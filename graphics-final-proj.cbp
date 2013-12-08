@@ -35,9 +35,13 @@
 		</Compiler>
 		<Unit filename="include/Camera.h" />
 		<Unit filename="include/Colour.h" />
+		<Unit filename="include/Common.h" />
 		<Unit filename="include/Image.h" />
 		<Unit filename="include/Light.h" />
 		<Unit filename="include/Material.h" />
+		<Unit filename="include/Mesh.h" />
+		<Unit filename="include/MeshTriangle.h" />
+		<Unit filename="include/OBJ.h" />
 		<Unit filename="include/Ray.h" />
 		<Unit filename="include/Raytracer.h" />
 		<Unit filename="include/Shape.h" />
@@ -47,11 +51,16 @@
 		<Unit filename="include/Triangle.h" />
 		<Unit filename="include/Vector2.h" />
 		<Unit filename="include/Vector3.h" />
+		<Unit filename="include/tiny_obj_loader.h" />
 		<Unit filename="src/Camera.cpp" />
 		<Unit filename="src/Colour.cpp" />
+		<Unit filename="src/Common.cpp" />
 		<Unit filename="src/Image.cpp" />
 		<Unit filename="src/Light.cpp" />
 		<Unit filename="src/Material.cpp" />
+		<Unit filename="src/Mesh.cpp" />
+		<Unit filename="src/MeshTriangle.cpp" />
+		<Unit filename="src/OBJ.cpp" />
 		<Unit filename="src/Ray.cpp" />
 		<Unit filename="src/Raytracer.cpp" />
 		<Unit filename="src/Sphere.cpp" />
@@ -61,6 +70,7 @@
 		<Unit filename="src/Vector2.cpp" />
 		<Unit filename="src/Vector3.cpp" />
 		<Unit filename="src/graphics-final-project.cpp" />
+		<Unit filename="src/tiny_obj_loader.cc" />
 		<Extensions>
 			<code_completion />
 			<envvars />

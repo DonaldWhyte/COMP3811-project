@@ -9,6 +9,7 @@ class Material
 {
 
 public:
+    Material();
     Material(float ka, float kd, float ks, float n,
         const Colour& colour, Texture* texture = NULL);
 

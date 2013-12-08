@@ -31,6 +31,12 @@ void Raytracer::addShape(Shape* shape)
     shapes.push_back(shape);
 }
 
+void Raytracer::addShapes(const ShapeList& newShapes)
+{
+    for (int i = 0; (i < newShapes.size()); i++)
+        shapes.push_back(newShapes[i]);
+}
+
 void Raytracer::addLight(const PointLight& light)
 {
     lights.push_back(light);
