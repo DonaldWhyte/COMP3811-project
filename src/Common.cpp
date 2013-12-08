@@ -19,12 +19,12 @@ bool common::triangleShadowHit(const Vector3& p1, const Vector3& p2, const Vecto
     float d = p1.x - p3.x;
     float e = p1.y - p3.y;
     float f = p1.y - p3.z;
-    float g = ray.direction.x;
-    float h = ray.direction.y;
-    float i = ray.direction.z;
-    float j = p1.x - ray.origin.x;
-    float k = p1.y - ray.origin.y;
-    float l = p1.z - ray.origin.z;
+    float g = ray.direction().x;
+    float h = ray.direction().y;
+    float i = ray.direction().z;
+    float j = p1.x - ray.origin().x;
+    float k = p1.y - ray.origin().y;
+    float l = p1.z - ray.origin().z;
 
     float eihf = (e * i) - (h * f);
     float gfdi = (g * f) - (d * i);
@@ -63,12 +63,12 @@ bool common::triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
     float d = p1.x - p3.x; // column 2
     float e = p1.y - p3.y;
     float f = p1.y - p3.z;
-    float g = ray.direction.x; // column 3
-    float h = ray.direction.y;
-    float i = ray.direction.z;
-    float j = p1.x - ray.origin.x; // RHS of system of equations to solve
-    float k = p1.y - ray.origin.y;
-    float l = p1.z - ray.origin.z;
+    float g = ray.direction().x; // column 3
+    float h = ray.direction().y;
+    float i = ray.direction().z;
+    float j = p1.x - ray.origin().x; // RHS of system of equations to solve
+    float k = p1.y - ray.origin().y;
+    float l = p1.z - ray.origin().z;
 
     // These expressions are used multiple times, so store them
     // (so they only need to be computed once (plus it makes the code more readable)

@@ -68,8 +68,6 @@ int main(int argc, char** argv)
     {
         for (int j = 0; (j < output.getHeight()); j++)
         {
-            std::cout << "Rendering pixel (" << i << ", " << j << ")\r";
-            std::cout.flush();
             // Convert pixel coordinates (i, j) to viewing plane coordinates (x, y)
             // Note that this gets the pixel CENTRE
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a

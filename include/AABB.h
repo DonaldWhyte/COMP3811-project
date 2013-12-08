@@ -1,6 +1,9 @@
 #ifndef DW_RAYTRACER_AABB_H
 #define DW_RAYTRACER_AABB_H
 
+#include "Vector3.h"
+#include "Ray.h"
+
 class AABB
 {
 
@@ -10,7 +13,7 @@ public:
 
     bool intersects(const Ray& ray, float tMin, float tMax) const;
 
-    Vector3 boxMin, boxMax;
+    Vector3 bounds[2]; // 0 = min, 1 = max
 
 };
 

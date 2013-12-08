@@ -9,11 +9,11 @@ Sphere::Sphere(const Vector3& centre, float radius, Material* material) :
 
 bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
-    Vector3 temp = ray.origin - centre;
+    Vector3 temp = ray.origin() - centre;
 
     // Solve quadratic equation to check for intersection
-    double a = ray.direction.dot(ray.direction);
-    double b = 2 * ray.direction.dot(temp);
+    double a = ray.direction().dot(ray.direction());
+    double b = 2 * ray.direction().dot(temp);
     double c = temp.dot(temp) - (radius * radius);
     double discriminant = b * b - 4 * a * c;
 
@@ -33,8 +33,8 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
         {
             // Update hit record here!
             record.t = t;
-            record.pointOfIntersection = ray.origin + (ray.direction * t);
-            record.normal = ray.origin + (t * ray.direction) - centre;
+            record.pointOfIntersection = ray.origin() + (ray.direction() * t);
+            record.normal = ray.origin() + (t * ray.direction()) - centre;
             record.normal = record.normal.normalise(); // normalise unit vector to get just direction
             record.material = material;
             record.texCoord = computeTexCoord(record.pointOfIntersection);
@@ -49,10 +49,10 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
 
 bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
 {
-    Vector3 temp = ray.origin - centre;
+    Vector3 temp = ray.origin() - centre;
 
-    double a = ray.direction.dot(ray.direction);
-    double b = 2 * ray.direction.dot(temp);
+    double a = ray.direction().dot(ray.direction());
+    double b = 2 * ray.direction().dot(temp);
     double c = temp.dot(temp) - (radius * radius);
 
     double discriminant = b * b - 4 * a * c;
