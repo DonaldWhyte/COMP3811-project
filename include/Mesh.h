@@ -22,7 +22,7 @@ public:
     Mesh(const VertexList& vertices, const Material& material);
 
     const VertexList& getVertices() const;
-    const Material& getMaterial() const;
+    Material* getMaterial();
     void setVertices(const VertexList& newVertices);
     void setMaterial(const Material& newMaterial);
 

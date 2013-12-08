@@ -20,8 +20,4 @@ private:
 
 };
 
-typedef std::vector<Shape*> MeshTriangleList;
-
-MeshTriangleList fromOBJFile(const std::string& filename);
-
 #endif

@@ -2,6 +2,8 @@
 #include "Image.h"
 #include "Sphere.h"
 #include "Triangle.h"
+#include "BoundingShape.h"
+#include "ShapeLoaders.h"
 #include "Camera.h"
 #include "TGA.h"
 #include "Raytracer.h"
@@ -15,9 +17,9 @@ int main(int argc, char** argv)
     // Load resources
     Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
-    ShapeList mesh = fromOBJFile("resources/halberd.obj");
 
     // Define scene
+    AABB sceneBoundary(Vector3(-100000, -100000, -100000), Vector3(100000, 100000, 100000));
     Camera camera(
         Vector3(0, 300, 0), // position
         Vector3(0, 0, -1), // direction
@@ -26,29 +28,34 @@ int main(int argc, char** argv)
         Rectangle(-400, 400, -400, 400), // viewing rectangle
         500
     );
-    Raytracer raytracer(camera);
-    raytracer.setRootShape(new Sphere(Vector3(250, 250, -1000), 150,
+    ShapeList shapes;
+    shapes.push_back(new Sphere(Vector3(250, 250, -1000), 150,
         new Material(0.3f, 0.9f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    /*raytracer.addShape( new Triangle(
+    shapes.push_back( new Triangle(
         Vector3(300, 600, -800),
         Vector3(0, 100, -1000),
         Vector3(450, 20, -1000),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
-    raytracer.addShape( new Triangle(
+    shapes.push_back( new Triangle(
         Vector3(0, 100, -250),
         Vector3(0, 200, -250),
         Vector3(100, 200, -250),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.8f, 0.7f, 0.2f), NULL)
     ));
-    raytracer.addShape( new Triangle(
+    shapes.push_back( new Triangle(
         Vector3(100, 0, -100),
         Vector3(100, 200, -100),
         Vector3(300, 200, -100),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.2f, 0.7f, 0), NULL)
     ));
-    raytracer.addShapes(mesh);*/
+    shapes.push_back( shapeloaders::getMeshFromOBJ("resources/halberd.obj", Vector3(0, 0, -1000), 20) );
+
+    // Create raytracer
+    Raytracer raytracer(camera);
+    raytracer.setRootShape(new BoundingShape(shapes, sceneBoundary));
+    // Add light source
     raytracer.addLight(PointLight(
         Vector3(0, 0, 0),
         Colour(0.2f, 0.2f, 0.2f),

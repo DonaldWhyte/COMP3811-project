@@ -10,9 +10,9 @@ const VertexList& Mesh::getVertices() const
     return vertices;
 }
 
-const Material& Mesh::getMaterial() const
+Material* Mesh::getMaterial()
 {
-    return material;
+    return &material;
 }
 
 void Mesh::setVertices(const VertexList& newVertices)

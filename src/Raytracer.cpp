@@ -59,16 +59,18 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // Get hit object's material and derive source object colour from it
         Material* material = record.material;
         Colour objectColour;
-        if (material->getTexture())
+        if (material)
         {
-            objectColour = material->getTexture()->getTexel(
-                record.texCoord.x, record.texCoord.y);
+            if (material->getTexture())
+                objectColour = material->getTexture()->getTexel(
+                    record.texCoord.x, record.texCoord.y);
+            else
+                objectColour = material->getColour();
         }
         else
         {
-            objectColour = material->getColour();
+            material = &defaultMaterial;
         }
-
         // Add illumination to object for each light source in the scene
         // This is LOCAL ILLUMINATION
         for (int i = 0; (i < lights.size()); i++)

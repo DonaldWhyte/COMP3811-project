@@ -4,7 +4,7 @@
 #include "Shape.h"
 #include "AABB.h"
 
-class BoundingShape
+class BoundingShape : public Shape
 {
 
 public:

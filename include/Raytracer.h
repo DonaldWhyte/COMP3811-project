@@ -29,6 +29,8 @@ private:
     LightList lights;
     Camera camera;
 
+    Material defaultMaterial;
+
 };
 
 #endif
