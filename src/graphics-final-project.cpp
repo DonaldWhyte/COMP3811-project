@@ -50,7 +50,10 @@ int main(int argc, char** argv)
         Vector3(300, 200, -100),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.2f, 0.7f, 0), NULL)
     ));
-    shapes.push_back( shapeloaders::getMeshFromOBJ("resources/halberd.obj", Vector3(0, 0, -1000), 20) );
+    shapes.push_back( shapeloaders::getMeshFromOBJ(
+        "resources/halberd.obj", Vector3(0, 0, -1000), 20) );
+    shapes.push_back( shapeloaders::getTerrainFromHeightmap(
+        "resources/heightmap.tga", 100.0f, 1000.0f) );
 
     // Create raytracer
     Raytracer raytracer(camera);

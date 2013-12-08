@@ -97,6 +97,8 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
             reflectedColour = reflectRecord.colour;
 
+        // TODO: transmission?
+
         // Combine computed colours into one
         record.colour = localColour + (0.5f * reflectedColour);
     }
