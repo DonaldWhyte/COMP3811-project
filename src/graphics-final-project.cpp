@@ -9,13 +9,13 @@
 #include "Raytracer.h"
 #include "MeshTriangle.h"
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 4000;
+static const int IMAGE_HEIGHT = 4000;
 
 int main(int argc, char** argv)
 {
     // Load resources
-    Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
+    Image* worldMapImage = tga::readTGAFile("resources/world_map_big.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
 
     // Define scene
