@@ -17,6 +17,9 @@ public:
     virtual ~Raytracer();
 
     bool raytrace(float x, float y, Colour& result);
+    bool multisample(float x, float y, float rangeX, float rangeY,
+        unsigned int samples, Colour& result);
+
     void setRootShape(Shape* newRoot);
     void addLight(const PointLight& light);
     Camera* getCamera();

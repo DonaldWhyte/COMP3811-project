@@ -21,6 +21,11 @@ namespace common
     bool triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
         const Ray& ray, float tMin, float tMax, float time, HitRecord& record);
 
+    /* Generate floating point number >= min && <= max. */
+    float randomFloat(float min, float max);
+    /* Generate random 3D vector inside a circle using Monte Carlo method. */
+    Vector3 monteCarloDirection();
+
 }
 
 #endif

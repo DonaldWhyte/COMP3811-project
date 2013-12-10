@@ -9,11 +9,18 @@
 #include "Raytracer.h"
 #include "MeshTriangle.h"
 
+#include "Common.h"
+#include <ctime>
+#include <cstdlib>
+
 static const int IMAGE_WIDTH = 4000;
 static const int IMAGE_HEIGHT = 4000;
 
 int main(int argc, char** argv)
 {
+    // Seed random number generator for varying results
+    srand(time(NULL));
+
     // Load resources
     Image* worldMapImage = tga::readTGAFile("resources/world_map_big.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
@@ -50,10 +57,10 @@ int main(int argc, char** argv)
         Vector3(300, 200, -100),
         new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.2f, 0.7f, 0), NULL)
     ));
-    shapes.push_back( shapeloaders::getMeshFromOBJ(
+    /*shapes.push_back( shapeloaders::getMeshFromOBJ(
         "resources/halberd.obj", Vector3(0, 0, -1000), 20) );
     shapes.push_back( shapeloaders::getTerrainFromHeightmap(
-        "resources/heightmap.tga", 100.0f, 1000.0f) );
+        "resources/heightmap.tga", 100.0f, 1000.0f) );*/
 
     // Create raytracer
     Raytracer raytracer(camera);
@@ -73,6 +80,8 @@ int main(int argc, char** argv)
 
     // Perform raytrace
     Colour resultantColour;
+    float rangeX = 1.0f / output.getWidth();
+    float rangeY = 1.0f / output.getHeight();
     // Loop over the pixels of the image
     for (int i = 0; (i < output.getWidth()); i++)
     {
@@ -81,8 +90,8 @@ int main(int argc, char** argv)
             // Convert pixel coordinates (i, j) to viewing plane coordinates (x, y)
             // Note that this gets the pixel CENTRE
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
-            float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // n
-            bool hit = raytracer.raytrace(x, y, resultantColour);
+            float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
+            bool hit = raytracer.multisample(x, y, rangeX, rangeY, 64, resultantColour);
             if (hit)
                 output.set(i, j, resultantColour);
             else

@@ -1,8 +1,9 @@
 #include "Raytracer.h"
+#include "Common.h"
 #include <cmath>
-#include <iostream>
+#include <algorithm>
 
-Raytracer::Raytracer(const Camera& camera) : camera(camera), rootShape(NULL)
+Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
 {
 }
 
@@ -22,6 +23,28 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     if (isAHit)
         result = record.colour;
     return isAHit;
+}
+
+bool Raytracer::multisample(float x, float y, float rangeX, float rangeY, unsigned int samples, Colour& result)
+{
+    Ray ray = camera.getRayToPixel(x, y, 0, 0);
+    Colour sum;
+    int hits = 0;
+    // TODO: comment
+    for (unsigned int i = 0; (i < samples); i++)
+    {
+        Ray sampleRay(ray.origin(), ray.direction() + (common::monteCarloDirection() * rangeX));
+        HitRecord record;
+        bool isHit = recursiveTrace(sampleRay, record, 0);
+        if (isHit)
+        {
+            sum += record.colour;
+            hits += 1;
+        }
+    }
+
+    result = sum / std::max(1, hits);
+    return (hits > 0);
 }
 
 void Raytracer::setRootShape(Shape* newRoot)
