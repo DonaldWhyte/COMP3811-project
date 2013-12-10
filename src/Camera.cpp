@@ -40,6 +40,6 @@ void Camera::updateBasisVectors(const Vector3& direction, const Vector3& up)
 {
     // Construct orthonormal basis vectors for view coordinate system
     w = (-direction).normalise();
-    u = (-direction).cross(up).normalise();
+    u = up.cross(w).normalise();
     v = w.cross(u);
 }
