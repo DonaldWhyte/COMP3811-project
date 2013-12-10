@@ -5,6 +5,8 @@
 #include "tiny_obj_loader.h"
 #include "TGA.h"
 
+static const float MATERIAL_REFLECTIVITY = 0.1f;
+
 Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     float cellSize, float maxHeight)
 {
@@ -96,7 +98,8 @@ Shape* shapeloaders::getMeshFromOBJ(const std::string& filename,
     // Construct material for mesh
     Material material(shape.material.ambient[0],
         shape.material.diffuse[0], shape.material.specular[0],
-        shape.material.shininess, Colour(0.8f, 0.2f, 0.2f), NULL);
+        shape.material.shininess, MATERIAL_REFLECTIVITY,
+        Colour(0.8f, 0.2f, 0.2f), NULL);
     // Create mesh object to assign to all triangles
     Mesh* mesh = new Mesh(vertices, material);
 

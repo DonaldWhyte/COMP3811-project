@@ -10,19 +10,21 @@ class Material
 
 public:
     Material();
-    Material(float ka, float kd, float ks, float n,
+    Material(float ka, float kd, float ks, float n, float reflectionFactor,
         const Colour& colour, Texture* texture = NULL);
 
     float ambientIntensity() const;
     float diffuseIntensity() const;
     float specularIntensity() const;
     float specularExponent() const;
+    float reflectivity() const;
     const Colour& getColour() const;
     Texture* getTexture() const;
     void setAmbientIntensity(float newKA);
     void setDiffuseIntensity(float newKD);
     void setSpecularIntensity(float newKS);
     void setSpecularExponent(float n);
+    void setReflectivity(float newReflectionFactor);
     void setColour(const Colour& newAmbient);
     void setTexture(Texture* newTexture);
 
@@ -32,6 +34,8 @@ private:
     float kd; // diffuse
     float ks; // specular
     float n; // specular exponent
+    // how much light this object reflects (0 = no reflection, 1 = mirror)
+    float reflectionFactor;
     Colour colour;
     Texture* texture;
 

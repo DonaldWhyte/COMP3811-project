@@ -25,15 +25,15 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     return isAHit;
 }
 
-bool Raytracer::multisample(float x, float y, float rangeX, float rangeY, unsigned int samples, Colour& result)
+bool Raytracer::multisample(float x, float y, float range, unsigned int samples, Colour& result)
 {
     Ray ray = camera.getRayToPixel(x, y, 0, 0);
     Colour sum;
     int hits = 0;
-    // TODO: comment
+
     for (unsigned int i = 0; (i < samples); i++)
     {
-        Ray sampleRay(ray.origin(), ray.direction() + (common::monteCarloDirection() * rangeX));
+        Ray sampleRay(ray.origin(), ray.direction() + (common::monteCarloDirection() * range));
         HitRecord record;
         bool isHit = recursiveTrace(sampleRay, record, 0);
         if (isHit)
@@ -115,15 +115,19 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         }
 
         // Handle reflection
-        Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);
-        HitRecord reflectRecord;
-        if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
-            reflectedColour = reflectRecord.colour;
+        // (but only if material of hit shape is actually reflective!)
+        if (material->reflectivity() > 0.0f)
+        {
+            Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);
+            HitRecord reflectRecord;
+            if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
+                reflectedColour = reflectRecord.colour;
+        }
 
         // TODO: transmission?
 
         // Combine computed colours into one
-        record.colour = localColour + (0.5f * reflectedColour);
+        record.colour = localColour + (material->reflectivity() * reflectedColour);
     }
 
     return isAHit;

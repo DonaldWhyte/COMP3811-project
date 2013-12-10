@@ -13,8 +13,8 @@
 #include <ctime>
 #include <cstdlib>
 
-static const int IMAGE_WIDTH = 4000;
-static const int IMAGE_HEIGHT = 4000;
+static const int IMAGE_WIDTH = 500;
+static const int IMAGE_HEIGHT = 500;
 
 int main(int argc, char** argv)
 {
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     srand(time(NULL));
 
     // Load resources
-    Image* worldMapImage = tga::readTGAFile("resources/world_map_big.tga");
+    Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
 
     // Define scene
@@ -37,25 +37,43 @@ int main(int argc, char** argv)
     );
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(250, 250, -1000), 150,
-        new Material(0.3f, 0.9f, 0.5f, 20.0f, Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
+        new Material(0.3f, 0.9f, 0.5f, 20.0f, 0.5f,
+            Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
     shapes.push_back( new Triangle(
         Vector3(300, 600, -800),
         Vector3(0, 100, -1000),
         Vector3(450, 20, -1000),
-        new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.8f, 0.2f, 0.2f), NULL)
+        new Material(0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
+            Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     shapes.push_back( new Triangle(
         Vector3(0, 100, -250),
         Vector3(0, 200, -250),
         Vector3(100, 200, -250),
-        new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.8f, 0.7f, 0.2f), NULL)
+        new Material(0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
+            Colour(0.8f, 0.7f, 0.2f), NULL)
     ));
     shapes.push_back( new Triangle(
         Vector3(100, 0, -100),
         Vector3(100, 200, -100),
         Vector3(300, 200, -100),
-        new Material(0.5f, 0.5f, 0.5f, 0.1f, Colour(0.2f, 0.7f, 0), NULL)
+        new Material(0.5f, 0.5f, 0.5f, 0.1f, 0.1f,
+            Colour(0.2f, 0.7f, 0), NULL)
+    ));
+    /* Define floor. */
+    std::vector<Vector3> floorVerts(4);
+    floorVerts[0] = Vector3(2, 1, -1) * 500.0f;
+    floorVerts[1] = Vector3(2, 1, -6) * 500.0f;
+    floorVerts[2] = Vector3(-3, 1, -6) * 500.0f;
+    floorVerts[3] = Vector3(-3, 1, -1) * 500.0f;
+    shapes.push_back( new Triangle(
+        floorVerts[0], floorVerts[1], floorVerts[2],
+        new Material(0.5f, 0.5f, 0.1f, 0.05f, 0.1f, Colour(1.0f, 0.0f, 0.0f), NULL)
+    ));
+    shapes.push_back( new Triangle(
+        floorVerts[0], floorVerts[3], floorVerts[2],
+        new Material(0.5f, 0.5f, 0.1f, 0.05f, 0.1f, Colour(1.0f, 0.0f, 0.0f), NULL)
     ));
     /*shapes.push_back( shapeloaders::getMeshFromOBJ(
         "resources/halberd.obj", Vector3(0, 0, -1000), 20) );
@@ -80,8 +98,7 @@ int main(int argc, char** argv)
 
     // Perform raytrace
     Colour resultantColour;
-    float rangeX = 1.0f / output.getWidth();
-    float rangeY = 1.0f / output.getHeight();
+    float range = 1.0f / output.getWidth();
     // Loop over the pixels of the image
     for (int i = 0; (i < output.getWidth()); i++)
     {
@@ -91,7 +108,11 @@ int main(int argc, char** argv)
             // Note that this gets the pixel CENTRE
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
-            bool hit = raytracer.multisample(x, y, rangeX, rangeY, 64, resultantColour);
+            //bool hit = raytracer.multisample(x, y, range, 64, resultantColour);
+            bool hit = raytracer.raytrace(x, y, resultantColour);
+
+            // TODO: get multisampling working with non-square images! (rangeX + rangeY)
+
             if (hit)
                 output.set(i, j, resultantColour);
             else

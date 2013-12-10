@@ -17,7 +17,7 @@ public:
     virtual ~Raytracer();
 
     bool raytrace(float x, float y, Colour& result);
-    bool multisample(float x, float y, float rangeX, float rangeY,
+    bool multisample(float x, float y, float range,
         unsigned int samples, Colour& result);
 
     void setRootShape(Shape* newRoot);
