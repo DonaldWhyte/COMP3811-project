@@ -12,7 +12,7 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
     bool isHit = common::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
     // Augment hit record with the material of the hit shape
     if (isHit)
-        record.material = material;
+        record.hitShape = this;
     return isHit;
 }
 

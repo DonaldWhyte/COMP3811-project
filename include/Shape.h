@@ -8,14 +8,18 @@
 #include "Material.h"
 #include "Colour.h"
 
+class Shape; //forward declaration for 'hitShape' member
 struct HitRecord
 {
     float t; // distance from original ray
     Vector3 pointOfIntersection;
     Vector3 normal; // surface normal of point of intersection
     Vector2 texCoord; // (U, V) coordinates of point of intersection
-    Material* material;
+
+    const Shape* hitShape;
+
     Colour colour;
+
 };
 
 class Shape
@@ -28,8 +32,8 @@ public:
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const = 0;
     virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const = 0;
 
-    Material* getMaterial() { return material; }
-    void setMaterial(Material* newMaterial) { material = newMaterial; }
+    virtual const Material* getMaterial() const { return material; }
+    virtual void setMaterial(Material* newMaterial) { material = newMaterial; }
 
 protected:
     Material* material;

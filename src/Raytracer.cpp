@@ -80,7 +80,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         Colour localColour, reflectedColour;
 
         // Get hit object's material and derive source object colour from it
-        Material* material = record.material;
+        const Material* material = record.hitShape->getMaterial();
         Colour objectColour;
         if (material)
         {
@@ -100,9 +100,23 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // This is LOCAL ILLUMINATION
         for (int i = 0; (i < lights.size()); i++)
         {
-            Vector3 lightDirection = (lights[i].getPosition() - record.pointOfIntersection).normalise();
+            const Vector3& lightPos = lights[i].getPosition();
+            Vector3 lightDirection = (lightPos - record.pointOfIntersection).normalise();
             // Ambient lighting
             localColour += (lights[i].getAmbient() * objectColour * material->ambientIntensity());
+
+            // Don't add diffuse and specular contribution from this light
+            // if the light is being blocked by another object
+            Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
+            HitRecord shadowRecord;
+            bool shadowHit = rootShape->hit(lightRay, 0.00001f, MAX_RAY_DISTANCE, 0.0f, shadowRecord);
+            if (shadowHit)
+            {
+                // If another object has blocked light reaching current objecy
+                if (record.hitShape != shadowRecord.hitShape)
+                    continue;
+            }
+
             // Diffuse lighting
             float angle = lightDirection.dot(record.normal);
             if (angle > 0.0f) // only diffuse light coming from FRONT will be considered
@@ -117,6 +131,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         }
 
         // Handle reflection
+        // TODO: fix reflection direction
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
         {
@@ -126,7 +141,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
                 reflectedColour = reflectRecord.colour;
         }
 
-        // TODO: transmission?
+        // TODO: transmission
 
         // Combine computed colours into one
         record.colour = localColour + (material->reflectivity() * reflectedColour);

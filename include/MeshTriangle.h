@@ -11,6 +11,10 @@ public:
     MeshTriangle(Mesh* mesh, int v1, int v2, int v3);
     virtual ~MeshTriangle();
 
+    // Overloading Material getter/setter so it uses the Mesh object's material
+    virtual const Material* getMaterial() const;
+    virtual void setMaterial(Material* newMaterial);
+
     bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;
 

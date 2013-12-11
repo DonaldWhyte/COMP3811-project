@@ -13,8 +13,6 @@
 #include <ctime>
 #include <cstdlib>
 
-#include <cmath>
-
 static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
 
@@ -45,12 +43,15 @@ int main(int argc, char** argv)
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    /*shapes.push_back( shapeloaders::getMeshFromOBJ(
-        "resources/halberd.obj", Vector3(0, 0, -1000), 20) );*/
-    shapes.push_back( shapeloaders::getTerrainFromHeightmap(
-        "resources/heightmap.tga", 150.0f, 1000.0f,
-        Vector3(-100, -600, -500.0f),
-        terrainTexture) );
+    shapes.push_back(new Sphere(Vector3(-475, 0, 100), 40,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
+            Colour(0.2f, 0.6f, 0.8f), NULL)
+    ));
+    shapes.push_back(new Sphere(Vector3(-300, -75, 200), 40,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
+            Colour(0.6f, 0.2f, 0.2f), NULL)
+    ));
+
 
     // Create raytracer
     Raytracer raytracer(camera);

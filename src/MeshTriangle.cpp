@@ -10,6 +10,16 @@ MeshTriangle::~MeshTriangle()
 {
 }
 
+const Material* MeshTriangle::getMaterial() const
+{
+    return mesh->getMaterial();
+}
+
+void MeshTriangle::setMaterial(Material* newMaterial)
+{
+    // DO NOTHING
+}
+
 bool MeshTriangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
     // Retrieve points from mesh
@@ -20,7 +30,7 @@ bool MeshTriangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRe
     // Perform ray-triangle intersection test
     bool isHit = common::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
     if (isHit)
-        record.material = mesh->getMaterial();
+        record.hitShape = this;
     return isHit;
 }
 
