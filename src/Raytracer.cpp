@@ -21,10 +21,7 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     bool isAHit = recursiveTrace(ray, record, 0);
     // If the ray hit an object, store resultant colour in OUT parameter
     if (isAHit)
-    {
-        //std::cout << "HIT!" << std::endl;
         result = record.colour;
-    }
     return isAHit;
 }
 

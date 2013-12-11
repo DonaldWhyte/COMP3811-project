@@ -14,7 +14,7 @@ Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3&
 Ray Camera::getRayToPixel(float pixelX, float pixelY)
 {
     // Compute position of point on screen to render
-    Vector3 target = cornerPoint + acrossVec * pixelX + upVec * pixelY;
+    Vector3 target = cornerPoint + (acrossVec * pixelX) + (upVec * pixelY);
     if (orthographic) // orthographic projection
     {
         return Ray(target, acrossVec.cross(upVec).normalise());

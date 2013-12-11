@@ -34,8 +34,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
                 Vertex vert;
 
                 float pointHeight = getHeight(heightMap, x, y, maxHeight);
-                pointHeight = 0.0f;
-                vert.position = Vector3(x * cellSize, y * cellSize, pointHeight);
+                vert.position = Vector3(x * cellSize, pointHeight, y * cellSize);
                 vert.position += offset;
                 // Vertices in mesh grid alternate having 0 and 1 for tex coords
                 float texX = ((x % 2) == 0) ? 0.0f : 1.0f;
@@ -54,12 +53,11 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
                 vert.normal = Vector3((hLeft - hRight), (hDown - hUp), 2.0f).normalise();
 
                 vertices.push_back(vert);
-                std::cout << "(" << x << ", " << y << ") -> " << vert.position << " " << vert.texCoord << " " << vert.normal << std::endl;
             }
         }
         delete heightMap; // no longer need height map
 
-        Material material(1.0f, 0.3f, 0.0f, 0.0f, 0.2f, Colour(0.2f, 0.7f, 0.2f), texture);
+        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.2f, Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;

@@ -14,40 +14,27 @@ bool common::triangleHit(const Vector3& p1, const Vector3& p2, const Vector3& p3
 bool common::triangleShadowHit(const Vector3& p1, const Vector3& p2, const Vector3& p3,
     const Ray& ray, float tMin, float tMax, float time)
 {
-    float a = p1.x - p2.x;
-    float b = p1.y - p2.y;
-    float c = p1.z - p2.z;
-    float d = p1.x - p3.x;
-    float e = p1.y - p3.y;
-    float f = p1.y - p3.z;
-    float g = ray.direction().x;
-    float h = ray.direction().y;
-    float i = ray.direction().z;
-    float j = p1.x - ray.origin().x;
-    float k = p1.y - ray.origin().y;
-    float l = p1.z - ray.origin().z;
+    Vector3 edge1 = p2 - p1;
+    Vector3 edge2 = p3 - p1;
 
-    float eihf = (e * i) - (h * f);
-    float gfdi = (g * f) - (d * i);
-    float dheg = (d * h) - (e * g);
+    Vector3 s1 = ray.direction().cross(edge2);
+    float divisor = s1.dot(edge1);
+    if (divisor == 0.0)
+    {
+           return false;
+    }
+    float invDivisor = 1/ divisor;
 
-    float denominator = (a * eihf + b * gfdi + c * dheg);
-    float beta = (j * eihf + k * gfdi + l * dheg) / denominator;
-    if (beta <= 0.0f || beta >= 1.0f)
+    Vector3 distance = ray.origin() - p1;
+    float barycCoord_1 = distance.dot(s1) * invDivisor;
+    if (barycCoord_1 < 0.0 || barycCoord_1 > 1.0)
+        return false;
+    Vector3 s2 = distance.cross(edge1);
+    float barycCoord_2 = ray.direction().dot(s2) * invDivisor;
+    if (barycCoord_2 < 0.0 || (barycCoord_1 + barycCoord_2) > 1.0)
         return false;
 
-    float akjb = (a * k) - (j * b);
-    float jcal = (j * c) - (a * l);
-    float blkc = (b * l) - (k * c);
-    float gamma = (i * akjb + h * jcal + g * blkc) / denominator;
-    if (gamma <= 0.0f || (beta + gamma) >= 1.0f)
-        return false;
-
-    float tVal = -(f * akjb + e * jcal + d*blkc) / denominator;
-    if (tVal >= tMin && tVal <= tMax)
-        return true;
-    else
-        return false;
+    return true;
 }
 
 bool common::triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
@@ -56,60 +43,45 @@ bool common::triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
     const Vector3& p1 = v1.position;
     const Vector3& p2 = v2.position;
     const Vector3& p3 = v3.position;
-    // Using Cramer's rule to efficiently find beta, gamma and t
-    // For this, the 3 x 3 matrix below is constructed;
-    float a = p1.x - p2.x; // column 1
-    float b = p1.y - p2.y;
-    float c = p1.z - p2.z;
-    float d = p1.x - p3.x; // column 2
-    float e = p1.y - p3.y;
-    float f = p1.y - p3.z;
-    float g = ray.direction().x; // column 3
-    float h = ray.direction().y;
-    float i = ray.direction().z;
-    float j = p1.x - ray.origin().x; // RHS of system of equations to solve
-    float k = p1.y - ray.origin().y;
-    float l = p1.z - ray.origin().z;
+    Vector3 edge1 = p2 - p1;
+    Vector3 edge2 = p3 - p1;
 
-    // These expressions are used multiple times, so store them
-    // (so they only need to be computed once (plus it makes the code more readable)
-    float eihf = (e * i) - (h * f);
-    float gfdi = (g * f) - (d * i);
-    float dheg = (d * h) - (e * g);
-
-    // Compute 'beta' Barycentric coordinate
-    float denominator = (a * eihf + b * gfdi + c * dheg);
-    // TODO: check for 0 value for divide-by-zero here?
-    //        costly operation, but necessary???
-    float beta = (j * eihf + k * gfdi + l * dheg) / denominator;
-    // If resultant coordinates is out of bounds, then ray does NOT hit the triangle!
-    if (beta < 0.0f || beta > 1.0f)
-        return false;
-    // Compute gamma Barycentric coordinates
-    float akjb = (a * k) - (j * b);
-    float jcal = (j * c) - (a * l);
-    float blkc = (b * l) - (k * c);
-    float gamma = (i * akjb + h * jcal + g * blkc) / denominator;
-    if (gamma < 0.0f || (beta + gamma) > 1.0f)
-        return false;
-    // Compute distance from origin of ray to triangle
-    float tVal = -(f * akjb + e * jcal + d*blkc) / denominator;
-
-    // If ray hits triangle too late (i.e. it's too far!) then we
-    // consider it as no intersection
-    if (tVal >= tMin && tVal <= tMax)
+    // Find the cross product of edge2 and the ray direction
+    Vector3 s1 = ray.direction().cross(edge2);
+    // Find the divisor, if its zero, return false as the triangle is
+    // degenerated
+    float divisor = s1.dot(edge1);
+    if (divisor == 0.0)
     {
-        record.t = tVal;
-        // Compute actual point of intersection given barycentric coordinayes
-        float alpha = 1.0f - beta - gamma;
-        record.pointOfIntersection = p1 * alpha + p2 * beta + p3 * gamma;
-        record.normal = (p2 - p1).cross(p3 - p1).normalise();
-        record.texCoord = v1.texCoord * alpha + v2.texCoord * beta + v3.texCoord * gamma;
-
-        return true;
+           return false;
     }
+    // A inverted divisor, as multipling is faster then division
+    float invDivisor = 1/ divisor;
 
-    return false;
+    // Calculate the first barycentic coordinate. Barycentic coordinates
+    // are between 0.0 and 1.0
+    Vector3 distance = ray.origin() - p1;
+    float barycCoord_1 = distance.dot(s1) * invDivisor;
+    if (barycCoord_1 < 0.0 || barycCoord_1 > 1.0)
+        return false;
+    // Calculate the second barycentic coordinate
+    Vector3 s2 = distance.cross(edge1);
+    float barycCoord_2 = ray.direction().dot(s2) * invDivisor;
+    if (barycCoord_2 < 0.0 || (barycCoord_1 + barycCoord_2) > 1.0)
+        return false;
+
+    // After doing the barycentic coordinate test we know if the ray hits or
+    // not. If we got this far the ray hits.
+    // Calculate the distance to the intersection point
+    float intersectionDistance = edge2.dot(s2) * invDivisor;
+    record.t = intersectionDistance;
+
+    float alpha = 1.0f - barycCoord_1 - barycCoord_2;
+    record.pointOfIntersection = p1 * alpha + p2 * barycCoord_1 + p3 * barycCoord_2;
+    record.normal = (p2 - p1).cross(p3 - p1).normalise();
+    record.texCoord = v1.texCoord * alpha + v2.texCoord * barycCoord_1 + v3.texCoord * barycCoord_2;
+
+    return true;
 }
 
 float common::randomFloat(float min, float max)
