@@ -1,51 +1,82 @@
 #include "ShapeLoaders.h"
 #include "BoundingShape.h"
 #include "Mesh.h"
+#include "Triangle.h"
 #include "MeshTriangle.h"
 #include "tiny_obj_loader.h"
 #include "TGA.h"
 
+/* Reflectivity of materials loaded from Wavefront OBJ meshes. */
 static const float MATERIAL_REFLECTIVITY = 0.1f;
 
-Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
-    float cellSize, float maxHeight)
+float getHeight(Image* image, int x, int y, float maxHeight)
 {
+    return image->get(x, y).r * maxHeight;
+}
+
+Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
+    float cellSize, float maxHeight, const Vector3& offset, Texture* texture)
+{
+    // TODO: provide ways to cleanup Mesh and Texture
+
     Image* heightMap = tga::readTGAFile(filename);
     if (heightMap)
     {
-        int rows = heightMap->getWidth();
-        int columns = heightMap->getHeight();
+        int width = heightMap->getWidth();
+        int height = heightMap->getHeight();
         // Construct mesh using heightmap's pixels as points on grid
         VertexList vertices;
-        for (int x = 0; (x < columns); x++)
+        vertices.reserve(width * height);
+        for (int y = 0; (y < height); y++)
         {
-            for (int y = 0; (y < rows); y++)
+            for (int x = 0; (x < width); x++)
             {
                 Vertex vert;
-                vert.position = Vector3(x * cellSize,
-                    maxHeight * heightMap->get(x, y).r,
-                    y * cellSize);
+
+                float pointHeight = getHeight(heightMap, x, y, maxHeight);
+                pointHeight = 0.0f;
+                vert.position = Vector3(x * cellSize, y * cellSize, pointHeight);
+                vert.position += offset;
+                // Vertices in mesh grid alternate having 0 and 1 for tex coords
+                float texX = ((x % 2) == 0) ? 0.0f : 1.0f;
+                float texY = ((y % 2) == 0) ? 0.0f : 1.0f;
+                vert.texCoord = Vector2(texX, texY);
+                // Compute normal vector using central differencing
+                float hLeft, hRight, hDown, hUp;
+                if (x > 0) hLeft = getHeight(heightMap, x - 1, y, maxHeight);
+                else hLeft = pointHeight;
+                if (x < (width - 1)) hRight = getHeight(heightMap, x + 1, y, maxHeight);
+                else hRight = pointHeight;
+                if (y > 0) hDown = getHeight(heightMap, x, y - 1, maxHeight);
+                else hDown = pointHeight;
+                if (y < (height - 1)) hUp = getHeight(heightMap, x, y + 1, maxHeight);
+                else hUp = pointHeight;
+                vert.normal = Vector3((hLeft - hRight), (hDown - hUp), 2.0f).normalise();
+
                 vertices.push_back(vert);
+                std::cout << "(" << x << ", " << y << ") -> " << vert.position << " " << vert.texCoord << " " << vert.normal << std::endl;
             }
         }
         delete heightMap; // no longer need height map
-        Mesh* mesh = new Mesh(vertices, Material());
+
+        Material material(1.0f, 0.3f, 0.0f, 0.0f, 0.2f, Colour(0.2f, 0.7f, 0.2f), texture);
+        Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;
-        triangles.reserve((rows - 1) * (columns - 1));
-        for (int x = 0; (x < columns - 1); x++)
+        triangles.reserve((width - 1) * (height - 1) * 2);
+        for (int x = 0; (x < width - 1); x++)
         {
-            for (int y = 0; (y < rows - 1); y++)
+            for (int y = 0; (y < height - 1); y++)
             {
-                int offset = x + (y * rows);
-                Shape* tri1 = new MeshTriangle(mesh, offset, offset + 1, offset + 2);
-                Shape* tri2 = new MeshTriangle(mesh, offset, offset + 3, offset + 1);
+                int offset = (y * width) + x;
+                Shape* tri1 = new MeshTriangle(mesh, offset, offset + height, offset + 1);
+                Shape* tri2 = new MeshTriangle(mesh, offset + height, offset + height + 1, offset + 1);
                 triangles.push_back(tri1);
                 triangles.push_back(tri2);
             }
         }
 
-        AABB boundingBox;
+        AABB boundingBox(Vector3(-1, -1, -1) * 100000, Vector3(1, 1, 1) * 100000);
         return new BoundingShape(triangles, boundingBox);
     }
     else

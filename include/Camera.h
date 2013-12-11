@@ -20,9 +20,12 @@ class Camera
 
 public:
     Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-        const Rectangle& viewingRectangle, float distance);
+        const Rectangle& viewingRectangle, float distance, bool orthographic = false);
 
-    Ray getRayToPixel(float pixelX, float pixelY, float xi1, float xi2);
+    Ray getRayToPixel(float pixelX, float pixelY);
+
+    bool isOrthographic() const;
+    void setOrthographic(bool useOrthographicProjection);
 
     /* Getters for camera's orthonormal basis vectors. */
     const Vector3& getBasisX() const;
@@ -50,6 +53,10 @@ private:
     Vector3 upVec;
     // Point at bottom-left corner of VIEWING RECTANGLE
     Vector3 cornerPoint;
+
+    // Flag that, when set to true, makes the camera use orthographic
+    // and NOT perspective projection
+    bool orthographic;
 
 };
 

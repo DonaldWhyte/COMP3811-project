@@ -1,8 +1,9 @@
 #include "Camera.h"
 
 Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-    const Rectangle& viewingRectangle, float distance) :
-    position(position), distance(distance), viewingRect(viewingRectangle)
+    const Rectangle& viewingRectangle, float distance, bool orthographic) :
+    position(position), distance(distance), viewingRect(viewingRectangle),
+    orthographic(orthographic)
 {
     updateBasisVectors(direction, up);
     acrossVec = (viewingRect.right - viewingRect.left) * u;
@@ -10,15 +11,32 @@ Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3&
     cornerPoint = position + (viewingRect.left * u) + (viewingRect.bottom * v) - (distance * w);
 }
 
-Ray Camera::getRayToPixel(float pixelX, float pixelY, float xi1, float xi2)
+Ray Camera::getRayToPixel(float pixelX, float pixelY)
 {
-    // Ray origin is simply camera position
-    Vector3 origin = position;
-    // Compute vector towards target from camera to get ray's direction
-    Vector3 target = cornerPoint + acrossVec * pixelX + upVec * pixelY; // point on screen
-    Vector3 direction = (target - origin).normalise(); // (s - e)
+    // Compute position of point on screen to render
+    Vector3 target = cornerPoint + acrossVec * pixelX + upVec * pixelY;
+    if (orthographic) // orthographic projection
+    {
+        return Ray(target, acrossVec.cross(upVec).normalise());
+    }
+    else // perspective projection
+    {
+        // Ray origin is simply camera position
+        Vector3 origin = position;
+        // Compute vector towards target from camera to get ray's direction
+        Vector3 direction = (target - origin).normalise(); // (s - e)
+        return Ray(origin, direction);
+    }
+}
 
-    return Ray(origin, direction);
+bool Camera::isOrthographic() const
+{
+    return orthographic;
+}
+
+void Camera::setOrthographic(bool useOrthographicProjection)
+{
+    orthographic = useOrthographicProjection;
 }
 
 const Vector3& Camera::getBasisX() const

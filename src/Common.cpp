@@ -83,14 +83,14 @@ bool common::triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
     //        costly operation, but necessary???
     float beta = (j * eihf + k * gfdi + l * dheg) / denominator;
     // If resultant coordinates is out of bounds, then ray does NOT hit the triangle!
-    if (beta <= 0.0f || beta >= 1.0f)
+    if (beta < 0.0f || beta > 1.0f)
         return false;
     // Compute gamma Barycentric coordinates
     float akjb = (a * k) - (j * b);
     float jcal = (j * c) - (a * l);
     float blkc = (b * l) - (k * c);
     float gamma = (i * akjb + h * jcal + g * blkc) / denominator;
-    if (gamma <= 0.0f || (beta + gamma) >= 1.0f)
+    if (gamma < 0.0f || (beta + gamma) > 1.0f)
         return false;
     // Compute distance from origin of ray to triangle
     float tVal = -(f * akjb + e * jcal + d*blkc) / denominator;

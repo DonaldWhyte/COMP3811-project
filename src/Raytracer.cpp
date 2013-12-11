@@ -15,19 +15,22 @@ Raytracer::~Raytracer()
 bool Raytracer::raytrace(float x, float y, Colour& result)
 {
     // Construct Ray from Camera towards desired pixel
-    Ray ray = camera.getRayToPixel(x, y, 0, 0);
+    Ray ray = camera.getRayToPixel(x, y);
     // Perform a recursive raytrace
     HitRecord record;
     bool isAHit = recursiveTrace(ray, record, 0);
     // If the ray hit an object, store resultant colour in OUT parameter
     if (isAHit)
+    {
+        //std::cout << "HIT!" << std::endl;
         result = record.colour;
+    }
     return isAHit;
 }
 
 bool Raytracer::multisample(float x, float y, float range, unsigned int samples, Colour& result)
 {
-    Ray ray = camera.getRayToPixel(x, y, 0, 0);
+    Ray ray = camera.getRayToPixel(x, y);
     Colour sum;
     int hits = 0;
 
@@ -85,8 +88,10 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         if (material)
         {
             if (material->getTexture())
+            {
                 objectColour = material->getTexture()->getTexel(
                     record.texCoord.x, record.texCoord.y);
+            }
             else
                 objectColour = material->getColour();
         }
