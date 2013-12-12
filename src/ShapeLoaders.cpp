@@ -8,6 +8,8 @@
 
 /* Reflectivity of materials loaded from Wavefront OBJ meshes. */
 static const float MATERIAL_REFLECTIVITY = 0.1f;
+/* Transparency of materials loaded from Wavefront OBJ meshes. */
+static const float MATERIAL_TRANSPARENCY = 0.0f;
 
 float getHeight(Image* image, int x, int y, float maxHeight)
 {
@@ -57,7 +59,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         }
         delete heightMap; // no longer need height map
 
-        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.2f, Colour(0.2f, 0.7f, 0.2f), texture);
+        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.2f,  0.0f, Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;
@@ -128,7 +130,7 @@ Shape* shapeloaders::getMeshFromOBJ(const std::string& filename,
     Material material(shape.material.ambient[0],
         shape.material.diffuse[0], shape.material.specular[0],
         shape.material.shininess, MATERIAL_REFLECTIVITY,
-        Colour(0.8f, 0.2f, 0.2f), NULL);
+        MATERIAL_TRANSPARENCY, Colour(0.8f, 0.2f, 0.2f), NULL);
     // Create mesh object to assign to all triangles
     Mesh* mesh = new Mesh(vertices, material);
 

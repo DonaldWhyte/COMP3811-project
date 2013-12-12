@@ -77,7 +77,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     bool isAHit = rootShape->hit(ray, 0.00001f, MAX_RAY_DISTANCE, 0.0f, record);
     if (isAHit)
     {
-        Colour localColour, reflectedColour;
+        Colour localColour, reflectedColour, transmittedColour;
 
         // Get hit object's material and derive source object colour from it
         const Material* material = record.hitShape->getMaterial();
@@ -135,16 +135,24 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
         {
-            Ray reflectedRay = Ray(record.pointOfIntersection, record.normal);
+            Ray reflectedRay(record.pointOfIntersection, record.normal);
             HitRecord reflectRecord;
             if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
                 reflectedColour = reflectRecord.colour;
         }
-
-        // TODO: transmission
+        // Handle transmission
+        if (material->transparency() > 0.0f)
+        {
+            Ray transmissionRay; // TODO: (record.pointOfIntersection, TODO);
+            HitRecord transmissionRecord;
+            if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
+                transmittedColour = transmissionRecord.colour;
+        }
 
         // Combine computed colours into one
-        record.colour = localColour + (material->reflectivity() * reflectedColour);
+        record.colour = localColour +
+            (material->reflectivity() * reflectedColour) +
+            (material->transparency() * transmittedColour) ;
     }
 
     return isAHit;

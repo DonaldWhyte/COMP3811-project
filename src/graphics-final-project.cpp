@@ -40,15 +40,15 @@ int main(int argc, char** argv)
     );
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(-400, -150, 0), 150,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
     shapes.push_back(new Sphere(Vector3(-475, 0, 100), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(-300, -75, 200), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
             Colour(0.6f, 0.2f, 0.2f), NULL)
     ));
 
