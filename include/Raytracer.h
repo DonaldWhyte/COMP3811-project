@@ -8,6 +8,9 @@
 
 static const int MAX_TRACE_DEPTH = 10;
 static const float MAX_RAY_DISTANCE = 100000.0f;
+// Refractive index of air.
+// (source: http://en.wikipedia.org/wiki/Refractive_index)
+static const float AIR_REFRACTIVE_INDEX = 1.000293;
 
 class Raytracer
 {
@@ -27,6 +30,10 @@ public:
 private:
     void reset();
     bool recursiveTrace(const Ray& ray, HitRecord& record, int depth);
+
+    Ray computeRefractedRay(const Vector3 incidentDirection,
+        const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
+        float surfaceRefractiveIndex);
 
     Shape* rootShape;
     LightList lights;

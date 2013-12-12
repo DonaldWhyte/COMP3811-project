@@ -108,14 +108,12 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             // Don't add diffuse and specular contribution from this light
             // if the light is being blocked by another object
             Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
-            HitRecord shadowRecord;
+            HitRecord shadowRecord; // TODO: add Shape* to shadowHit() parameters so it can be used
             bool shadowHit = rootShape->hit(lightRay, 0.00001f, MAX_RAY_DISTANCE, 0.0f, shadowRecord);
+            // If another object has blocked light reaching current object, don't add light contribution!
             if (shadowHit)
-            {
-                // If another object has blocked light reaching current objecy
                 if (record.hitShape != shadowRecord.hitShape)
                     continue;
-            }
 
             // Diffuse lighting
             float angle = lightDirection.dot(record.normal);
@@ -131,7 +129,6 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
         }
 
         // Handle reflection
-        // TODO: fix reflection direction
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
         {
@@ -140,10 +137,13 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
                 reflectedColour = reflectRecord.colour;
         }
+
         // Handle transmission
         if (material->transparency() > 0.0f)
         {
-            Ray transmissionRay; // TODO: (record.pointOfIntersection, TODO);
+            Ray transmissionRay = computeRefractedRay(
+                ray.direction(), record.pointOfIntersection,
+                record.normal, material->refractiveIndex());
             HitRecord transmissionRecord;
             if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
                 transmittedColour = transmissionRecord.colour;
@@ -156,4 +156,34 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     }
 
     return isAHit;
+}
+
+/* Help from Realistic Raytracing and:
+ * http://steve.hollasch.net/cgindex/render/refraction.txt */
+Ray Raytracer::computeRefractedRay(const Vector3 incidentDirection,
+    const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
+    float surfaceRefractiveIndex)
+{
+    // NOTE: For simplicity, it is assumed that all rays were
+    // travelling through the air BEFORE they hit the surface
+    // that is refracting light
+    float eta = surfaceRefractiveIndex;
+    float c1 = -(incidentDirection.dot(surfaceNormal)); // incomingDirection = ray.direction?
+    float cs2 = 1 - eta * eta * (1 - c1 * c1);
+    // If < 0, then we have total internal refraction. DON'T create a ray for transmission.
+    Vector3 transmissionDirection;
+    if (cs2 < 0)
+    {
+        /*eta = AIR_REFRACTIVE_INDEX;
+        c1 = -(incidentDirection.dot(-surfaceNormal)); // incomingDirection = ray.direction?
+        cs2 = 1 - eta * eta * (1 - c1 * c1);
+        transmissionDirection = eta * incidentDirection + (eta * c1 - sqrt(cs2)) * (-surfaceNormal);*/
+        //return computeRefractedRay(incidentDirection, pointOfIntersection, -surfaceNormal, surfaceRefractiveIndex);
+        return Ray();
+    }
+    else
+    {
+        transmissionDirection = eta * incidentDirection + (eta * c1 - sqrt(cs2)) * surfaceNormal;
+    }
+    return Ray(pointOfIntersection, transmissionDirection);
 }

@@ -11,7 +11,8 @@ class Material
 public:
     Material();
     Material(float ka, float kd, float ks, float n, float reflectionFactor,
-        float transparencyFactor, const Colour& colour, Texture* texture = NULL);
+        float transparencyFactor, float refractiveIndex,
+        const Colour& colour, Texture* texture = NULL);
 
     float ambientIntensity() const;
     float diffuseIntensity() const;
@@ -19,6 +20,7 @@ public:
     float specularExponent() const;
     float reflectivity() const;
     float transparency() const;
+    float refractiveIndex() const;
     const Colour& getColour() const;
     Texture* getTexture() const;
     void setAmbientIntensity(float newKA);
@@ -27,6 +29,7 @@ public:
     void setSpecularExponent(float n);
     void setReflectivity(float newReflectionFactor);
     void setTransparency(float newTransparencyFactor);
+    void setRefractiveIndex(float newRefractiveIndex);
     void setColour(const Colour& newAmbient);
     void setTexture(Texture* newTexture);
 
@@ -40,6 +43,7 @@ private:
     float reflectionFactor;
     // How transparent the material is (0 = opaque, 1 = completely transparent)
     float transparencyFactor;
+    float surfaceRefractiveIndex;
 
     Colour colour;
     Texture* texture;

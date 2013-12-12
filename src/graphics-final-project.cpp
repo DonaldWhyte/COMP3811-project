@@ -13,8 +13,8 @@
 #include <ctime>
 #include <cstdlib>
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 1024;
+static const int IMAGE_HEIGHT = 1024;
 
 int main(int argc, char** argv)
 {
@@ -35,20 +35,20 @@ int main(int argc, char** argv)
         //Vector3(0.4f, 0.5f, -1), // direction
         Vector3(0, 1, 0), // up
         Rectangle(-1000, 1000, -1000, 1000), // viewing rectangle
-        1000,
+        2000,
         false
     );
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(-400, -150, 0), 150,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
+    shapes.push_back(new Sphere(Vector3(-100, -150, 0), 150,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    shapes.push_back(new Sphere(Vector3(-475, 0, 100), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
+    shapes.push_back(new Sphere(Vector3(-175, 0, 100), 40,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
-    shapes.push_back(new Sphere(Vector3(-300, -75, 200), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f,
+    shapes.push_back(new Sphere(Vector3(0, -75, 200), 40,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 1.0f, 1.0f,
             Colour(0.6f, 0.2f, 0.2f), NULL)
     ));
 
@@ -82,6 +82,7 @@ int main(int argc, char** argv)
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
             bool hit = raytracer.raytrace(x, y, resultantColour);
+            //bool hit = raytracer.multisample(x, y, range, 32, resultantColour);
             // TODO: get multisampling working with non-square images! (rangeX + rangeY)
             if (hit)
                 output.set(i, j, resultantColour);

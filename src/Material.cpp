@@ -7,10 +7,11 @@ Material::Material() : ka(0), kd(0), ks(0), n(0),
 
 Material::Material(float ka, float kd, float ks, float n,
     float reflectionFactor, float transparencyFactor,
-    const Colour& colour,Texture* texture) :
+    float refractiveIndex, const Colour& colour, Texture* texture) :
     ka(ka), kd(kd), ks(ks), n(n), reflectionFactor(reflectionFactor),
-    transparencyFactor(transparencyFactor), colour(colour),
-    texture(texture)
+    transparencyFactor(transparencyFactor),
+    surfaceRefractiveIndex(refractiveIndex),
+    colour(colour), texture(texture)
 {
 }
 
@@ -43,6 +44,12 @@ float Material::transparency() const
 {
     return transparencyFactor;
 }
+
+float Material::refractiveIndex() const
+{
+    return surfaceRefractiveIndex;
+}
+
 
 const Colour& Material::getColour() const
 {
@@ -82,6 +89,11 @@ void Material::setReflectivity(float newReflectionFactor)
 void Material::setTransparency(float newTransparencyFactor)
 {
     transparencyFactor = newTransparencyFactor;
+}
+
+void Material::setRefractiveIndex(float newRefractiveIndex)
+{
+    surfaceRefractiveIndex = newRefractiveIndex;
 }
 
 void Material::setColour(const Colour& newColour)
