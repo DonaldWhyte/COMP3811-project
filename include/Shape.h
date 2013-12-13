@@ -29,6 +29,10 @@ public:
     Shape() : material(NULL) { }
     // Virtual because it's an abstract type
     virtual ~Shape() { delete material; }
+
+    /* Retrieve centre point of the shape. */
+    virtual const Vector3& getCentre() const = 0;
+    /* Ray-shape intersection tests. */
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const = 0;
     virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const = 0;
 

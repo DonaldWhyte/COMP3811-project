@@ -38,3 +38,12 @@ bool AABB::intersects(const Ray& ray, float tMin, float tMax) const
     if (t1 < intervalMax) intervalMax = t1;
     return (intervalMin <= intervalMax);
 }
+
+bool AABB::contains(const Vector3& point) const
+{
+    return (
+        (point.x >= bounds[0].x && point.x <= bounds[1].x) &&
+        (point.y >= bounds[0].y && point.y <= bounds[1].y) &&
+        (point.z >= bounds[0].z && point.z <= bounds[1].z)
+    );
+}

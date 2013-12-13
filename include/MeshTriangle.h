@@ -15,12 +15,14 @@ public:
     virtual const Material* getMaterial() const;
     virtual void setMaterial(Material* newMaterial);
 
+    const Vector3& getCentre() const;
     bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
     bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;
 
 private:
     Mesh* mesh;
     int v1, v2, v3;
+    Vector3 centrePoint;
 
 };
 

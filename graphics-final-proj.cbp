@@ -43,7 +43,7 @@
 		<Unit filename="include/Material.h" />
 		<Unit filename="include/Mesh.h" />
 		<Unit filename="include/MeshTriangle.h" />
-		<Unit filename="include/OBJ.h" />
+		<Unit filename="include/Octree.h" />
 		<Unit filename="include/Ray.h" />
 		<Unit filename="include/Raytracer.h" />
 		<Unit filename="include/Shape.h" />
@@ -65,6 +65,7 @@
 		<Unit filename="src/Material.cpp" />
 		<Unit filename="src/Mesh.cpp" />
 		<Unit filename="src/MeshTriangle.cpp" />
+		<Unit filename="src/Octree.cpp" />
 		<Unit filename="src/Ray.cpp" />
 		<Unit filename="src/Raytracer.cpp" />
 		<Unit filename="src/ShapeLoaders.cpp" />

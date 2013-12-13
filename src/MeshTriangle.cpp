@@ -4,6 +4,12 @@
 MeshTriangle::MeshTriangle(Mesh* mesh, int v1, int v2, int v3) :
     mesh(mesh), v1(v1), v2(v2), v3(v3)
 {
+    // Compute centre point of triangle
+    const VertexList& vertices = mesh->getVertices();
+    const Vector3& p1 = vertices[v1].position;
+    const Vector3& p2 = vertices[v2].position;
+    const Vector3& p3 = vertices[v3].position;
+    centrePoint = (p1 + p2 + p3) / 3;
 }
 
 MeshTriangle::~MeshTriangle()
@@ -18,6 +24,11 @@ const Material* MeshTriangle::getMaterial() const
 void MeshTriangle::setMaterial(Material* newMaterial)
 {
     // DO NOTHING
+}
+
+const Vector3& MeshTriangle::getCentre() const
+{
+    return centrePoint;
 }
 
 bool MeshTriangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const

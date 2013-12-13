@@ -7,6 +7,11 @@ Sphere::Sphere(const Vector3& centre, float radius, Material* material) :
     this->material = material;
 }
 
+const Vector3& Sphere::getCentre() const
+{
+    return centre;
+}
+
 bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
     Vector3 temp = ray.origin() - centre;

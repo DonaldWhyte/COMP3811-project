@@ -174,6 +174,7 @@ Ray Raytracer::computeRefractedRay(const Vector3 incidentDirection,
     Vector3 transmissionDirection;
     if (cs2 < 0)
     {
+        // TODO: fix crappy refraction
         /*eta = AIR_REFRACTIVE_INDEX;
         c1 = -(incidentDirection.dot(-surfaceNormal)); // incomingDirection = ray.direction?
         cs2 = 1 - eta * eta * (1 - c1 * c1);

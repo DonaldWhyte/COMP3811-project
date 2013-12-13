@@ -12,6 +12,7 @@ public:
     AABB(const Vector3& boxMin, const Vector3& boxMax);
 
     bool intersects(const Ray& ray, float tMin, float tMax) const;
+    bool contains(const Vector3& point) const;
 
     Vector3 bounds[2]; // 0 = min, 1 = max
 

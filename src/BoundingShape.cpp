@@ -13,6 +13,11 @@ BoundingShape::~BoundingShape()
     }
 }
 
+const Vector3& BoundingShape::getCentre() const
+{
+    return boundingBox.bounds[0] + ((boundingBox.bounds[1] - boundingBox.bounds[0]) / 2);
+}
+
 bool BoundingShape::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
     // First check if ray intersects with the bounding box

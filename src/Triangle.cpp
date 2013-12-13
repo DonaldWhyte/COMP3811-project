@@ -4,7 +4,13 @@
 Triangle::Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, Material* material) :
     p1(p1), p2(p2), p3(p3)
 {
+    centrePoint = (p1 + p2 + p3) / 3;
     this->material = material;
+}
+
+const Vector3& Triangle::getCentre() const
+{
+    return centrePoint;
 }
 
 bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const

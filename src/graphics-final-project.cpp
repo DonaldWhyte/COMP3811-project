@@ -1,23 +1,26 @@
 #include <iostream>
+#include <ctime>
+#include <cstdlib>
+
 #include "Image.h"
 #include "Sphere.h"
-#include "Triangle.h"
 #include "BoundingShape.h"
 #include "ShapeLoaders.h"
 #include "Camera.h"
 #include "TGA.h"
 #include "Raytracer.h"
 #include "MeshTriangle.h"
-
+#include "Octree.h""
 #include "Common.h"
-#include <ctime>
-#include <cstdlib>
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 4000;
+static const int IMAGE_HEIGHT = 4000;
 
 int main(int argc, char** argv)
 {
+    tests::testOctree();
+    return 0;
+
     // Seed random number generator for varying results
     srand(time(NULL));
 
