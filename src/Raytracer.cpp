@@ -5,6 +5,7 @@
 
 Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
 {
+    resetRayCount();
 }
 
 Raytracer::~Raytracer()
@@ -22,6 +23,9 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     // If the ray hit an object, store resultant colour in OUT parameter
     if (isAHit)
         result = record.colour;
+
+    numPrimaryRays++;
+
     return isAHit;
 }
 
@@ -42,6 +46,8 @@ bool Raytracer::multisample(float x, float y, float range, unsigned int samples,
             hits += 1;
         }
     }
+
+    numPrimaryRays += samples;
 
     result = sum / std::max(1, hits);
     return (hits > 0);
@@ -110,6 +116,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
             HitRecord shadowRecord; // TODO: add Shape* to shadowHit() parameters so it can be used
             bool shadowHit = rootShape->hit(lightRay, 0.00001f, MAX_RAY_DISTANCE, 0.0f, shadowRecord);
+            numShadowRays++;
             // If another object has blocked light reaching current object, don't add light contribution!
             if (shadowHit)
                 if (record.hitShape != shadowRecord.hitShape)
@@ -136,6 +143,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             HitRecord reflectRecord;
             if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
                 reflectedColour = reflectRecord.colour;
+            numReflectedRays++;
         }
 
         // Handle transmission
@@ -147,6 +155,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             HitRecord transmissionRecord;
             if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
                 transmittedColour = transmissionRecord.colour;
+            numRefractedRays++;
         }
 
         // Combine computed colours into one
@@ -187,4 +196,44 @@ Ray Raytracer::computeRefractedRay(const Vector3 incidentDirection,
         transmissionDirection = eta * incidentDirection + (eta * c1 - sqrt(cs2)) * surfaceNormal;
     }
     return Ray(pointOfIntersection, transmissionDirection);
+}
+
+unsigned int Raytracer::primaryRays() const
+{
+    return numPrimaryRays;
+}
+
+unsigned int Raytracer::reflectedRays() const
+{
+    return numReflectedRays;
+}
+
+unsigned int Raytracer::refractedRays() const
+{
+    return numRefractedRays;
+}
+
+unsigned int Raytracer::illuminationRays() const
+{
+    return numIlluminationRays;
+}
+
+unsigned int Raytracer::shadowRays() const
+{
+    return numShadowRays;
+}
+
+unsigned int Raytracer::totalRays() const
+{
+    return numPrimaryRays + numReflectedRays + numRefractedRays +
+        numIlluminationRays + numShadowRays;
+}
+
+void Raytracer::resetRayCount()
+{
+    numPrimaryRays = 0;
+    numReflectedRays = 0;
+    numRefractedRays = 0;
+    numIlluminationRays = 0;
+    numShadowRays = 0;
 }

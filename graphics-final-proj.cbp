@@ -31,8 +31,12 @@
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
+			<Add option="-pg" />
 			<Add directory="include" />
 		</Compiler>
+		<Linker>
+			<Add option="-pg -lgmon" />
+		</Linker>
 		<Unit filename="include/AABB.h" />
 		<Unit filename="include/BoundingShape.h" />
 		<Unit filename="include/Camera.h" />

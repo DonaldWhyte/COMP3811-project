@@ -94,6 +94,14 @@ int main(int argc, char** argv)
         }
     }
 
+    // Display statistics on raytracer
+    std::cout << "Primary rays: " << raytracer.primaryRays() << std::endl;
+    std::cout << "Reflected rays: " << raytracer.reflectedRays() << std::endl;
+    std::cout << "Refracted rays: " << raytracer.refractedRays() << std::endl;
+    std::cout << "Illumination rays: " << raytracer.illuminationRays() << std::endl;
+    std::cout << "Shadow rays: " << raytracer.shadowRays() << std::endl;
+    std::cout << "Total rays: " << raytracer.totalRays() << std::endl;
+
     tga::writeTGAFile("output.tga", output);
 
     // Cleanup resources

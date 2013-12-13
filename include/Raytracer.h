@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "Ray.h"
 
-static const int MAX_TRACE_DEPTH = 10;
+static const int MAX_TRACE_DEPTH = 2;
 static const float MAX_RAY_DISTANCE = 100000.0f;
 // Refractive index of air.
 // (source: http://en.wikipedia.org/wiki/Refractive_index)
@@ -25,10 +25,20 @@ public:
 
     void setRootShape(Shape* newRoot);
     void addLight(const PointLight& light);
+
     Camera* getCamera();
 
+    /* Accessors for statistics on trace. */
+    unsigned int primaryRays() const;
+    unsigned int reflectedRays() const;
+    unsigned int refractedRays() const;
+    unsigned int illuminationRays() const;
+    unsigned int shadowRays() const;
+    unsigned int totalRays() const;
+    /* Used to reset ray counts to zero. */
+    void resetRayCount();
+
 private:
-    void reset();
     bool recursiveTrace(const Ray& ray, HitRecord& record, int depth);
 
     Ray computeRefractedRay(const Vector3 incidentDirection,
@@ -40,6 +50,12 @@ private:
     Camera camera;
 
     Material defaultMaterial;
+
+    unsigned int numPrimaryRays;
+    unsigned int numReflectedRays;
+    unsigned int numRefractedRays;
+    unsigned int numIlluminationRays;
+    unsigned int numShadowRays;
 
 };
 
