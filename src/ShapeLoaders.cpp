@@ -1,5 +1,7 @@
+#include <float.h>
 #include "ShapeLoaders.h"
 #include "BoundingShape.h"
+#include "Octree.h"
 #include "Mesh.h"
 #include "Triangle.h"
 #include "MeshTriangle.h"
@@ -27,6 +29,9 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     {
         int width = heightMap->getWidth();
         int height = heightMap->getHeight();
+        // Keep track of minimum and maximum vertex positions for heightmap's bounding box
+        Vector3 minPoint(FLT_MIN, FLT_MIN, FLT_MIN);
+        Vector3 maxPoint(FLT_MAX, FLT_MAX, FLT_MAX);
         // Construct mesh using heightmap's pixels as points on grid
         VertexList vertices;
         vertices.reserve(width * height);
@@ -35,10 +40,19 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
             for (int x = 0; (x < width); x++)
             {
                 Vertex vert;
-
+                // Compute position of next point in terrain grid
                 float pointHeight = getHeight(heightMap, x, y, maxHeight);
                 vert.position = Vector3(x * cellSize, pointHeight, y * cellSize);
                 vert.position += offset;
+                // Update min and max points
+                if (vert.position.x < minPoint.x) minPoint.x = vert.position.x;
+                if (vert.position.y < minPoint.y) minPoint.y = vert.position.y;
+                if (vert.position.z < minPoint.z) minPoint.z = vert.position.z;
+                if (vert.position.x > maxPoint.x) maxPoint.x = vert.position.x;
+                if (vert.position.y > maxPoint.y) maxPoint.y = vert.position.y;
+                if (vert.position.z > maxPoint.z) maxPoint.z = vert.position.z;
+
+
                 // Vertices in mesh grid alternate having 0 and 1 for tex coords
                 float texX = ((x % 2) == 0) ? 0.0f : 1.0f;
                 float texY = ((y % 2) == 0) ? 0.0f : 1.0f;
@@ -78,8 +92,11 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
             }
         }
 
-        AABB boundingBox(Vector3(-1, -1, -1) * 100000, Vector3(1, 1, 1) * 100000);
-        return new BoundingShape(triangles, boundingBox);
+        AABB boundingBox(minPoint, maxPoint);
+        Octree* octree = new Octree(boundingBox);
+        for (unsigned int i = 0; (i < triangles.size()); i++)
+            octree->insert(triangles[i]);
+        return octree;
     }
     else
     {
