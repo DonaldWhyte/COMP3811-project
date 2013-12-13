@@ -13,8 +13,8 @@
 #include <ctime>
 #include <cstdlib>
 
-static const int IMAGE_WIDTH = 1024;
-static const int IMAGE_HEIGHT = 1024;
+static const int IMAGE_WIDTH = 500;
+static const int IMAGE_HEIGHT = 500;
 
 int main(int argc, char** argv)
 {
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
     srand(time(NULL));
 
     // Load resources
-    Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
+    Image* worldMapImage = tga::readTGAFile("resources/world_map_big.tga");
     Texture* worldMapTexture = new Texture(worldMapImage);
     Image* terrainTextureImage = tga::readTGAFile("resources/terrain.tga");
     Texture* terrainTexture = new Texture(terrainTextureImage);

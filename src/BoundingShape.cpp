@@ -16,9 +16,8 @@ BoundingShape::~BoundingShape()
 bool BoundingShape::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
     // First check if ray intersects with the bounding box
-    /*if (!boundingBox.intersects(ray, tMin, tMax))
-        return false;*/
-    // TODO: bounding box intersection test doesn't work correctly (inside)
+    if (!boundingBox.intersects(ray, tMin, tMax))
+        return false;
 
     bool isAHit = false;
     for (int i = 0; (i < children.size()); i++)
