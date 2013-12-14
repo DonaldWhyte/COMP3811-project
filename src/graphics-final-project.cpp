@@ -13,8 +13,8 @@
 #include "Octree.h"
 #include "Common.h"
 
-static const int IMAGE_WIDTH = 4000;
-static const int IMAGE_HEIGHT = 4000;
+static const int IMAGE_WIDTH = 500;
+static const int IMAGE_HEIGHT = 500;
 
 int main(int argc, char** argv)
 {
