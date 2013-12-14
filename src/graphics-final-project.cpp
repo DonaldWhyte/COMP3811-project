@@ -10,11 +10,11 @@
 #include "TGA.h"
 #include "Raytracer.h"
 #include "MeshTriangle.h"
-#include "Octree.h""
+#include "Octree.h"
 #include "Common.h"
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 4000;
+static const int IMAGE_HEIGHT = 4000;
 
 int main(int argc, char** argv)
 {
@@ -51,9 +51,9 @@ int main(int argc, char** argv)
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 1.0f, 1.0f,
             Colour(0.6f, 0.2f, 0.2f), NULL)
     ));
-    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    /*shapes.push_back(shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", 20.0f, 100.0f,
-        Vector3(0, -100, 300), terrainTexture));
+        Vector3(0, -100, 300), terrainTexture));*/
 
 
     // Create raytracer

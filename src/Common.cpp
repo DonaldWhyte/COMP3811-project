@@ -53,7 +53,7 @@ bool common::triangleHit(const Vertex& v1, const Vertex& v2, const Vertex& v3,
     float divisor = s1.dot(edge1);
     if (divisor == 0.0)
     {
-           return false;
+        return false;
     }
     // A inverted divisor, as multipling is faster then division
     float invDivisor = 1/ divisor;
