@@ -3,6 +3,7 @@
 BoundingShape::BoundingShape(const ShapeList& children, AABB& boundingBox)
     : children(children), boundingBox(boundingBox)
 {
+    centrePoint = boundingBox.bounds[0] + ((boundingBox.bounds[1] - boundingBox.bounds[0]) / 2);
 }
 
 BoundingShape::~BoundingShape()
@@ -15,7 +16,7 @@ BoundingShape::~BoundingShape()
 
 const Vector3& BoundingShape::getCentre() const
 {
-    return boundingBox.bounds[0] + ((boundingBox.bounds[1] - boundingBox.bounds[0]) / 2);
+    return centrePoint;
 }
 
 bool BoundingShape::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const

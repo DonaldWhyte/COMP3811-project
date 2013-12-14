@@ -17,6 +17,7 @@ public:
 
 private:
     ShapeList children;
+    Vector3 centrePoint;
     AABB boundingBox;
 
 };
