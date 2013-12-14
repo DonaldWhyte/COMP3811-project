@@ -6,7 +6,7 @@
 #include "Camera.h"
 #include "Ray.h"
 
-static const int MAX_TRACE_DEPTH = 2;
+static const int MAX_TRACE_DEPTH = 10;
 static const float MAX_RAY_DISTANCE = 100000.0f;
 // Refractive index of air.
 // (source: http://en.wikipedia.org/wiki/Refractive_index)
