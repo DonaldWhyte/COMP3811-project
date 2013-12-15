@@ -18,6 +18,7 @@ static const int IMAGE_HEIGHT = 500;
 
 static const float TERRAIN_CELL_SIZE = 10.0f;
 static const float TERRAIN_MAX_HEIGHT = 75.0f;
+static const float SKYBOX_SIZE = 500.0f;
 
 int main(int argc, char** argv)
 {
@@ -29,6 +30,8 @@ int main(int argc, char** argv)
     Texture* worldMapTexture = new Texture(worldMapImage);
     Image* terrainTextureImage = tga::readTGAFile("resources/terrain.tga");
     Texture* terrainTexture = new Texture(terrainTextureImage);
+    Image* skyboxImage = tga::readTGAFile("resources/skybox.tga");
+    Texture* skyboxTexture = new Texture(skyboxImage);
 
     // Define scene
     AABB sceneBoundary(Vector3(-100000, -100000, -100000), Vector3(100000, 100000, 100000));
@@ -46,15 +49,6 @@ int main(int argc, char** argv)
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    /*shapes.push_back(new Sphere(Vector3(-175, 0, 100), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
-            Colour(0.2f, 0.6f, 0.8f), NULL)
-    ));
-    shapes.push_back(new Sphere(Vector3(0, -75, 200), 40,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 1.0f, 1.0f,
-            Colour(0.6f, 0.2f, 0.2f), NULL)
-    ));*/
-
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -65,6 +59,8 @@ int main(int argc, char** argv)
     shapes.push_back(shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
         terrainOffset, terrainTexture));
+    // Load skybox
+    shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyboxTexture));
 
 
     // Create raytracer
@@ -77,13 +73,11 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
     Image output(IMAGE_WIDTH, IMAGE_HEIGHT);
     output.clear(backgroundColour);
-
-    // Perform raytrace
+    // Perform raytrace!
     Colour resultantColour;
     float range = 1.0f / output.getWidth();
     // Loop over the pixels of the image
@@ -119,6 +113,8 @@ int main(int argc, char** argv)
     delete worldMapTexture;
     delete terrainTextureImage;
     delete terrainTexture;
+    delete skyboxImage;
+    delete skyboxTexture;
 
     return 0;
 }

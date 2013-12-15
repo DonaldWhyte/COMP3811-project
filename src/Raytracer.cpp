@@ -137,7 +137,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
                     * pow(reflectionAngle, material->specularExponent()));
         }
 
-        /*// Handle reflection
+        // Handle reflection
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
         {
@@ -158,7 +158,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
                 transmittedColour = transmissionRecord.colour;
             numRefractedRays++;
-        }*/
+        }
 
         // Combine computed colours into one
         record.colour = localColour +

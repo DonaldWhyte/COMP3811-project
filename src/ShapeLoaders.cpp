@@ -73,7 +73,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         }
         delete heightMap; // no longer need height map
 
-        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.2f, 0.0f, 0.0f,
+        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.0f, 0.0f, 0.0f,
         Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
@@ -101,6 +101,68 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     {
         return NULL;
     }
+}
+
+/* Function here purely to make getSkyBox() code more readable. */
+void addVertexToList(VertexList& vertices, const Vector3& position, const Vector2& texCoord)
+{
+    Vertex vert;
+    vert.position = position;
+    vert.texCoord = texCoord;
+    vertices.push_back(vert);
+}
+
+Shape* shapeloaders::getSkyBox(float size, Texture* skyBoxTexture)
+{
+    // Construct vertices for mesh
+    VertexList vertices;
+    vertices.reserve(6 * 4); // four vertices for each face of cube
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0)); // front
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
+
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0)); // left
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0)); // back
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
+
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // right
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 0)); // top
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
+
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // bottom
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0));
+    // Specify material (only ambient contribution with no reflection/refraction!)
+    Material material(1.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, Colour(1.0f, 0.0f, 0.0f), NULL);
+    // Create mesh object and triangles which make up the mesh
+    Mesh* mesh = new Mesh(vertices, material);
+    std::vector<Shape*> triangles(6 * 2); // two triangles for each of the six faces
+    for (unsigned int i = 0; (i < 6); i++)
+    {
+        unsigned int offset = i * 4;
+        unsigned int triIndex = i * 2;
+        triangles[triIndex] = new MeshTriangle(mesh, offset, offset + 1, offset + 2);
+        triangles[triIndex + 1] = new MeshTriangle(mesh, offset, offset + 2, offset + 3);
+    }
+
+    // Construct bounding box for sky box and returned shape with bounded triangles
+    AABB boundingBox(Vector3(-size, -size, -size), Vector3(size, size, size));
+    return new BoundingShape(triangles, boundingBox);
 }
 
 Shape* shapeloaders::getMeshFromOBJ(const std::string& filename,

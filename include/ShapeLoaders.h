@@ -9,6 +9,7 @@ namespace shapeloaders
     Shape* getTerrainFromHeightmap(const std::string& filename,
         float cellWidth, float maxHeight, const Vector3& offset,
         Texture* texture = NULL);
+    Shape* getSkyBox(float size, Texture* skyBoxTexture);
     Shape* getMeshFromOBJ(const std::string& filename,
         const Vector3& translation, float scaleFactor = 1.0f);
 
