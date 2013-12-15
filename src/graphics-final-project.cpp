@@ -16,6 +16,9 @@
 static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
 
+static const float TERRAIN_CELL_SIZE = 10.0f;
+static const float TERRAIN_MAX_HEIGHT = 75.0f;
+
 int main(int argc, char** argv)
 {
     // Seed random number generator for varying results
@@ -30,30 +33,38 @@ int main(int argc, char** argv)
     // Define scene
     AABB sceneBoundary(Vector3(-100000, -100000, -100000), Vector3(100000, 100000, 100000));
     Camera camera(
-        Vector3(0, 0, 1000), // position
+        Vector3(0, 40.0f, 10), // position
         Vector3(0, 0, -1), // direction
         //Vector3(0.4f, 0.5f, -1), // direction
         Vector3(0, 1, 0), // up
-        Rectangle(-1000, 1000, -1000, 1000), // viewing rectangle
-        2000,
+        Rectangle(-100, 100, -100, 100), // viewing rectangle
+        200,
         false
     );
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(-100, -150, 0), 150,
+    shapes.push_back(new Sphere(Vector3(0.0f, 40.0f, -5.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
-    shapes.push_back(new Sphere(Vector3(-175, 0, 100), 40,
+    /*shapes.push_back(new Sphere(Vector3(-175, 0, 100), 40,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(0, -75, 200), 40,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 1.0f, 1.0f,
             Colour(0.6f, 0.2f, 0.2f), NULL)
-    ));
+    ));*/
+
+    // Load terrain heightmap
+    Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
+    Vector3 terrainOffset(
+        -((TERRAIN_CELL_SIZE * terrainHeightmap->getWidth()) / 2.0f),
+        0.0f,
+        -((TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
+    );
     shapes.push_back(shapeloaders::getTerrainFromHeightmap(
-        "resources/heightmap.tga", 20.0f, 100.0f,
-        Vector3(0, -100, 300), terrainTexture));
+        "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
+        terrainOffset, terrainTexture));
 
 
     // Create raytracer
@@ -98,7 +109,6 @@ int main(int argc, char** argv)
     std::cout << "Primary rays: " << raytracer.primaryRays() << std::endl;
     std::cout << "Reflected rays: " << raytracer.reflectedRays() << std::endl;
     std::cout << "Refracted rays: " << raytracer.refractedRays() << std::endl;
-    std::cout << "Illumination rays: " << raytracer.illuminationRays() << std::endl;
     std::cout << "Shadow rays: " << raytracer.shadowRays() << std::endl;
     std::cout << "Total rays: " << raytracer.totalRays() << std::endl;
 

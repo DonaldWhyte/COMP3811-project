@@ -42,7 +42,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
                 Vertex vert;
                 // Compute position of next point in terrain grid
                 float pointHeight = getHeight(heightMap, x, y, maxHeight);
-                vert.position = Vector3(x * cellSize, -pointHeight, y * cellSize);
+                vert.position = Vector3(x * cellSize, pointHeight, y * cellSize);
                 vert.position += offset;
                 // Update min and max points
                 if (vert.position.x < minPoint.x) minPoint.x = vert.position.x;
@@ -51,7 +51,6 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
                 if (vert.position.x > maxPoint.x) maxPoint.x = vert.position.x;
                 if (vert.position.y > maxPoint.y) maxPoint.y = vert.position.y;
                 if (vert.position.z > maxPoint.z) maxPoint.z = vert.position.z;
-
 
                 // Vertices in mesh grid alternate having 0 and 1 for tex coords
                 float texX = ((x % 2) == 0) ? 0.0f : 1.0f;

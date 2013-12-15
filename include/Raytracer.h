@@ -32,7 +32,6 @@ public:
     unsigned int primaryRays() const;
     unsigned int reflectedRays() const;
     unsigned int refractedRays() const;
-    unsigned int illuminationRays() const;
     unsigned int shadowRays() const;
     unsigned int totalRays() const;
     /* Used to reset ray counts to zero. */
@@ -54,7 +53,6 @@ private:
     unsigned int numPrimaryRays;
     unsigned int numReflectedRays;
     unsigned int numRefractedRays;
-    unsigned int numIlluminationRays;
     unsigned int numShadowRays;
 
 };

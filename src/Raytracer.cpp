@@ -113,14 +113,14 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
 
             // Don't add diffuse and specular contribution from this light
             // if the light is being blocked by another object
-            Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
+            /*Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
             HitRecord shadowRecord; // TODO: add Shape* to shadowHit() parameters so it can be used
             bool shadowHit = rootShape->hit(lightRay, 0.00001f, MAX_RAY_DISTANCE, 0.0f, shadowRecord);
             numShadowRays++;
             // If another object has blocked light reaching current object, don't add light contribution!
             if (shadowHit)
                 if (record.hitShape != shadowRecord.hitShape)
-                    continue;
+                    continue;*/
 
             // Diffuse lighting
             float angle = lightDirection.dot(record.normal);
@@ -135,7 +135,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
                     * pow(reflectionAngle, material->specularExponent()));
         }
 
-        // Handle reflection
+        /*// Handle reflection
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
         {
@@ -156,7 +156,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
                 transmittedColour = transmissionRecord.colour;
             numRefractedRays++;
-        }
+        }*/
 
         // Combine computed colours into one
         record.colour = localColour +
@@ -213,11 +213,6 @@ unsigned int Raytracer::refractedRays() const
     return numRefractedRays;
 }
 
-unsigned int Raytracer::illuminationRays() const
-{
-    return numIlluminationRays;
-}
-
 unsigned int Raytracer::shadowRays() const
 {
     return numShadowRays;
@@ -225,8 +220,7 @@ unsigned int Raytracer::shadowRays() const
 
 unsigned int Raytracer::totalRays() const
 {
-    return numPrimaryRays + numReflectedRays + numRefractedRays +
-        numIlluminationRays + numShadowRays;
+    return numPrimaryRays + numReflectedRays + numRefractedRays + numShadowRays;
 }
 
 void Raytracer::resetRayCount()
@@ -234,6 +228,5 @@ void Raytracer::resetRayCount()
     numPrimaryRays = 0;
     numReflectedRays = 0;
     numRefractedRays = 0;
-    numIlluminationRays = 0;
     numShadowRays = 0;
 }
