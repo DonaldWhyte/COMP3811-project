@@ -171,11 +171,6 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
         Material faceMaterial = material;
         faceMaterial.setTexture(skyBoxTextures[i]);
 
-        VertexList tmp(start, end);
-        for (unsigned int j = 0; (j < tmp.size()); j++)
-            std::cout << tmp[j].position << std::endl;
-        std::cout << std::endl;
-
         faceMeshes[i] = new Mesh(VertexList(start, end), faceMaterial);
     }
 
