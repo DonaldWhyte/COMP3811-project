@@ -45,7 +45,7 @@ int main(int argc, char** argv)
         false
     );
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -10.0f), 2.0f,
+    shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
@@ -68,7 +68,7 @@ int main(int argc, char** argv)
     raytracer.setRootShape(new BoundingShape(shapes, sceneBoundary));
     // Add light source
     raytracer.addLight(PointLight(
-        Vector3(-300, 0, 200),
+        Vector3(-100, 70, 0),
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)

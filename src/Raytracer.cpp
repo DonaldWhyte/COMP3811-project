@@ -114,8 +114,15 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             // Don't add diffuse and specular contribution from this light
             // if the light is being blocked by another object
             Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
+            // Compute distance from light to point of intersection.
+            // This is used to ignore any shapes that are FURTHER AWAY
+            // FROM THE LIGHT SOURCE than the current object
+            // TODO: find a better way of implementing shadows correctly, WITHOUT A SQUARE ROOT
+            float distanceFromLightToPoint = fabs((record.pointOfIntersection - lightPos).length());
+
+            // Store shape which the ray hit!
             const Shape* occludingShape = NULL;
-            bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f, MAX_RAY_DISTANCE, 0.0f, occludingShape);
+            bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f, distanceFromLightToPoint, 0.0f, occludingShape);
             numShadowRays++;
             // If another object has blocked light reaching current object, don't add light contribution!
             if (shadowHit)
@@ -137,6 +144,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
                     * pow(reflectionAngle, material->specularExponent()));
         }
 
+        /*
         // Handle reflection
         // (but only if material of hit shape is actually reflective!)
         if (material->reflectivity() > 0.0f)
@@ -158,7 +166,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
                 transmittedColour = transmissionRecord.colour;
             numRefractedRays++;
-        }
+        }*/
 
         // Combine computed colours into one
         record.colour = localColour +

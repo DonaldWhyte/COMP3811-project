@@ -117,38 +117,38 @@ Shape* shapeloaders::getSkyBox(float size, Texture* skyBoxTexture)
     // Construct vertices for mesh
     VertexList vertices;
     vertices.reserve(6 * 4); // four vertices for each face of cube
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0)); // front
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(1, 0));
-    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(1, 0));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 0.33f)); // front
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.5f, 0.33f));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0.5f, 0.66f));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.66f));
 
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0)); // left
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0.0f, 0.33f)); // left
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 0.33f));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.66f));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.0f, 0.66f));
 
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0)); // back
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.75f, 0.33f)); // back
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(1.0f, 0.33f));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(1.0f, 0.66f));
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0.75f, 0.66f));
 
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // right
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.5f, 0.33f)); // right
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.75f, 0.33));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.75f, 0.66f));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.5f, 0.66f));
 
-    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 0)); // top
-    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0.25f, 0.0f)); // top
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0.5f, 0.0f));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.5f, 0.33f));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.33f));
 
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // bottom
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.25f, 0.66f)); // bottom
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.5f, 0.66f));
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0.5f, 1.0f));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 1.0f));
     // Specify material (only ambient contribution with no reflection/refraction!)
-    Material material(1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, Colour(1.0f, 0.0f, 0.0f), NULL);
+    Material material(5.0f, 0.0f, 0.0f, 0.0f,
+        0.0f, 0.0f, 0.0f, Colour(), skyBoxTexture);
     // Create mesh object and triangles which make up the mesh
     Mesh* mesh = new Mesh(vertices, material);
     std::vector<Shape*> triangles(6 * 2); // two triangles for each of the six faces
