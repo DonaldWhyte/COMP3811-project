@@ -42,7 +42,7 @@ int main(int argc, char** argv)
         false
     );
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(0.0f, 7.5f, -7.5f), 2.0f,
+    shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -10.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
             Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
     ));
