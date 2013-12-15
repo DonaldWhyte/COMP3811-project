@@ -19,13 +19,20 @@ public:
     Raytracer(const Camera& camera);
     virtual ~Raytracer();
 
+    /* Single and multisample raytracing. */
     bool raytrace(float x, float y, Colour& result);
     bool multisample(float x, float y, float range,
         unsigned int samples, Colour& result);
+    /* Methods which compute the contribution of different physical
+     * phenoma to the final pixel colour. */
+    Colour localIllumination(const HitRecord& record);
+    Colour reflectionAndRefraction(const HitRecord& record);
 
+    /* Set a new root shape in the shape hierarchy. */
     void setRootShape(Shape* newRoot);
+    /* Add another light ot the scene. */
     void addLight(const PointLight& light);
-
+    /* Retrieve reference to scene's camera. */
     Camera* getCamera();
 
     /* Accessors for statistics on trace. */

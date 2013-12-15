@@ -83,97 +83,102 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     bool isAHit = rootShape->hit(ray, 0.00001f, MAX_RAY_DISTANCE, 0.0f, record);
     if (isAHit)
     {
-        Colour localColour, reflectedColour, transmittedColour;
-
-        // Get hit object's material and derive source object colour from it
-        const Material* material = record.hitShape->getMaterial();
-        Colour objectColour;
-        if (material)
-        {
-            if (material->getTexture())
-            {
-                objectColour = material->getTexture()->getTexel(
-                    record.texCoord.x, record.texCoord.y);
-            }
-            else
-                objectColour = material->getColour();
-        }
-        else
-        {
-            material = &defaultMaterial;
-        }
-        // Add illumination to object for each light source in the scene
-        // This is LOCAL ILLUMINATION
-        for (int i = 0; (i < lights.size()); i++)
-        {
-            const Vector3& lightPos = lights[i].getPosition();
-            Vector3 lightDirection = (lightPos - record.pointOfIntersection).normalise();
-            // Ambient lighting
-            localColour += (lights[i].getAmbient() * objectColour * material->ambientIntensity());
-
-            // Don't add diffuse and specular contribution from this light
-            // if the light is being blocked by another object
-            Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
-            // Compute distance from light to point of intersection.
-            // This is used to ignore any shapes that are FURTHER AWAY
-            // FROM THE LIGHT SOURCE than the current object
-            // TODO: find a better way of implementing shadows correctly, WITHOUT A SQUARE ROOT
-            float distanceFromLightToPoint = fabs((record.pointOfIntersection - lightPos).length());
-
-            // Store shape which the ray hit!
-            const Shape* occludingShape = NULL;
-            bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f, distanceFromLightToPoint, 0.0f, occludingShape);
-            numShadowRays++;
-            // If another object has blocked light reaching current object, don't add light contribution!
-            if (shadowHit)
-            {
-                if (record.hitShape != occludingShape)
-                    continue;
-            }
-
-            // Diffuse lighting
-            float angle = lightDirection.dot(record.normal);
-            if (angle > 0.0f) // only diffuse light coming from FRONT will be considered
-                localColour += lights[i].getDiffuse() * objectColour * material->diffuseIntensity() * angle;
-            // Specular lighting
-            // Use lightDir DOT normal to compute reflection direction
-            Vector3 reflectionDirection = -(lightDirection - (2.0f * angle * record.normal));
-            float reflectionAngle = reflectionDirection.dot(lightDirection);
-            if (reflectionAngle > 0) // only specular light from FRONT will be considered
-                localColour += (lights[i].getSpecular() * material->specularIntensity()
-                    * pow(reflectionAngle, material->specularExponent()));
-        }
-
-        // Handle reflection
-        // (but only if material of hit shape is actually reflective!)
-        if (material->reflectivity() > 0.0f)
-        {
-            Ray reflectedRay(record.pointOfIntersection, record.normal);
-            HitRecord reflectRecord;
-            if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
-                reflectedColour = reflectRecord.colour;
-            numReflectedRays++;
-        }
-
-        // Handle transmission
-        /*if (material->transparency() > 0.0f)
-        {
-            Ray transmissionRay = computeRefractedRay(
-                ray.direction(), record.pointOfIntersection,
-                record.normal, material->refractiveIndex());
-            HitRecord transmissionRecord;
-            if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
-                transmittedColour = transmissionRecord.colour;
-            numRefractedRays++;
-        }*/
-
+        // Compute contributions of different physical phenoma to final colour
+        Colour localColour = localIllumination(record);
+        Colour reflectedRefractedColour = reflectionAndRefraction(record);
         // Combine computed colours into one
-        record.colour = localColour +
-            (material->reflectivity() * reflectedColour) +
-            (material->transparency() * transmittedColour) ;
+        record.colour = localColour + reflectedRefractedColour;
     }
 
     return isAHit;
+}
+
+Colour Raytracer::localIllumination(const HitRecord& record)
+{
+    Colour localColour;
+
+    // Get hit object's material and derive source object colour from it
+    const Material* material = record.hitShape->getMaterial();
+    Colour objectColour;
+    if (material)
+        if (material->getTexture())
+            objectColour = material->getTexture()->getTexel(record.texCoord.x, record.texCoord.y);
+        else
+            objectColour = material->getColour();
+    else
+        material = &defaultMaterial;
+    // Add illumination to object for each light source in the scene
+    for (int i = 0; (i < lights.size()); i++)
+    {
+        const Vector3& lightPos = lights[i].getPosition();
+        Vector3 lightDirection = (lightPos - record.pointOfIntersection).normalise();
+        // Ambient lighting
+        localColour += (lights[i].getAmbient() * objectColour * material->ambientIntensity());
+
+        // Don't add diffuse and specular contribution from this light
+        // if the light is being blocked by another object
+        Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
+        // Compute distance from light to point of intersection.
+        // This is used to ignore any shapes that are FURTHER AWAY
+        // FROM THE LIGHT SOURCE than the current object
+        // TODO: find a better way of implementing shadows correctly, WITHOUT A SQUARE ROOT
+        float distanceFromLightToPoint = fabs((record.pointOfIntersection - lightPos).length());
+
+        // Store shape which the ray hit!
+        const Shape* occludingShape = NULL;
+        bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f, distanceFromLightToPoint, 0.0f, occludingShape);
+        numShadowRays++;
+        // If another object has blocked light reaching current object, don't add light contribution!
+        if (shadowHit)
+        {
+            if (record.hitShape != occludingShape)
+                continue;
+        }
+
+        // Diffuse lighting
+        float angle = lightDirection.dot(record.normal);
+        if (angle > 0.0f) // only diffuse light coming from FRONT will be considered
+            localColour += lights[i].getDiffuse() * objectColour * material->diffuseIntensity() * angle;
+        // Specular lighting
+        // Use lightDir DOT normal to compute reflection direction
+        Vector3 reflectionDirection = -(lightDirection - (2.0f * angle * record.normal));
+        float reflectionAngle = reflectionDirection.dot(lightDirection);
+        if (reflectionAngle > 0) // only specular light from FRONT will be considered
+            localColour += (lights[i].getSpecular() * material->specularIntensity()
+                * pow(reflectionAngle, material->specularExponent()));
+    }
+
+    return localColour;
+}
+
+Colour Raytracer::reflectionAndRefraction(const HitRecord& record)
+{
+    /*Colour reflectedColour, refractedColour;
+
+    // Handle reflection but only if material of hit shape is actually reflective!)
+    if (material->reflectivity() > 0.0f)
+    {
+        Ray reflectedRay(record.pointOfIntersection, record.normal);
+        HitRecord reflectRecord;
+        if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
+            reflectedColour = reflectRecord.colour;
+        numReflectedRays++;
+    }
+
+    // Handle transmission
+    if (material->transparency() > 0.0f)
+    {
+        Ray transmissionRay = computeRefractedRay(
+            ray.direction(), record.pointOfIntersection,
+            record.normal, material->refractiveIndex());
+        HitRecord transmissionRecord;
+        if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
+            transmittedColour = transmissionRecord.colour;
+        numRefractedRays++;
+    }
+
+    return reflectedColour + refractedColour;*/
+    return Colour();
 }
 
 /* Help from Realistic Raytracing and:
