@@ -21,8 +21,17 @@ class Mesh
 public:
     Mesh(const VertexList& vertices, const Material& material);
 
-    const VertexList& getVertices() const;
-    Material* getMaterial();
+    /* NOTE: These are inlined because the overhead caused by
+     * calls to these methods was found to be a bottleneck in
+     * performance during profiling. */
+    inline const VertexList& getVertices() const
+    {
+        return vertices;
+    }
+    inline Material* getMaterial()
+    {
+        return &material;
+    }
     void setVertices(const VertexList& newVertices);
     void setMaterial(const Material& newMaterial);
 

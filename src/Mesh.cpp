@@ -5,16 +5,6 @@ Mesh::Mesh(const std::vector<Vertex>& vertices, const Material& material) :
 {
 }
 
-const VertexList& Mesh::getVertices() const
-{
-    return vertices;
-}
-
-Material* Mesh::getMaterial()
-{
-    return &material;
-}
-
 void Mesh::setVertices(const VertexList& newVertices)
 {
     vertices = newVertices;
