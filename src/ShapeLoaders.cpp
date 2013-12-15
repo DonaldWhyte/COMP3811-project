@@ -73,7 +73,8 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         }
         delete heightMap; // no longer need height map
 
-        Material material(1.0f, 0.3f, 0.05f, 0.05f, 0.0f, 0.0f, 0.0f,
+        // Material only has ambient and diffuse (no specular or reflection!)
+        Material material(1.0f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
         Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain

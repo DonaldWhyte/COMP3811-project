@@ -55,7 +55,8 @@ namespace common
             record.pointOfIntersection = p1 * alpha + p2 * beta + p3 * gamma;
             record.texCoord = v1.texCoord * alpha + v2.texCoord * beta + v3.texCoord * gamma;
             // Compute triangle normal
-            record.normal = (p2 - p1).cross(p3 - p1).normalise();
+            //record.normal = (p2 - p1).cross(p3 - p1).normalise();
+            record.normal = v1.normal * alpha + v2.normal * beta + v3.normal * gamma;
 
             return true;
         }
