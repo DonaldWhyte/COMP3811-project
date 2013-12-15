@@ -19,11 +19,11 @@ float getHeight(Image* image, int x, int y, float maxHeight)
     return image->get(x, y).r * maxHeight;
 }
 
+// TODO: provide ways to cleanup Mesh and Texture
+
 Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     float cellSize, float maxHeight, const Vector3& offset, Texture* texture)
 {
-    // TODO: provide ways to cleanup Mesh and Texture
-
     Image* heightMap = tga::readTGAFile(filename);
     if (heightMap)
     {
@@ -113,52 +113,78 @@ void addVertexToList(VertexList& vertices, const Vector3& position, const Vector
     vertices.push_back(vert);
 }
 
-Shape* shapeloaders::getSkyBox(float size, Texture* skyBoxTexture)
+Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTextures)
 {
+    // TODO: find good sky box texture and split into appropriate images
+    // TODO: fix dodgy texture coordinates
+    if (skyBoxTextures.size() != 6)
+    {
+        std::cerr << "Exactly six textures are required to construct sky boxes ("
+            << skyBoxTextures.size() << " given)" << std::endl;
+        return NULL;
+    }
+
+    // Half the size so we get a sky box centered at origin
+    size /= 2.0f;
     // Construct vertices for mesh
     VertexList vertices;
     vertices.reserve(6 * 4); // four vertices for each face of cube
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 0.33f)); // front
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.5f, 0.33f));
-    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0.5f, 0.66f));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.66f));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 0)); // front
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 1));
 
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0.0f, 0.33f)); // left
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 0.33f));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.66f));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.0f, 0.66f));
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0, 0)); // left
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(0, 1));
 
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.75f, 0.33f)); // back
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(1.0f, 0.33f));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(1.0f, 0.66f));
-    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0.75f, 0.66f));
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 0)); // back
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 1));
 
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.5f, 0.33f)); // right
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.75f, 0.33));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.75f, 0.66f));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.5f, 0.66f));
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // right
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 1));
 
-    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0.25f, 0.0f)); // top
-    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0.5f, 0.0f));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(0.5f, 0.33f));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0.25f, 0.33f));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 1)); // top
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(1, 1));
 
-    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0.25f, 0.66f)); // bottom
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0.5f, 0.66f));
-    addVertexToList(vertices, Vector3(size, -size, size), Vector2(0.5f, 1.0f));
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0.25f, 1.0f));
+    addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // bottom
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 1));
+    addVertexToList(vertices, Vector3(size, -size, size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(1, 0));
+
     // Specify material (only ambient contribution with no reflection/refraction!)
     Material material(5.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, Colour(), skyBoxTexture);
-    // Create mesh object and triangles which make up the mesh
-    Mesh* mesh = new Mesh(vertices, material);
+        0.0f, 0.0f, 0.0f, Colour(), NULL);
+    // Construct a mesh for each face of the sky box
+    std::vector<Mesh*> faceMeshes(6);
+    for (unsigned int i = 0; (i < faceMeshes.size()); i++)
+    {
+        VertexList::const_iterator start = vertices.begin() + (i * 4);
+        VertexList::const_iterator end = start + 4;
+        Material faceMaterial = material;
+        faceMaterial.setTexture(skyBoxTextures[i]);
+
+        VertexList tmp(start, end);
+        for (unsigned int j = 0; (j < tmp.size()); j++)
+            std::cout << tmp[j].position << std::endl;
+        std::cout << std::endl;
+
+        faceMeshes[i] = new Mesh(VertexList(start, end), faceMaterial);
+    }
+
     std::vector<Shape*> triangles(6 * 2); // two triangles for each of the six faces
     for (unsigned int i = 0; (i < 6); i++)
     {
-        unsigned int offset = i * 4;
         unsigned int triIndex = i * 2;
-        triangles[triIndex] = new MeshTriangle(mesh, offset, offset + 1, offset + 2);
-        triangles[triIndex + 1] = new MeshTriangle(mesh, offset, offset + 2, offset + 3);
+        triangles[triIndex] = new MeshTriangle(faceMeshes[i], 0, 1, 2);
+        triangles[triIndex + 1] = new MeshTriangle(faceMeshes[i], 0, 2, 3);
     }
 
     // Construct bounding box for sky box and returned shape with bounded triangles

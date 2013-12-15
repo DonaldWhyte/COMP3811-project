@@ -24,7 +24,6 @@ public:
 
 private:
     Vector3 position;
-    // TODO: attenuation
 
     Colour ambient;
     Colour diffuse;

@@ -18,7 +18,7 @@ static const int IMAGE_HEIGHT = 500;
 
 static const float TERRAIN_CELL_SIZE = 10.0f;
 static const float TERRAIN_MAX_HEIGHT = 75.0f;
-static const float SKYBOX_SIZE = 500.0f;
+static const float SKYBOX_SIZE = 200.0f;
 
 int main(int argc, char** argv)
 {
@@ -30,8 +30,17 @@ int main(int argc, char** argv)
     Texture* worldMapTexture = new Texture(worldMapImage);
     Image* terrainTextureImage = tga::readTGAFile("resources/terrain.tga");
     Texture* terrainTexture = new Texture(terrainTextureImage);
-    Image* skyboxImage = tga::readTGAFile("resources/skybox.tga");
-    Texture* skyboxTexture = new Texture(skyboxImage);
+    std::vector<Image*> skyBoxImages(6);
+    skyBoxImages[0] = tga::readTGAFile("resources/siege_front.tga");
+    skyBoxImages[1] = tga::readTGAFile("resources/siege_left.tga");
+    skyBoxImages[2] = tga::readTGAFile("resources/siege_back.tga");
+    skyBoxImages[3] = tga::readTGAFile("resources/siege_right.tga");
+    skyBoxImages[4] = tga::readTGAFile("resources/siege_top.tga");
+    skyBoxImages[5] = NULL;
+    std::vector<Texture*> skyBoxTextures(6);
+    for (unsigned int i = 0; (i < skyBoxTextures.size()); i++)
+        if (skyBoxImages[i])
+            skyBoxTextures[i] = new Texture(skyBoxImages[i]);
 
     // Define scene
     AABB sceneBoundary(Vector3(-100000, -100000, -100000), Vector3(100000, 100000, 100000));
@@ -47,7 +56,7 @@ int main(int argc, char** argv)
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
-            Colour(0.2f, 0.6f, 0.8f), worldMapTexture)
+            Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
@@ -60,7 +69,7 @@ int main(int argc, char** argv)
         "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
         terrainOffset, terrainTexture));
     // Load skybox
-    shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyboxTexture));
+    shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyBoxTextures));
 
 
     // Create raytracer
@@ -113,8 +122,10 @@ int main(int argc, char** argv)
     delete worldMapTexture;
     delete terrainTextureImage;
     delete terrainTexture;
-    delete skyboxImage;
-    delete skyboxTexture;
+    for (unsigned int i = 0; (i < skyBoxImages.size()); i++)
+        delete skyBoxImages[i];
+    for (unsigned int i = 0; (i < skyBoxTextures.size()); i++)
+        delete skyBoxTextures[i];
 
     return 0;
 }
