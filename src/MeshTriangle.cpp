@@ -45,14 +45,17 @@ bool MeshTriangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRe
     return isHit;
 }
 
-bool MeshTriangle::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+bool MeshTriangle::shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const
 {
     // Retrieve points from mesh
     const VertexList& vertices = mesh->getVertices();
     const Vertex& p1 = vertices[v1];
     const Vertex& p2 = vertices[v2];
     const Vertex& p3 = vertices[v3];
-    return common::triangleShadowHit(
+    bool isHit = common::triangleShadowHit(
         p1.position, p2.position, p3.position,
         ray, tMin, tMax, time);
+    if (isHit)
+        occludingShape = this;
+    return isHit;
 }

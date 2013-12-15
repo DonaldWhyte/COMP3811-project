@@ -130,12 +130,12 @@ bool Octree::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
     return isAHit;
 }
 
-bool Octree::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+bool Octree::shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const
 {
     if (!boundary.intersects(ray, tMin, tMax))
         return false;
     for (int i = 0; (i < numChildren); i++)
-        if (children[i]->shadowHit(ray, tMin, tMax, 0.0f))
+        if (children[i]->shadowHit(ray, tMin, tMax, 0.0f, occludingShape))
             return true;
     return false;
 }
@@ -151,7 +151,7 @@ public:
     { return centrePoint; }
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
     { return false; }
-    virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+    virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const
     { return false; }
 
     Vector3 centrePoint;

@@ -54,7 +54,8 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
     }
 }
 
-bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax,
+    float time, const Shape*& occludingShape) const
 {
     Vector3 temp = ray.origin() - centre;
 
@@ -71,9 +72,14 @@ bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
         if (t < tMin)
             t = (-b - discriminant) / (2 * a);
         if (t < tMin || t > tMax)
+        {
             return false;
+        }
         else
+        {
+            occludingShape = this;
             return true;
+        }
     }
     else
     {

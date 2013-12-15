@@ -34,7 +34,8 @@ public:
     virtual const Vector3& getCentre() const = 0;
     /* Ray-shape intersection tests. */
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const = 0;
-    virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const = 0;
+    virtual bool shadowHit(const Ray& ray, float tMin, float tMax,
+        float time, const Shape*& occludingShape) const = 0;
 
     virtual const Material* getMaterial() const { return material; }
     virtual void setMaterial(Material* newMaterial) { material = newMaterial; }

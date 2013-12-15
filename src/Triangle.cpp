@@ -22,7 +22,11 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
     return isHit;
 }
 
-bool Triangle::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+bool Triangle::shadowHit(const Ray& ray, float tMin, float tMax,
+    float time, const Shape*& occludingShape) const
 {
-    return common::triangleShadowHit(p1, p2, p3, ray, tMin, tMax, time);
+    bool isHit = common::triangleShadowHit(p1, p2, p3, ray, tMin, tMax, time);
+    if (isHit)
+        occludingShape = this;
+    return isHit;
 }

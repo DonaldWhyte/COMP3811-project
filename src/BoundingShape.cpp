@@ -40,7 +40,8 @@ bool BoundingShape::hit(const Ray& ray, float tMin, float tMax, float time, HitR
     return isAHit;
 }
 
-bool BoundingShape::shadowHit(const Ray& ray, float tMin, float tMax, float time) const
+bool BoundingShape::shadowHit(const Ray& ray, float tMin, float tMax,
+    float time, const Shape*& occludingShape) const
 {
     // First check if ray intersects with the bounding box
     if (!boundingBox.intersects(ray, tMin, tMax))
@@ -48,7 +49,7 @@ bool BoundingShape::shadowHit(const Ray& ray, float tMin, float tMax, float time
 
     for (int i = 0; (i < children.size()); i++)
         // NOTE: We only care if ANY shape is hit by the ray
-        if (children[i]->shadowHit(ray, tMin, tMax, 0.0f))
+        if (children[i]->shadowHit(ray, tMin, tMax, 0.0f, occludingShape))
             return true;
     return false;
 }

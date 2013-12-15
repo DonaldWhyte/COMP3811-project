@@ -13,7 +13,7 @@ public:
 
     const Vector3& getCentre() const;
     bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
-    bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;
+    bool shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const;
 
 private:
     Vector2 computeTexCoord(const Vector3& posOnSphere) const;

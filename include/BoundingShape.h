@@ -13,7 +13,7 @@ public:
 
     virtual const Vector3& getCentre() const;
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
-    virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time) const;
+    virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const;
 
 private:
     ShapeList children;
