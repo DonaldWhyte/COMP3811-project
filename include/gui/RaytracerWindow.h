@@ -7,9 +7,6 @@
 
 namespace raytracer { namespace gui {
 
-static const unsigned int WINDOW_WIDTH = 500;
-static const unsigned int WINDOW_HEIGHT = 500;
-
 class RaytracerWindow : public QMainWindow
 {
 

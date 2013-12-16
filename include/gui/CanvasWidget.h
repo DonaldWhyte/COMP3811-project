@@ -18,15 +18,21 @@ public:
 	CanvasWidget(unsigned int width, unsigned int height);
 	
 	Image* getCanvas();
-	
 	/* Override paint event so it draws the contents of the canvas image. */
 	virtual void paintEvent(QPaintEvent* event);
+	
+public slots:
+	/* Makes the canvas widget only render up to row with given index.
+     * This should be executed when a row of the raytraced image has
+     * finished rendering. */
+	void updateRowsToRender(int rowIndex);
 	
 private:
 	/* Convert raytracer Colour class to QColor. */
 	QColor toQColor(const Colour& col);
 
 	Image canvas;
+	unsigned int rowsToRender;
 	
 };
 

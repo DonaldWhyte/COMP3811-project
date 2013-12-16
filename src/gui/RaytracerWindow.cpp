@@ -9,8 +9,8 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 {
 	// Set title and size of window
 	setWindowTitle("COMP811 Graphics Project -- Raytracer (Donald Whyte)");
-	this->setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	resize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	this->setFixedSize(CANVAS_WIDTH, CANVAS_HEIGHT);
+	resize(CANVAS_WIDTH, CANVAS_HEIGHT);	
 	// Disable resizing
 	this->statusBar()->setSizeGripEnabled(false);
 	// Create menus

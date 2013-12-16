@@ -19,7 +19,7 @@ public slots:
 	void render();
 	
 signals:
-	void rowFinished(int rowIndex);
+	void finishedRow(int rowIndex);
 	void finished();
 	void error(QString error);
 	
