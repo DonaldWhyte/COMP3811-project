@@ -67,8 +67,7 @@ namespace common
     }
 
     /* Triangle intersection test with raytrace hit record updating. Separated
-     * here so it can be used in multiple shape classes.
- */
+     * here so it can be used in multiple shape classes. */
     inline bool triangleHit(const Vector3& p1, const Vector3& p2, const Vector3& p3,
         const Ray& ray, float tMin, float tMax, float time, HitRecord& record)
     {

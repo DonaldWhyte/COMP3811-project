@@ -1,6 +1,7 @@
 #include "Raytracer.h"
 #include "Common.h"
 #include <cmath>
+#include <cfloat>
 #include <algorithm>
 
 Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
@@ -124,11 +125,13 @@ Colour Raytracer::localIllumination(const HitRecord& record)
         // This is used to ignore any shapes that are FURTHER AWAY
         // FROM THE LIGHT SOURCE than the current object
         // TODO: find a better way of implementing shadows correctly, WITHOUT A SQUARE ROOT
-        float distanceFromLightToPoint = fabs((record.pointOfIntersection - lightPos).length());
+        float distanceFromLightToPoint = (record.pointOfIntersection - lightPos).length();
 
         // Store shape which the ray hit!
         const Shape* occludingShape = NULL;
-        bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f, distanceFromLightToPoint, 0.0f, occludingShape);
+        bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f,
+            distanceFromLightToPoint - SHADOW_RAY_DISTANCE_THRESHOLD,
+            0.0f, occludingShape);
         numShadowRays++;
         // If another object has blocked light reaching current object, don't add light contribution!
         if (shadowHit)

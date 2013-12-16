@@ -57,7 +57,7 @@ int main(int argc, char** argv)
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
         Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
-    shapes.push_back(new Sphere(Vector3(-5.0f, 12.0f, -21.0f), 2.0f,
+    shapes.push_back(new Sphere(Vector3(-4.0f, 10.0f, -20.0f), 1.25f,
         new Material(0.5f, 3.0f, 1.0f, 20.0f, 1.0f,
         Material::NO_REFRACTION, Colour(), NULL)
     ));
