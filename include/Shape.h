@@ -12,13 +12,18 @@ class Shape; //forward declaration for 'hitShape' member
 struct HitRecord
 {
     float t; // distance from original ray
-    Vector3 pointOfIntersection;
+    Vector3 pointOfIntersection; // exact point in world coordinates that ray hit
     Vector3 normal; // surface normal of point of intersection
     Vector2 texCoord; // (U, V) coordinates of point of intersection
 
-    const Shape* hitShape;
+    const Shape* originShape; // shape which the ray bounced off
+    const Shape* hitShape; // shape which the ray has hit
 
     Colour colour;
+
+    /* Ensure numerical values and pointers are initialised 0
+     * and NULL respectively. */
+    HitRecord() : t (0), originShape(NULL), hitShape(NULL) { }
 
 };
 

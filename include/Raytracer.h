@@ -8,9 +8,12 @@
 
 static const int MAX_TRACE_DEPTH = 10;
 static const float MAX_RAY_DISTANCE = 100000.0f;
-// Refractive index of air.
-// (source: http://en.wikipedia.org/wiki/Refractive_index)
-static const float AIR_REFRACTIVE_INDEX = 1.000293;
+// Determines the contribution of reflected/refracted colours
+// to the final colour of a surface.
+static const float REFLECTED_REFRACTED_WEIGHT = 0.5f;
+// Determines the contribution of local illumination
+// to the final colour of a surface.
+static const float LOCAL_ILLUMINATION_WEIGHT = (1 - REFLECTED_REFRACTED_WEIGHT);
 
 class Raytracer
 {
@@ -26,7 +29,8 @@ public:
     /* Methods which compute the contribution of different physical
      * phenoma to the final pixel colour. */
     Colour localIllumination(const HitRecord& record);
-    Colour reflectionAndRefraction(const HitRecord& record);
+    Colour reflectionAndRefraction(const Vector3& rayDirection,
+        const HitRecord& record, int depth);
 
     /* Set a new root shape in the shape hierarchy. */
     void setRootShape(Shape* newRoot);
@@ -47,9 +51,12 @@ public:
 private:
     bool recursiveTrace(const Ray& ray, HitRecord& record, int depth);
 
+    float computeSurfaceReflectivity(const Vector3& incoming,
+        const Vector3& surfaceNormal, float originRefractiveIndex,
+        float hitRefractiveIndex);
     Ray computeRefractedRay(const Vector3 incidentDirection,
         const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
-        float surfaceRefractiveIndex);
+        float refractiveIndex1, float refractiveIndex2);
 
     Shape* rootShape;
     LightList lights;

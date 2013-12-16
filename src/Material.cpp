@@ -1,7 +1,8 @@
 #include "Material.h"
 
 Material::Material() : ka(0), kd(0), ks(0), n(0),
-    reflectionFactor(0), transparencyFactor(0), texture(NULL)
+    reflectionFactor(NO_REFLECTION), transparencyFactor(0),
+    surfaceRefractiveIndex(NO_REFRACTION), texture(NULL)
 {
 }
 

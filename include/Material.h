@@ -9,6 +9,13 @@ class Material
 {
 
 public:
+    /* Useful constants for setting material parameters. */
+    static const float NO_REFLECTION = -1.0f; // value to indicate to raytracer NOT TO reflect
+    static const float NO_REFRACTION = -1.0f; // value to indicate to raytracer NOT TO refract
+    // Refractive index of air.
+    // (source: http://en.wikipedia.org/wiki/Refractive_index)
+    static const float AIR_REFRACTIVE_INDEX = 1.000293;
+
     Material();
     Material(float ka, float kd, float ks, float n, float reflectionFactor,
         float transparencyFactor, float refractiveIndex,

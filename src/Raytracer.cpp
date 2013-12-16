@@ -85,9 +85,11 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     {
         // Compute contributions of different physical phenoma to final colour
         Colour localColour = localIllumination(record);
-        Colour reflectedRefractedColour = reflectionAndRefraction(record);
+        Colour reflectedRefractedColour = reflectionAndRefraction(
+            ray.direction(), record, depth);
         // Combine computed colours into one
-        record.colour = localColour + reflectedRefractedColour;
+        record.colour = (LOCAL_ILLUMINATION_WEIGHT * localColour)
+            + (REFLECTED_REFRACTED_WEIGHT * reflectedRefractedColour);
     }
 
     return isAHit;
@@ -130,10 +132,8 @@ Colour Raytracer::localIllumination(const HitRecord& record)
         numShadowRays++;
         // If another object has blocked light reaching current object, don't add light contribution!
         if (shadowHit)
-        {
             if (record.hitShape != occludingShape)
                 continue;
-        }
 
         // Diffuse lighting
         float angle = lightDirection.dot(record.normal);
@@ -151,65 +151,111 @@ Colour Raytracer::localIllumination(const HitRecord& record)
     return localColour;
 }
 
-Colour Raytracer::reflectionAndRefraction(const HitRecord& record)
+Colour Raytracer::reflectionAndRefraction(const Vector3& rayDirection, const HitRecord& record, int depth)
 {
-    /*Colour reflectedColour, refractedColour;
+    // Retrieve material properties
+    const Material* material = record.hitShape->getMaterial();
+    float reflectivity = material->reflectivity();
+    float refractiveIndex = material->refractiveIndex();
 
-    // Handle reflection but only if material of hit shape is actually reflective!)
-    if (material->reflectivity() > 0.0f)
+    // If the hit object has no reflective nor refractive properties, just return no colour
+    if (reflectivity == Material::NO_REFLECTION && refractiveIndex == Material::NO_REFRACTION)
+        return Colour();
+
+    // Retrieve refractive index of object ray orignated from
+    // (refractive index of air is used as a default is the
+    // ray was one which was originally cast through the viewing plane)
+    float originRefractiveIndex = Material::AIR_REFRACTIVE_INDEX;
+    if (record.originShape)
+        originRefractiveIndex = record.originShape->getMaterial()->refractiveIndex();
+
+    // Compute contribution of reflected and refracted colour
+    // (contributions should sum up to one!)
+    float reflectionFactor = reflectivity;
+    float refractionFactor = 0.0f;
+    if (refractiveIndex != Material::NO_REFRACTION)
+    {
+        // Compute surface's actual reflectivity, given its refraction index
+        // (and the refraction index of the previous medium the ray was travelling through)
+        reflectionFactor = computeSurfaceReflectivity(rayDirection,
+            record.normal, originRefractiveIndex, refractiveIndex);
+        refractionFactor = 1.0f - reflectionFactor;
+    }
+    // If there is no contribution from either, then return no colour
+    if (reflectionFactor <= 0 && refractionFactor <= 0)
+        return Colour();
+
+    // Handle reflection if material of hit shape is reflective
+    Colour reflectedColour;
+    if (reflectionFactor > 0.0f)
     {
         Ray reflectedRay(record.pointOfIntersection, record.normal);
+        // Cast reflected ray and store resultant colour
         HitRecord reflectRecord;
         if (recursiveTrace(reflectedRay, reflectRecord, depth + 1))
             reflectedColour = reflectRecord.colour;
         numReflectedRays++;
     }
-
-    // Handle transmission
-    if (material->transparency() > 0.0f)
+    // Handle refraction if material of hit shape is refractive
+    Colour refractedColour;
+    if (refractionFactor > 0.0f)
     {
-        Ray transmissionRay = computeRefractedRay(
-            ray.direction(), record.pointOfIntersection,
-            record.normal, material->refractiveIndex());
-        HitRecord transmissionRecord;
-        if (recursiveTrace(transmissionRay, transmissionRecord, depth + 1))
-            transmittedColour = transmissionRecord.colour;
+        Ray refractedRay = computeRefractedRay(
+            rayDirection, record.pointOfIntersection,
+            record.normal, originRefractiveIndex, refractiveIndex);
+        // Cast refracted ray and store resultant colour
+        HitRecord refractionRecord;
+        if (recursiveTrace(refractedRay, refractionRecord, depth + 1))
+            refractedColour = refractionRecord.colour;
         numRefractedRays++;
     }
 
-    return reflectedColour + refractedColour;*/
-    return Colour();
+    return (reflectedColour * reflectionFactor) + (refractedColour * refractionFactor);
 }
 
-/* Help from Realistic Raytracing and:
- * http://steve.hollasch.net/cgindex/render/refraction.txt */
-Ray Raytracer::computeRefractedRay(const Vector3 incidentDirection,
+/* The following two methods were implemented with help from Realistic
+ * Raytracing and: http://steve.hollasch.net/cgindex/render/refraction.txt */
+float Raytracer::computeSurfaceReflectivity(const Vector3& incoming,
+    const Vector3& surfaceNormal, float originRefractiveIndex,
+    float hitRefractiveIndex)
+{
+    // TODO: reimplement and understand
+    double n = originRefractiveIndex / hitRefractiveIndex;
+    double cosI = -surfaceNormal.dot(incoming);
+    double sinT2 = n * n * (1.0 - cosI * cosI);
+
+    if (sinT2 > 1.0) {
+      // Total Internal Reflection.
+      return 1.0;
+    }
+
+    double cosT = sqrt(1.0f - sinT2);
+    double r0rth = (originRefractiveIndex * cosI - hitRefractiveIndex * cosT) / (originRefractiveIndex * cosI + hitRefractiveIndex * cosT);
+    double rPar = (hitRefractiveIndex * cosI - originRefractiveIndex * cosT) / (hitRefractiveIndex * cosI + originRefractiveIndex * cosT);
+    return (r0rth * r0rth + rPar * rPar) / 2.0f;
+}
+
+Ray Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
-    float surfaceRefractiveIndex)
+    float refractiveIndex1, float refractiveIndex2)
 {
     // NOTE: For simplicity, it is assumed that all rays were
     // travelling through the air BEFORE they hit the surface
     // that is refracting light
-    float eta = surfaceRefractiveIndex;
-    float c1 = -(incidentDirection.dot(surfaceNormal)); // incomingDirection = ray.direction?
+    float eta = refractiveIndex1 / refractiveIndex2;
+    float c1 = -(incomingDirection.dot(surfaceNormal)); // incomingDirection = ray.direction?
     float cs2 = 1 - eta * eta * (1 - c1 * c1);
     // If < 0, then we have total internal refraction. DON'T create a ray for transmission.
     Vector3 transmissionDirection;
-    if (cs2 < 0)
+    if (cs2 >= 0)
     {
-        // TODO: fix crappy refraction
-        /*eta = AIR_REFRACTIVE_INDEX;
-        c1 = -(incidentDirection.dot(-surfaceNormal)); // incomingDirection = ray.direction?
-        cs2 = 1 - eta * eta * (1 - c1 * c1);
-        transmissionDirection = eta * incidentDirection + (eta * c1 - sqrt(cs2)) * (-surfaceNormal);*/
-        //return computeRefractedRay(incidentDirection, pointOfIntersection, -surfaceNormal, surfaceRefractiveIndex);
-        return Ray();
+        transmissionDirection = (eta * incomingDirection) + ((eta * c1 - sqrt(cs2)) * surfaceNormal);
+        return Ray(pointOfIntersection, transmissionDirection);
     }
-    else
+    else // total internal reflection!
     {
-        transmissionDirection = eta * incidentDirection + (eta * c1 - sqrt(cs2)) * surfaceNormal;
+        return Ray(); // TODO: handle gracefully
     }
-    return Ray(pointOfIntersection, transmissionDirection);
 }
 
 unsigned int Raytracer::primaryRays() const

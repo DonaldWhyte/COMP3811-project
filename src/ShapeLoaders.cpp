@@ -74,8 +74,8 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         delete heightMap; // no longer need height map
 
         // Material only has ambient and diffuse (no specular or reflection!)
-        Material material(1.0f, 0.6f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-        Colour(0.2f, 0.7f, 0.2f), texture);
+        Material material(2.0f, 0.6f, 0.0f, 0.0f, Material::NO_REFLECTION,
+            0.0f, Material::NO_REFRACTION, Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;
@@ -116,7 +116,6 @@ void addVertexToList(VertexList& vertices, const Vector3& position, const Vector
 Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTextures)
 {
     // TODO: find good sky box texture and split into appropriate images
-    // TODO: fix dodgy texture coordinates
     if (skyBoxTextures.size() != 6)
     {
         std::cerr << "Exactly six textures are required to construct sky boxes ("
@@ -160,8 +159,9 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
     addVertexToList(vertices, Vector3(size, -size, -size), Vector2(1, 0));
 
     // Specify material (only ambient contribution with no reflection/refraction!)
-    Material material(5.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, Colour(), NULL);
+    Material material(10.0f, 0.0f, 0.0f, 0.0f,
+        Material::NO_REFLECTION, 0.0f, Material::NO_REFRACTION,
+        Colour(), NULL);
     // Construct a mesh for each face of the sky box
     std::vector<Mesh*> faceMeshes(6);
     for (unsigned int i = 0; (i < faceMeshes.size()); i++)
@@ -231,8 +231,9 @@ Shape* shapeloaders::getMeshFromOBJ(const std::string& filename,
     // Construct material for mesh
     Material material(shape.material.ambient[0],
         shape.material.diffuse[0], shape.material.specular[0],
-        shape.material.shininess, MATERIAL_REFLECTIVITY,
-        MATERIAL_TRANSPARENCY, MATERIAL_REFRACTIVE_INDEX, Colour(0.8f, 0.2f, 0.2f), NULL);
+        shape.material.shininess, Material::NO_REFLECTION,
+        MATERIAL_TRANSPARENCY, Material::NO_REFRACTION,
+        Colour(0.8f, 0.2f, 0.2f), NULL);
     // Create mesh object to assign to all triangles
     Mesh* mesh = new Mesh(vertices, material);
 

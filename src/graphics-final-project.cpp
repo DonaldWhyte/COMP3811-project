@@ -43,20 +43,23 @@ int main(int argc, char** argv)
             skyBoxTextures[i] = new Texture(skyBoxImages[i]);
 
     // Define scene
-    AABB sceneBoundary(Vector3(-100000, -100000, -100000), Vector3(100000, 100000, 100000));
+    AABB sceneBoundary(Vector3(-10000, -10000, -10000), Vector3(10000, 10000, 10000));
     Camera camera(
         Vector3(0, 5.0f, 0), // position
         Vector3(0, 0, -1), // direction
-        //Vector3(0.4f, 0.5f, -1), // direction
         Vector3(0, 1, 0), // up
         Rectangle(-100, 100, -100, 100), // viewing rectangle
         200,
         false
     );
     ShapeList shapes;
+    shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -30.0f), 2.0f,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
+        0.0f, Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
+    ));
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f, 0.0f, 0.0f,
-            Colour(0.2f, 0.6f, 0.8f), NULL)
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
+            0.0f, 1.33, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
