@@ -54,9 +54,10 @@ private:
     float computeSurfaceReflectivity(const Vector3& incoming,
         const Vector3& surfaceNormal, float originRefractiveIndex,
         float hitRefractiveIndex);
-    Ray computeRefractedRay(const Vector3 incidentDirection,
+    bool computeRefractedRay(const Vector3 incidentDirection,
         const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
-        float refractiveIndex1, float refractiveIndex2);
+        float refractiveIndex1, float refractiveIndex2,
+        Ray& result);
 
     Shape* rootShape;
     LightList lights;

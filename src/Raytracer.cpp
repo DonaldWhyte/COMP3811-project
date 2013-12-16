@@ -200,13 +200,18 @@ Colour Raytracer::reflectionAndRefraction(const Vector3& rayDirection, const Hit
     Colour refractedColour;
     if (refractionFactor > 0.0f)
     {
-        Ray refractedRay = computeRefractedRay(
-            rayDirection, record.pointOfIntersection,
-            record.normal, originRefractiveIndex, refractiveIndex);
-        // Cast refracted ray and store resultant colour
-        HitRecord refractionRecord;
-        if (recursiveTrace(refractedRay, refractionRecord, depth + 1))
-            refractedColour = refractionRecord.colour;
+        // Compute refracted ray
+        Ray refractedRay;
+        bool shouldRefract = computeRefractedRay(rayDirection,
+            record.pointOfIntersection, record.normal,
+            originRefractiveIndex, refractiveIndex, refractedRay);
+        if (shouldRefract) // false if total internal reflection occurred
+        {
+            // Cast refracted ray and store resultant colour
+            HitRecord refractionRecord;
+            if (recursiveTrace(refractedRay, refractionRecord, depth + 1))
+                refractedColour = refractionRecord.colour;
+        }
         numRefractedRays++;
     }
 
@@ -235,9 +240,9 @@ float Raytracer::computeSurfaceReflectivity(const Vector3& incoming,
     return (r0rth * r0rth + rPar * rPar) / 2.0f;
 }
 
-Ray Raytracer::computeRefractedRay(const Vector3 incomingDirection,
+bool Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
-    float refractiveIndex1, float refractiveIndex2)
+    float refractiveIndex1, float refractiveIndex2, Ray& result)
 {
     // NOTE: For simplicity, it is assumed that all rays were
     // travelling through the air BEFORE they hit the surface
@@ -250,11 +255,15 @@ Ray Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     if (cs2 >= 0)
     {
         transmissionDirection = (eta * incomingDirection) + ((eta * c1 - sqrt(cs2)) * surfaceNormal);
-        return Ray(pointOfIntersection, transmissionDirection);
+        result = Ray(pointOfIntersection, transmissionDirection);
+        return true;
     }
-    else // total internal reflection!
+    // This means there is total internal reflection and NO REFRACTION.
+    // To handle this, 'false' is returned to tell the calling code that
+    // no refraction ray could be computed
+    else
     {
-        return Ray(); // TODO: handle gracefully
+        return false;
     }
 }
 
