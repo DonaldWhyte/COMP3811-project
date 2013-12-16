@@ -5,7 +5,6 @@
 #include "Mesh.h"
 #include "Triangle.h"
 #include "MeshTriangle.h"
-#include "tiny_obj_loader.h"
 #include "TGA.h"
 
 /* Reflectivity of materials loaded from Wavefront OBJ meshes. */
@@ -148,15 +147,15 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
     addVertexToList(vertices, Vector3(-size, size, size), Vector2(1, 1));
     addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 1));
 
-    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 1)); // top
-    addVertexToList(vertices, Vector3(-size, size, size), Vector2(0, 0));
-    addVertexToList(vertices, Vector3(size, size, size), Vector2(1, 0));
-    addVertexToList(vertices, Vector3(size, size, -size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(-size, size, -size), Vector2(0, 0)); // top
+    addVertexToList(vertices, Vector3(-size, size, size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, size, size), Vector2(1, 1));
+    addVertexToList(vertices, Vector3(size, size, -size), Vector2(0, 1));
 
     addVertexToList(vertices, Vector3(-size, -size, -size), Vector2(0, 0)); // bottom
-    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(0, 1));
+    addVertexToList(vertices, Vector3(-size, -size, size), Vector2(1, 0));
     addVertexToList(vertices, Vector3(size, -size, size), Vector2(1, 1));
-    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(1, 0));
+    addVertexToList(vertices, Vector3(size, -size, -size), Vector2(0, 1));
 
     // Specify material (only ambient contribution with no reflection/refraction!)
     Material material(10.0f, 0.0f, 0.0f, 0.0f,
