@@ -16,6 +16,7 @@ void RendererWorker::render()
     unsigned int canvasWidth = canvas->getWidth();
     unsigned int canvasHeight = canvas->getHeight();
     Colour resultantColour;
+   
 	for (unsigned int j = 0; (j < canvasHeight); j++)
 	{
 		for (unsigned int i = 0; (i < canvasWidth); i++)

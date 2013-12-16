@@ -25,6 +25,8 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	// Delete the worker and the thread when render has finished
 	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
 	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	
+	// Connect application quite signal to thread's stop
+	// TODO: clean up thread elegantly so that there is no segmentation fault
+	// Start rendering!
 	thread->start();
 }

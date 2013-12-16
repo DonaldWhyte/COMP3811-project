@@ -1,11 +1,12 @@
+#include <sstream>
 #include <float.h>
 #include "ShapeLoaders.h"
 #include "BoundingShape.h"
 #include "Octree.h"
 #include "Mesh.h"
-#include "Triangle.h"
 #include "MeshTriangle.h"
 #include "TGA.h"
+#include "ResourceManager.h"
 
 using namespace raytracer;
 
@@ -14,12 +15,22 @@ static const float MATERIAL_REFLECTIVITY = 0.1f;
 /* Transparency and refractive index of materials loaded from Wavefront OBJ meshes. */
 static const float MATERIAL_REFRACTIVE_INDEX = 0.0f;
 
+/* Generate unique ID for mesh. */
+std::string generateMeshID()
+{
+	static unsigned int idCount = 0;
+	idCount++;
+	
+	std::stringstream ss;
+	ss << "generated-mesh-" << idCount;
+	return ss.str();
+}
+
+/* Compute height at given point on terrain grid using heightmap. */
 float getHeight(Image* image, int x, int y, float maxHeight)
 {
     return image->get(x, y).r * maxHeight;
 }
-
-// TODO: provide ways to cleanup Mesh and Texture
 
 Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     float cellSize, float maxHeight, const Vector3& offset, Texture* texture)
@@ -76,7 +87,9 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         // Material only has ambient and diffuse (no specular or reflection!)
         Material material(2.0f, 0.6f, 0.0f, 0.0f, Material::NO_REFLECTION,
             Material::NO_REFRACTION, Colour(0.2f, 0.7f, 0.2f), texture);
-        Mesh* mesh = new Mesh(vertices, material);
+        // Construct mesh to hold the terrain's vertices
+        ResourceManager* resourceManager = ResourceManager::getInstance();
+        Mesh* mesh = resourceManager->createMesh(generateMeshID(), vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;
         triangles.reserve((width - 1) * (height - 1) * 2);
@@ -115,7 +128,6 @@ void addVertexToList(VertexList& vertices, const Vector3& position, const Vector
 
 Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTextures)
 {
-    // TODO: find good sky box texture and split into appropriate images
     if (skyBoxTextures.size() != 6)
     {
         std::cerr << "Exactly six textures are required to construct sky boxes ("
@@ -163,6 +175,7 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
         Material::NO_REFLECTION, Material::NO_REFRACTION,
         Colour(), NULL);
     // Construct a mesh for each face of the sky box
+    ResourceManager* resourceManager = ResourceManager::getInstance();
     std::vector<Mesh*> faceMeshes(6);
     for (unsigned int i = 0; (i < faceMeshes.size()); i++)
     {
@@ -170,8 +183,8 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
         VertexList::const_iterator end = start + 4;
         Material faceMaterial = material;
         faceMaterial.setTexture(skyBoxTextures[i]);
-
-        faceMeshes[i] = new Mesh(VertexList(start, end), faceMaterial);
+		faceMeshes[i] = resourceManager->createMesh(generateMeshID(),
+			VertexList(start, end), faceMaterial);  
     }
 
     std::vector<Shape*> triangles(6 * 2); // two triangles for each of the six faces

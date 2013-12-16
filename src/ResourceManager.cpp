@@ -147,3 +147,12 @@ void ResourceManager::clearAll()
 	clearMeshes();
 	clearTextures();
 }
+
+ResourceManager* ResourceManager::instance = NULL;
+ResourceManager* ResourceManager::getInstance()
+{
+    // Lazy initialisation of singleton instance
+    if (!instance)
+        instance = new ResourceManager();
+    return instance;
+}

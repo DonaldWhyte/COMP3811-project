@@ -7,7 +7,7 @@
 #include "Sphere.h"
 #include "ShapeLoaders.h"
 #include "Camera.h"
-#include "TGA.h"
+#include "ResourceManager.h"
 #include "Raytracer.h"
 
 using namespace raytracer;
@@ -21,21 +21,23 @@ int main(int argc, char* argv[])
     // Seed random number generator for varying results
     srand(time(NULL));
     // Load resources
-    Image* worldMapImage = tga::readTGAFile("resources/world_map.tga");
-    Texture* worldMapTexture = new Texture(worldMapImage);
-    Image* terrainTextureImage = tga::readTGAFile("resources/terrain.tga");
-    Texture* terrainTexture = new Texture(terrainTextureImage);
+    ResourceManager* resourceManager = ResourceManager::getInstance();
+    Image* terrainTextureImage = resourceManager->createImage("terrainImage", "resources/terrain.tga");
+    Texture* terrainTexture = resourceManager->createTexture("terainTexture", "terrainImage");
     std::vector<Image*> skyBoxImages(6);
-    skyBoxImages[0] = tga::readTGAFile("resources/miramar_ft.tga");
-    skyBoxImages[1] = tga::readTGAFile("resources/miramar_rt.tga");
-    skyBoxImages[2] = tga::readTGAFile("resources/miramar_bk.tga");
-    skyBoxImages[3] = tga::readTGAFile("resources/miramar_lf.tga");
-    skyBoxImages[4] = tga::readTGAFile("resources/miramar_up.tga");
-    skyBoxImages[5] = tga::readTGAFile("resources/miramar_dn.tga");
+    skyBoxImages[0] = resourceManager->createImage("skyboxFront", "resources/miramar_ft.tga");
+    skyBoxImages[1] = resourceManager->createImage("skyboxRight", "resources/miramar_rt.tga");
+    skyBoxImages[2] = resourceManager->createImage("skyboxBack", "resources/miramar_bk.tga");
+    skyBoxImages[3] = resourceManager->createImage("skyboxLeft", "resources/miramar_lf.tga");
+    skyBoxImages[4] = resourceManager->createImage("skyboxUp", "resources/miramar_up.tga");
+    skyBoxImages[5] = resourceManager->createImage("skyboxDown", "resources/miramar_dn.tga");    
     std::vector<Texture*> skyBoxTextures(6);
-    for (unsigned int i = 0; (i < skyBoxTextures.size()); i++)
-        if (skyBoxImages[i])
-            skyBoxTextures[i] = new Texture(skyBoxImages[i]);
+    skyBoxTextures[0] = resourceManager->createTexture("skyboxFrontTexture", "skyboxFront");
+    skyBoxTextures[1] = resourceManager->createTexture("skyboxRightTexture", "skyboxRight");
+	skyBoxTextures[2] = resourceManager->createTexture("skyboxBackTexture", "skyboxBack");
+	skyBoxTextures[3] = resourceManager->createTexture("skyboxLeftTexture", "skyboxLeft");
+	skyBoxTextures[4] = resourceManager->createTexture("skyboxUpTexture", "skyboxUp");
+	skyBoxTextures[5] = resourceManager->createTexture("skyboxDownTexture", "skyboxDown");
     // Define scene
     AABB sceneBoundary(Vector3(-10000, -10000, -10000), Vector3(10000, 10000, 10000));
     Camera camera(
@@ -60,7 +62,7 @@ int main(int argc, char* argv[])
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     // Load terrain heightmap
-    Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
+    Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
         -((TERRAIN_CELL_SIZE * terrainHeightmap->getWidth()) / 2.0f),
         0.0f,
@@ -99,15 +101,9 @@ int main(int argc, char* argv[])
 	window.show();
 	app.exec();
 	
-    // Cleanup resources
-    delete worldMapImage;
-    delete worldMapTexture;
-    delete terrainTextureImage;
-    delete terrainTexture;
-    for (unsigned int i = 0; (i < skyBoxImages.size()); i++)
-        delete skyBoxImages[i];
-    for (unsigned int i = 0; (i < skyBoxTextures.size()); i++)
-        delete skyBoxTextures[i];	
+	// Clean up resources
+	resourceManager->clearAll();
+	delete resourceManager;
 
 	return 0;
 }

@@ -35,10 +35,15 @@ public:
 	void clearTextures();
 	void clearAll();
 	
+	/* Return global, singleton instance of resource manager. */
+	static ResourceManager* getInstance();
+	
 private:
 	typedef std::map<std::string, Image*> ImageTable;
 	typedef std::map<std::string, Mesh*> MeshTable;
 	typedef std::map<std::string, Texture*> TextureTable;
+	
+	static ResourceManager* instance;
 
 	ImageTable images;
 	MeshTable meshes;
