@@ -10,7 +10,6 @@
 /* Reflectivity of materials loaded from Wavefront OBJ meshes. */
 static const float MATERIAL_REFLECTIVITY = 0.1f;
 /* Transparency and refractive index of materials loaded from Wavefront OBJ meshes. */
-static const float MATERIAL_TRANSPARENCY = 0.0f;
 static const float MATERIAL_REFRACTIVE_INDEX = 0.0f;
 
 float getHeight(Image* image, int x, int y, float maxHeight)
@@ -74,7 +73,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
 
         // Material only has ambient and diffuse (no specular or reflection!)
         Material material(2.0f, 0.6f, 0.0f, 0.0f, Material::NO_REFLECTION,
-            0.0f, Material::NO_REFRACTION, Colour(0.2f, 0.7f, 0.2f), texture);
+            Material::NO_REFRACTION, Colour(0.2f, 0.7f, 0.2f), texture);
         Mesh* mesh = new Mesh(vertices, material);
         // Create triangles to represent the terrain
         ShapeList triangles;
@@ -159,7 +158,7 @@ Shape* shapeloaders::getSkyBox(float size, const std::vector<Texture*>& skyBoxTe
 
     // Specify material (only ambient contribution with no reflection/refraction!)
     Material material(10.0f, 0.0f, 0.0f, 0.0f,
-        Material::NO_REFLECTION, 0.0f, Material::NO_REFRACTION,
+        Material::NO_REFLECTION, Material::NO_REFRACTION,
         Colour(), NULL);
     // Construct a mesh for each face of the sky box
     std::vector<Mesh*> faceMeshes(6);

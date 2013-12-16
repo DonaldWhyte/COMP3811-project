@@ -18,15 +18,13 @@ public:
 
     Material();
     Material(float ka, float kd, float ks, float n, float reflectionFactor,
-        float transparencyFactor, float refractiveIndex,
-        const Colour& colour, Texture* texture = NULL);
+        float refractiveIndex, const Colour& colour, Texture* texture = NULL);
 
     float ambientIntensity() const;
     float diffuseIntensity() const;
     float specularIntensity() const;
     float specularExponent() const;
     float reflectivity() const;
-    float transparency() const;
     float refractiveIndex() const;
     const Colour& getColour() const;
     Texture* getTexture() const;
@@ -35,7 +33,6 @@ public:
     void setSpecularIntensity(float newKS);
     void setSpecularExponent(float n);
     void setReflectivity(float newReflectionFactor);
-    void setTransparency(float newTransparencyFactor);
     void setRefractiveIndex(float newRefractiveIndex);
     void setColour(const Colour& newAmbient);
     void setTexture(Texture* newTexture);
@@ -48,8 +45,7 @@ private:
     float n; // specular exponent
     // How much light this object reflects (0 = no reflection, 1 = mirror)
     float reflectionFactor;
-    // How transparent the material is (0 = opaque, 1 = completely transparent)
-    float transparencyFactor;
+    // This determines how the surface refracts light
     float surfaceRefractiveIndex;
 
     Colour colour;

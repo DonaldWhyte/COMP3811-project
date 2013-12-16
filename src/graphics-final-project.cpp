@@ -17,8 +17,8 @@ static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
 
 static const float TERRAIN_CELL_SIZE = 10.0f;
-static const float TERRAIN_MAX_HEIGHT = 75.0f;
-static const float SKYBOX_SIZE = 100.0f;
+static const float TERRAIN_MAX_HEIGHT = 100.0f;
+static const float SKYBOX_SIZE = 200.0f;
 
 int main(int argc, char** argv)
 {
@@ -31,12 +31,12 @@ int main(int argc, char** argv)
     Image* terrainTextureImage = tga::readTGAFile("resources/terrain.tga");
     Texture* terrainTexture = new Texture(terrainTextureImage);
     std::vector<Image*> skyBoxImages(6);
-    skyBoxImages[0] = tga::readTGAFile("resources/stormydays_ft.tga");
-    skyBoxImages[1] = tga::readTGAFile("resources/stormydays_rt.tga");
-    skyBoxImages[2] = tga::readTGAFile("resources/stormydays_bk.tga");
-    skyBoxImages[3] = tga::readTGAFile("resources/stormydays_lf.tga");
-    skyBoxImages[4] = tga::readTGAFile("resources/stormydays_up.tga");
-    skyBoxImages[5] = tga::readTGAFile("resources/stormydays_dn.tga");
+    skyBoxImages[0] = tga::readTGAFile("resources/miramar_ft.tga");
+    skyBoxImages[1] = tga::readTGAFile("resources/miramar_rt.tga");
+    skyBoxImages[2] = tga::readTGAFile("resources/miramar_bk.tga");
+    skyBoxImages[3] = tga::readTGAFile("resources/miramar_lf.tga");
+    skyBoxImages[4] = tga::readTGAFile("resources/miramar_up.tga");
+    skyBoxImages[5] = tga::readTGAFile("resources/miramar_dn.tga");
     std::vector<Texture*> skyBoxTextures(6);
     for (unsigned int i = 0; (i < skyBoxTextures.size()); i++)
         if (skyBoxImages[i])
@@ -55,11 +55,15 @@ int main(int argc, char** argv)
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-        0.0f, Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
+        Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
+    ));
+    shapes.push_back(new Sphere(Vector3(-5.0f, 12.0f, -21.0f), 2.0f,
+        new Material(0.5f, 3.0f, 1.0f, 20.0f, 1.0f,
+        Material::NO_REFRACTION, Colour(), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, 1.0f,
-            0.0f, Material::NO_REFRACTION, Colour(0.8f, 0.2f, 0.2f), NULL)
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
+            1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
@@ -68,9 +72,9 @@ int main(int argc, char** argv)
         0.0f,
         -((TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
-    /*shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
-        terrainOffset, terrainTexture));*/
+        terrainOffset, terrainTexture));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyBoxTextures));
 
@@ -79,7 +83,8 @@ int main(int argc, char** argv)
     raytracer.setRootShape(new BoundingShape(shapes, sceneBoundary));
     // Add light source
     raytracer.addLight(PointLight(
-        Vector3(-20, 20, 20),
+        //Vector3(-20, 20, 20),
+        Vector3(-100, 70, 100),
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)

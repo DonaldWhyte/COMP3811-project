@@ -1,16 +1,17 @@
 #include "Material.h"
 
 Material::Material() : ka(0), kd(0), ks(0), n(0),
-    reflectionFactor(NO_REFLECTION), transparencyFactor(0),
-    surfaceRefractiveIndex(NO_REFRACTION), texture(NULL)
+    reflectionFactor(NO_REFLECTION),
+    surfaceRefractiveIndex(NO_REFRACTION),
+    texture(NULL)
 {
 }
 
 Material::Material(float ka, float kd, float ks, float n,
-    float reflectionFactor, float transparencyFactor,
-    float refractiveIndex, const Colour& colour, Texture* texture) :
-    ka(ka), kd(kd), ks(ks), n(n), reflectionFactor(reflectionFactor),
-    transparencyFactor(transparencyFactor),
+    float reflectionFactor, float refractiveIndex,
+    const Colour& colour, Texture* texture) :
+    ka(ka), kd(kd), ks(ks), n(n),
+    reflectionFactor(reflectionFactor),
     surfaceRefractiveIndex(refractiveIndex),
     colour(colour), texture(texture)
 {
@@ -39,11 +40,6 @@ float Material::specularExponent() const
 float Material::reflectivity() const
 {
     return reflectionFactor;
-}
-
-float Material::transparency() const
-{
-    return transparencyFactor;
 }
 
 float Material::refractiveIndex() const
@@ -85,11 +81,6 @@ void Material::setSpecularExponent(float newN)
 void Material::setReflectivity(float newReflectionFactor)
 {
     reflectionFactor = newReflectionFactor;
-}
-
-void Material::setTransparency(float newTransparencyFactor)
-{
-    transparencyFactor = newTransparencyFactor;
 }
 
 void Material::setRefractiveIndex(float newRefractiveIndex)
