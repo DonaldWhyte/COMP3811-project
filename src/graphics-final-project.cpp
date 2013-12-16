@@ -39,6 +39,9 @@ long getTimeInMilliseconds()
 #endif
 }
 
+// Only define the main function if the Qt GUI has not been enabled 
+#ifndef DW_RAYTRACER_GUI_ENABLED
+
 int main(int argc, char** argv)
 {
     // Seed random number generator for varying results
@@ -161,3 +164,5 @@ int main(int argc, char** argv)
 
     return 0;
 }
+
+#endif

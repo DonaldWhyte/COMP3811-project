@@ -1,3 +1,5 @@
+# Temporary files
+*~
 # Binary output
 bin/*
 obj/*
@@ -9,3 +11,7 @@ BIG_OUTPUT.tga
 *.depend
 *.layout
 *.cbTemp
+# QT output
+moc_*
+Makefile
+*.pro
