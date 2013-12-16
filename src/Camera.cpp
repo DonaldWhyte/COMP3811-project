@@ -3,7 +3,7 @@
 using namespace raytracer;
 
 Camera::Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-    const Rectangle& viewingRectangle, float distance, bool orthographic) :
+    const Rect& viewingRectangle, float distance, bool orthographic) :
     position(position), distance(distance), viewingRect(viewingRectangle),
     orthographic(orthographic)
 {

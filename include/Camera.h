@@ -5,12 +5,12 @@
 
 namespace raytracer {
 
-struct Rectangle
+struct Rect
 {
     float left, right;
     float top, bottom;
 
-    Rectangle(float left, float right, float top, float bottom) :
+    Rect(float left, float right, float top, float bottom) :
         left(left), right(right), top(top), bottom(bottom)
     {
     }
@@ -22,7 +22,7 @@ class Camera
 
 public:
     Camera(const Vector3& position, const Vector3& direction, const Vector3& up,
-        const Rectangle& viewingRectangle, float distance, bool orthographic = false);
+        const Rect& viewingRectangle, float distance, bool orthographic = false);
 
     Ray getRayToPixel(float pixelX, float pixelY);
 
@@ -49,7 +49,7 @@ private:
     float distance;
 
     // Coordinates of viewing rectangle
-    Rectangle viewingRect;
+    Rect viewingRect;
     // Vectors across on bottom edge and upwards on left edge OF VIEWING RECENTANGLE
     Vector3 acrossVec;
     Vector3 upVec;

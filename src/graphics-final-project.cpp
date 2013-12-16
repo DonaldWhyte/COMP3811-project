@@ -22,6 +22,23 @@ static const float TERRAIN_CELL_SIZE = 10.0f;
 static const float TERRAIN_MAX_HEIGHT = 100.0f;
 static const float SKYBOX_SIZE = 200.0f;
 
+/* Cross-platform millisecond time. */
+#if WIN32
+    #include <windows.h>
+#else
+    #include <sys/time.h>
+#endif
+long getTimeInMilliseconds()
+{
+#if WIN32
+    return GetTickCount();
+#else
+    struct timeval tv;
+    gettimeofday(&tv, NULL);
+    return static_cast<long>(tv.tv_sec) * 1000 + tv.tv_usec / 1000;
+#endif
+}
+
 int main(int argc, char** argv)
 {
     // Seed random number generator for varying results
@@ -50,7 +67,7 @@ int main(int argc, char** argv)
         Vector3(0, 5.0f, 0), // position
         Vector3(0, 0, -1), // direction
         Vector3(0, 1, 0), // up
-        Rectangle(-100, 100, -100, 100), // viewing rectangle
+        Rect(-100, 100, -100, 100), // viewing rectangle
         200,
         false
     );
@@ -95,9 +112,11 @@ int main(int argc, char** argv)
     Colour backgroundColour(0.2f, 0.2f, 0.2f);
     Image output(IMAGE_WIDTH, IMAGE_HEIGHT);
     output.clear(backgroundColour);
-    // Perform raytrace!
+    // Perform raytrace
     Colour resultantColour;
     float range = 1.0f / output.getWidth();
+
+    long startTime = getTimeInMilliseconds();
     // Loop over the pixels of the image
     for (int i = 0; (i < output.getWidth()); i++)
     {
@@ -117,12 +136,16 @@ int main(int argc, char** argv)
         }
     }
 
+    // Compute time the raytrace took
+    double elapsedTime = getTimeInMilliseconds() - startTime;
+    elapsedTime /= 1000.0f; // convert milliseconds to seconds
     // Display statistics on raytracer
     std::cout << "Primary rays: " << raytracer.primaryRays() << std::endl;
     std::cout << "Reflected rays: " << raytracer.reflectedRays() << std::endl;
     std::cout << "Refracted rays: " << raytracer.refractedRays() << std::endl;
     std::cout << "Shadow rays: " << raytracer.shadowRays() << std::endl;
     std::cout << "Total rays: " << raytracer.totalRays() << std::endl;
+    std::cout << "Time taken: " << elapsedTime << " seconds" << std::endl;
 
     tga::writeTGAFile("output.tga", output);
 
