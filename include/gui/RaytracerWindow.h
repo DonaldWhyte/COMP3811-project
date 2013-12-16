@@ -3,6 +3,7 @@
 
 #include <QMainWindow>
 #include "Raytracer.h"
+#include "gui/CanvasWidget.h"
 
 namespace raytracer { namespace gui {
 
@@ -19,12 +20,14 @@ public:
 	virtual ~RaytracerWindow();
 	
 	const QAction* getQuitAction() const;
+	CanvasWidget* getCanvasWidget();
 	
 private:
 	Raytracer* renderer;
 	
 	QMenu* fileMenu;
 		QAction* quitAction;
+	CanvasWidget* canvasWidget;
 
 };
 
