@@ -41,10 +41,12 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
             record.pointOfIntersection = ray.origin() + (ray.direction() * t);
             record.normal = ray.origin() + (t * ray.direction()) - centre;
             record.normal = record.normal.normalise(); // normalise unit vector to get just direction
+            // If refraction ray, reverse the normal
+            if (ray.direction().dot(record.normal) > 0)
+                record.normal = -record.normal;
             record.texCoord = computeTexCoord(record.pointOfIntersection);
 
             record.hitShape = reinterpret_cast<const Shape*>(this);
-
             return true;
         }
     }
