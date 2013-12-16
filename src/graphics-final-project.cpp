@@ -59,7 +59,7 @@ int main(int argc, char** argv)
     ));
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-            0.0f, 1.6, Colour(0.8f, 0.2f, 0.2f), NULL)
+            0.0f, 1.66, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
@@ -73,7 +73,6 @@ int main(int argc, char** argv)
         terrainOffset, terrainTexture));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyBoxTextures));
-
 
     // Create raytracer
     Raytracer raytracer(camera);

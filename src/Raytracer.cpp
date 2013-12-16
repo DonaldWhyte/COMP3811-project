@@ -247,6 +247,8 @@ bool Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     const Vector3& pointOfIntersection, const Vector3& surfaceNormal,
     float refractiveIndex1, float refractiveIndex2, Ray& result)
 {
+    // TODO: refraction doesn't QUITE work correctly - FIX
+
     // NOTE: For simplicity, it is assumed that all rays were
     // travelling through the air BEFORE they hit the surface
     // that is refracting light
