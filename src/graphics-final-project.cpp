@@ -53,13 +53,13 @@ int main(int argc, char** argv)
         false
     );
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -30.0f), 2.0f,
+    shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
         0.0f, Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-            0.0f, 1.33, Colour(0.8f, 0.2f, 0.2f), NULL)
+            0.0f, 1.6, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
     // Load terrain heightmap
     Image* terrainHeightmap = tga::readTGAFile("resources/heightmap.tga");
@@ -80,7 +80,7 @@ int main(int argc, char** argv)
     raytracer.setRootShape(new BoundingShape(shapes, sceneBoundary));
     // Add light source
     raytracer.addLight(PointLight(
-        Vector3(-100, 70, 0),
+        Vector3(-100, 70, 100),
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)

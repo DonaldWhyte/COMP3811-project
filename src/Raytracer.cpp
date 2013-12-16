@@ -175,10 +175,11 @@ Colour Raytracer::reflectionAndRefraction(const Vector3& rayDirection, const Hit
     float refractionFactor = 0.0f;
     if (refractiveIndex != Material::NO_REFRACTION)
     {
-        // Compute surface's actual reflectivity, given its refraction index
+        // Compute surface's actual reflectivity BASED on its refraction index
         // (and the refraction index of the previous medium the ray was travelling through)
         reflectionFactor = computeSurfaceReflectivity(rayDirection,
             record.normal, originRefractiveIndex, refractiveIndex);
+        // Transmittence is one minus reflection (Realistic Ray Reacing, page 177)
         refractionFactor = 1.0f - reflectionFactor;
     }
     // If there is no contribution from either, then return no colour
@@ -219,25 +220,27 @@ Colour Raytracer::reflectionAndRefraction(const Vector3& rayDirection, const Hit
 }
 
 /* The following two methods were implemented with help from Realistic
- * Raytracing and: http://steve.hollasch.net/cgindex/render/refraction.txt */
+ * Raytracing (pages 175-178) and:
+ * http://steve.hollasch.net/cgindex/render/refraction.txt */
 float Raytracer::computeSurfaceReflectivity(const Vector3& incoming,
     const Vector3& surfaceNormal, float originRefractiveIndex,
     float hitRefractiveIndex)
 {
-    // TODO: reimplement and understand
+    // Compute angle of refraction using refractive indices
     double n = originRefractiveIndex / hitRefractiveIndex;
-    double cosI = -surfaceNormal.dot(incoming);
-    double sinT2 = n * n * (1.0 - cosI * cosI);
-
-    if (sinT2 > 1.0) {
-      // Total Internal Reflection.
-      return 1.0;
-    }
-
+    double cosIncoming = -(surfaceNormal.dot(incoming)); // angle of incoming direction
+    double sinT2 = n * n * (1.0 - cosIncoming * cosIncoming);
+    // Check for total internal reflection (then we have full reflectance)
+    // (because cosT = sqrt(0))
+    if (sinT2 > 1.0)
+        return 1.0;
+    // Get cosine of refracted angle
     double cosT = sqrt(1.0f - sinT2);
-    double r0rth = (originRefractiveIndex * cosI - hitRefractiveIndex * cosT) / (originRefractiveIndex * cosI + hitRefractiveIndex * cosT);
-    double rPar = (hitRefractiveIndex * cosI - originRefractiveIndex * cosT) / (hitRefractiveIndex * cosI + originRefractiveIndex * cosT);
-    return (r0rth * r0rth + rPar * rPar) / 2.0f;
+    // Use this to compute the reflectivity of the surface with
+    // regards to the refractive indices (Realistic Raytracing, Equation 12.7)
+    double reflOrigin = (originRefractiveIndex * cosIncoming - hitRefractiveIndex * cosT) / (originRefractiveIndex * cosIncoming + hitRefractiveIndex * cosT);
+    double reflHit = (hitRefractiveIndex * cosIncoming - originRefractiveIndex * cosT) / (hitRefractiveIndex * cosIncoming + originRefractiveIndex * cosT);
+    return (reflOrigin * reflOrigin + reflHit * reflHit) / 2.0f;
 }
 
 bool Raytracer::computeRefractedRay(const Vector3 incomingDirection,
@@ -247,18 +250,19 @@ bool Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     // NOTE: For simplicity, it is assumed that all rays were
     // travelling through the air BEFORE they hit the surface
     // that is refracting light
-    float eta = refractiveIndex1 / refractiveIndex2;
-    float c1 = -(incomingDirection.dot(surfaceNormal)); // incomingDirection = ray.direction?
-    float cs2 = 1 - eta * eta * (1 - c1 * c1);
-    // If < 0, then we have total internal refraction. DON'T create a ray for transmission.
-    Vector3 transmissionDirection;
-    if (cs2 >= 0)
+
+    // Equation: cos^2(theta) = 1 - ((n^2 * (1 - cos^2(theta))) / (n_t^2))
+    float n = refractiveIndex1 / refractiveIndex2;
+    float cosIncoming = -(incomingDirection.dot(surfaceNormal));
+    float sinT2 = n * n * (1.0 - cosIncoming * cosIncoming); // from Snell's law
+    if (sinT2 <= 1.0f)
     {
-        transmissionDirection = (eta * incomingDirection) + ((eta * c1 - sqrt(cs2)) * surfaceNormal);
-        result = Ray(pointOfIntersection, transmissionDirection);
+        float cosT = sqrt(1 - sinT2);
+        Vector3 refractionDirection = (n * incomingDirection) + ((n * cosIncoming - cosT) * surfaceNormal);
+        result = Ray(pointOfIntersection, refractionDirection);
         return true;
     }
-    // This means there is total internal reflection and NO REFRACTION.
+    // If sinT2 > 1, then we have total internal reflection and NO REFRACTION.
     // To handle this, 'false' is returned to tell the calling code that
     // no refraction ray could be computed
     else
