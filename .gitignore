@@ -3,7 +3,8 @@ bin/*
 obj/*
 *.o
 # Image output
-*.tga
+output.tga
+BIG_OUTPUT.tga
 # Code::Blocks metadata
 *.depend
 *.layout
