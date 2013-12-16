@@ -6,13 +6,27 @@
 namespace shapeloaders
 {
 
+    /* Load a uniform grid of vertices that represent terrain.
+     * The height values for each point on the grid is determined
+     * by a heightmap (image). */
     Shape* getTerrainFromHeightmap(const std::string& filename,
         float cellWidth, float maxHeight, const Vector3& offset,
         Texture* texture = NULL);
-    /* TODO: add comment */
-    Shape* getSkyBox(float size, const std::vector<Texture*>& skyBoxTexture);
-    Shape* getMeshFromOBJ(const std::string& filename,
-        const Vector3& translation, float scaleFactor = 1.0f);
+
+    /* Load a textured sky box with the specified size.
+     * 'skyBoxTextures' should contain exactly SIX elements,
+     * with correspond to the textures of the six faces of
+     * of the sky box. The following index mapping is used:
+     *     0 => front
+     *     1 => left
+     *     2 => back
+     *     3 => right
+     *     4 => top
+     *     5 => bottom
+     * If NULL is used, then that face of the sky box is not
+     * textured.
+    */
+    Shape* getSkyBox(float size, const std::vector<Texture*>& skyBoxTextures);
 
 }
 
