@@ -6,6 +6,8 @@
 #include "Shape.h"
 #include "Mesh.h"
 
+namespace raytracer {
+
 namespace common
 {
 
@@ -123,6 +125,8 @@ namespace common
     float randomFloat(float min, float max);
     /* Generate random 3D vector inside a circle using Monte Carlo method. */
     Vector3 monteCarloDirection();
+
+}
 
 }
 

@@ -4,6 +4,8 @@
 #include "Colour.h"
 #include "Texture.h"
 
+namespace raytracer {
+
 /* Material used for local illumination Phong lighting. */
 class Material
 {
@@ -52,5 +54,7 @@ private:
     Texture* texture;
 
 };
+
+}
 
 #endif

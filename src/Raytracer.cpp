@@ -4,6 +4,8 @@
 #include <cfloat>
 #include <algorithm>
 
+using namespace raytracer;
+
 Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
 {
     resetRayCount();

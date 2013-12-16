@@ -6,6 +6,8 @@
 #include "Camera.h"
 #include "Ray.h"
 
+namespace raytracer {
+
 static const int MAX_TRACE_DEPTH = 10;
 static const float MAX_RAY_DISTANCE = 100000.0f;
 // Determines the contribution of reflected/refracted colours
@@ -73,5 +75,7 @@ private:
     unsigned int numShadowRays;
 
 };
+
+}
 
 #endif

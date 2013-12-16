@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <string.h>
 
+using namespace raytracer;
+
 /* TGA reading code taken from an old project I made open-source
  * a few years ago. Source files can be found here:
  * https://code.google.com/p/parcel-game-engine/source/browse/src/TGAImage.h

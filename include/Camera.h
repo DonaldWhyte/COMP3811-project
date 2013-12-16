@@ -3,6 +3,8 @@
 
 #include "Ray.h"
 
+namespace raytracer {
+
 struct Rectangle
 {
     float left, right;
@@ -59,5 +61,7 @@ private:
     bool orthographic;
 
 };
+
+}
 
 #endif

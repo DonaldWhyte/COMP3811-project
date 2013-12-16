@@ -5,6 +5,8 @@
 #include "Ray.h"
 #include "Colour.h"
 
+namespace raytracer {
+
 class Sphere : public Shape
 {
 
@@ -23,5 +25,6 @@ private:
 
 };
 
+}
 
 #endif

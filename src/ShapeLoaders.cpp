@@ -7,6 +7,8 @@
 #include "MeshTriangle.h"
 #include "TGA.h"
 
+using namespace raytracer;
+
 /* Reflectivity of materials loaded from Wavefront OBJ meshes. */
 static const float MATERIAL_REFLECTIVITY = 0.1f;
 /* Transparency and refractive index of materials loaded from Wavefront OBJ meshes. */

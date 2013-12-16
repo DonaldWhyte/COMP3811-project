@@ -3,6 +3,8 @@
 
 #include "Shape.h"
 
+namespace raytracer {
+
 namespace shapeloaders
 {
 
@@ -27,6 +29,8 @@ namespace shapeloaders
      * textured.
     */
     Shape* getSkyBox(float size, const std::vector<Texture*>& skyBoxTextures);
+
+}
 
 }
 

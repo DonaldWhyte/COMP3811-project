@@ -4,10 +4,14 @@
 #include <string>
 #include "Image.h"
 
+namespace raytracer {
+
 namespace tga
 {
     Image* readTGAFile(const std::string& filename);
     void writeTGAFile(const std::string& filename, const Image& image);
+}
+
 }
 
 #endif

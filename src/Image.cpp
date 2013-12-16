@@ -1,6 +1,7 @@
 #include "Image.h"
 #include <cmath>
-#include <fstream>
+
+using namespace raytracer;
 
 Image::Image(int width, int height, const Colour& background)
     : width(width), height(height)

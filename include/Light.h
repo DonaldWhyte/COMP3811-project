@@ -6,6 +6,8 @@
 #include "Vector3.h"
 #include "Ray.h"
 
+namespace raytracer {
+
 class PointLight
 {
 
@@ -32,5 +34,7 @@ private:
 };
 
 typedef std::vector<PointLight> LightList;
+
+}
 
 #endif

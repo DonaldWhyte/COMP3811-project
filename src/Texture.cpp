@@ -1,5 +1,7 @@
 #include "Texture.h"
 
+using namespace raytracer;
+
 Texture::Texture(Image* sourceImage) : sourceImage(sourceImage)
 {
 }

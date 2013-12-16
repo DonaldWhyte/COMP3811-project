@@ -5,7 +5,7 @@
 #include <cmath>
 #include <algorithm>
 
-/* Forward declaration of Vector3 class. */
+namespace raytracer {
 
 class Vector3
 {
@@ -190,6 +190,8 @@ namespace {
         os << "(" << vec.x << ", " << vec.y << ", " << vec.z << ")";
         return os;
     }
+}
+
 }
 
 #endif

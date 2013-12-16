@@ -1,6 +1,8 @@
 #include "MeshTriangle.h"
 #include "Common.h"
 
+using namespace raytracer;
+
 MeshTriangle::MeshTriangle(Mesh* mesh, int v1, int v2, int v3) :
     mesh(mesh), v1(v1), v2(v2), v3(v3)
 {

@@ -4,6 +4,8 @@
 #include "Vector3.h"
 #include "Ray.h"
 
+namespace raytracer {
+
 class AABB
 {
 
@@ -57,5 +59,7 @@ public:
     Vector3 bounds[2]; // 0 = min, 1 = max
 
 };
+
+}
 
 #endif

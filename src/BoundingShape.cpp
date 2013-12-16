@@ -1,5 +1,7 @@
 #include "BoundingShape.h"
 
+using namespace raytracer;
+
 BoundingShape::BoundingShape(const ShapeList& children, AABB& boundingBox)
     : children(children), boundingBox(boundingBox)
 {

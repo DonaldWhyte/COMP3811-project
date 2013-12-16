@@ -6,6 +6,8 @@
 #include "Vector3.h"
 #include "Material.h"
 
+namespace raytracer {
+
 struct Vertex
 {
     Vector3 position;
@@ -40,5 +42,7 @@ private:
     Material material;
 
 };
+
+}
 
 #endif

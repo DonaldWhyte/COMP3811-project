@@ -3,6 +3,8 @@
 
 #include "Shape.h"
 
+namespace raytracer {
+
 class Triangle : public Shape
 {
 
@@ -19,5 +21,7 @@ private:
     Vector3 centrePoint;
 
 };
+
+}
 
 #endif

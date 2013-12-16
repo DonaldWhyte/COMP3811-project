@@ -1,5 +1,7 @@
 #include "Colour.h"
 
+using namespace raytracer;
+
 Colour::Colour(float r, float g, float b) : r(r), g(g), b(b)
 {
 }
@@ -56,33 +58,32 @@ Colour Colour::operator-() const
     return Colour(-r, -g, -b);
 }
 
-Colour operator*(const Colour& a, float k)
+Colour raytracer::operator*(const Colour& a, float k)
 {
     return Colour(a.r * k, a.g * k, a.b * k);
 }
 
-Colour operator*(float k, const Colour& a)
+Colour raytracer::operator*(float k, const Colour& a)
 {
     return Colour(a.r * k, a.g * k, a.b * k);
 }
 
-Colour operator/(const Colour& a, float k)
+Colour raytracer::operator/(const Colour& a, float k)
 {
     return Colour(a.r / k, a.g / k, a.b / k);
 }
 
-Colour operator*(const Colour& a, const Colour& b)
+Colour raytracer::operator*(const Colour& a, const Colour& b)
 {
     return Colour(a.r * b.r, a.g * b.g, a.b * b.b);
 }
 
-Colour operator/(const Colour& a, const Colour& b)
+Colour raytracer::operator/(const Colour& a, const Colour& b)
 {
     return Colour(a.r / b.r, a.g / b.g, a.b / b.b);
 }
 
-Colour operator+(const Colour& a, const Colour& b)
+Colour raytracer::operator+(const Colour& a, const Colour& b)
 {
     return Colour(a.r + b.r, a.g + b.g, a.b + b.b);
 }
-

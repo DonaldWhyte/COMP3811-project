@@ -1,6 +1,8 @@
 #include "Triangle.h"
 #include "Common.h"
 
+using namespace raytracer;
+
 Triangle::Triangle(const Vector3& p1, const Vector3& p2, const Vector3& p3, Material* material) :
     p1(p1), p2(p2), p3(p3)
 {

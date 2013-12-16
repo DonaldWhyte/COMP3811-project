@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "Mesh.h"
 
+namespace raytracer {
+
 class MeshTriangle : public Shape
 {
 
@@ -26,5 +28,7 @@ private:
     Vector3 centrePoint;
 
 };
+
+}
 
 #endif

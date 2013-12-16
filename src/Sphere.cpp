@@ -1,6 +1,8 @@
 #include "Sphere.h"
 #include <cmath>
 
+using namespace raytracer;
+
 Sphere::Sphere(const Vector3& centre, float radius, Material* material) :
     centre(centre), radius(radius)
 {

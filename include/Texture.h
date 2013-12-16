@@ -3,6 +3,8 @@
 
 #include "Image.h"
 
+namespace raytracer {
+
 class Texture
 {
 
@@ -17,5 +19,7 @@ private:
     Image* sourceImage;
 
 };
+
+}
 
 #endif

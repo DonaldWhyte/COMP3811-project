@@ -1,7 +1,9 @@
-#ifndef DW_RAYTRACE_COLOUR_H
-#define DW_RAYTRACE_COLOUR_H
+#ifndef DW_RAYTRACER_COLOUR_H
+#define DW_RAYTRACER_COLOUR_H
 
 #include <iostream>
+
+namespace raytracer {
 
 class Colour
 {
@@ -40,6 +42,8 @@ namespace
         out << "(" << colour.r << ", " << colour.g << ", " << colour.b << ")";
         return out;
     }
+}
+
 }
 
 #endif

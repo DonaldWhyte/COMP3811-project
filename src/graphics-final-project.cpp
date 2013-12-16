@@ -13,6 +13,8 @@
 #include "Octree.h"
 #include "Common.h"
 
+using namespace raytracer;
+
 static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
 

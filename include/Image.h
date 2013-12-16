@@ -5,6 +5,8 @@
 #include <string>
 #include "Colour.h"
 
+namespace raytracer {
+
 class Image
 {
 
@@ -26,5 +28,7 @@ private:
     int height;
 
 };
+
+}
 
 #endif

@@ -1,6 +1,8 @@
 #include "Common.h"
 #include <cstdlib>
 
+using namespace raytracer;
+
 float common::randomFloat(float min, float max)
 {
     // Compute scalaing range

@@ -1,5 +1,7 @@
 #include "Light.h"
 
+using namespace raytracer;
+
 PointLight::PointLight(const Vector3& position, const Colour& ambient,
     const Colour& diffuse, const Colour& specular) :
     position(position), ambient(ambient), diffuse(diffuse),

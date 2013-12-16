@@ -1,5 +1,7 @@
 #include "Octree.h"
 
+using namespace raytracer;
+
 Octree::Octree(const AABB& boundary) : boundary(boundary), numShapes(0), numChildren(0)
 {
     // Initialise all shapes and child nodes to NULL

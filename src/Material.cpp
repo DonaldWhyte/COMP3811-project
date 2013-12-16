@@ -1,5 +1,7 @@
 #include "Material.h"
 
+using namespace raytracer;
+
 Material::Material() : ka(0), kd(0), ks(0), n(0),
     reflectionFactor(NO_REFLECTION),
     surfaceRefractiveIndex(NO_REFRACTION),

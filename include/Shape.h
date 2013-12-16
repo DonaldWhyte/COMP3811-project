@@ -8,6 +8,8 @@
 #include "Material.h"
 #include "Colour.h"
 
+namespace raytracer {
+
 class Shape; //forward declaration for 'hitShape' member
 struct HitRecord
 {
@@ -51,5 +53,7 @@ protected:
 };
 
 typedef std::vector<Shape*> ShapeList;
+
+}
 
 #endif

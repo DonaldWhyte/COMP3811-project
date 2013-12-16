@@ -5,6 +5,8 @@
 #include <cmath>
 #include <algorithm>
 
+namespace raytracer {
+
 class Vector2
 {
 
@@ -173,6 +175,8 @@ namespace {
         os << "(" << vec.x << ", " << vec.y << ")";
         return os;
     }
+}
+
 }
 
 #endif

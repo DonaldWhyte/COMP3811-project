@@ -3,6 +3,8 @@
 
 #include "Vector3.h"
 
+namespace raytracer {
+
 class Ray
 {
 
@@ -64,5 +66,7 @@ private:
     Vector3 rInverseDirection;
 
 };
+
+}
 
 #endif

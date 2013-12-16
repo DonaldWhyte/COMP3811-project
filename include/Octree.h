@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "AABB.h"
 
+namespace raytracer {
+
 /* Test octree code to ensure it's functioning correctly. */
 namespace tests
 {
@@ -49,5 +51,7 @@ private:
     unsigned int numChildren; // amount of children node currently has
 
 };
+
+}
 
 #endif

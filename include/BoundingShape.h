@@ -4,6 +4,8 @@
 #include "Shape.h"
 #include "AABB.h"
 
+namespace raytracer {
+
 class BoundingShape : public Shape
 {
 
@@ -21,5 +23,7 @@ private:
     AABB boundingBox;
 
 };
+
+}
 
 #endif
