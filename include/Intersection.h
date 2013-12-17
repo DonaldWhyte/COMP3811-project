@@ -121,7 +121,67 @@ namespace intersection
         }
     }
     
-    // TODO cylinder hit
+    inline bool cylinderShadowHit(const Vector3& base, const Vector3& axis, float radius,
+    	const Ray& ray, float tMin, float tMax, float time)
+    {
+    	return false; // TODO
+	}
+	
+    inline bool cylinderHit(const Vector3& base, const Vector3& axis, float radius,
+    	const Ray& ray, float tMin, float tMax, float time, HitRecord& record)
+    {
+    	// Compute vector from ray origin to cylinder
+    	Vector3 rayToCyl = ray.origin() - base;
+    	Vector3 rayCos = ray.direction(); // TODO
+    	Vector3 n = ray.direction().cross(axis); // 
+    	
+    	float nLength = n.length();
+    	// If ray is parallel to cylinder
+    	if (nLength == 0)
+    	{
+    		float shortestDistance = rayToCyl.dot(axis);
+    		Vector3 D = rayToCyl - (shortestDistance * axis);
+    		shortestDistance = D.length();
+    		if (shortestDistance <= radius) // if ray inside cylinder
+    		{
+    			record.pointOfIntersection = axis;
+				record.normal = (record.pointOfIntersection - base).normalise();
+    			record.t = tMin;
+    			return true;
+    		}
+    		else
+			{
+				return false;
+			}
+		}
+		// If ray is NOT parallel to cylinder
+		else
+		{
+			n = n.normalise();
+			float shortestDistance = fabs(rayToCyl.dot(n));
+			bool isHit = false;
+			if (shortestDistance <= radius)
+			{
+				Vector3 o = rayToCyl.cross(axis);
+				float t = -(o.dot(n));
+				o = n.cross(axis).normalise();
+				float s = fabs( sqrt(radius * radius - shortestDistance * shortestDistance) / rayCos.dot(o)); 
+				
+				// Compute entering distance and use that to get exact point
+				// of intersection by travelling along the ray's direction.
+				float enteringDistance = (t - s);
+				if (enteringDistance < 0)
+					return false;
+					
+				record.pointOfIntersection = ray.origin() + (ray.direction() * enteringDistance);
+				record.normal = (record.pointOfIntersection - base).normalise();
+				record.t = enteringDistance;
+				
+				return true;
+			}
+			return false;
+		}
+	}
 
 }
 
