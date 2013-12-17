@@ -19,7 +19,6 @@ static const int IMAGE_WIDTH = 500;
 static const int IMAGE_HEIGHT = 500;
 
 static const float TERRAIN_CELL_SIZE = 10.0f;
-static const float TERRAIN_MAX_HEIGHT = 100.0f;
 static const float SKYBOX_SIZE = 200.0f;
 
 /* Cross-platform millisecond time. */
@@ -95,8 +94,8 @@ int main(int argc, char** argv)
         -((TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
     shapes.push_back(shapeloaders::getTerrainFromHeightmap(
-        "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
-        terrainOffset, terrainTexture));
+        "resources/heightmap.tga", TERRAIN_CELL_SIZE,
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyBoxTextures));
 

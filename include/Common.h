@@ -11,6 +11,9 @@ namespace raytracer {
 namespace common
 {
 
+	/* TODO: comment */
+	static const float TERRAIN_MAX_HEIGHT = 100.0f;
+
     /* A separate triangle intersection test is used for generic vertices, which
      * contain vertex attributes other than position, so those attributes
      * be interpolated correctly (e.g. texture coordinate).

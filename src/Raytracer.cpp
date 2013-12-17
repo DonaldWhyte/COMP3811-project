@@ -1,4 +1,5 @@
 #include "Raytracer.h"
+#include "TerrainHeightTexture.h"
 #include "Common.h"
 #include <cmath>
 #include <cfloat>
@@ -144,9 +145,27 @@ Colour Raytracer::localIllumination(const HitRecord& record)
     Colour objectColour;
     if (material)
         if (material->getTexture())
-            objectColour = material->getTexture()->getTexel(record.texCoord.x, record.texCoord.y);
+        {
+        	Texture* texture = material->getTexture();
+        	// If the texture is a multitexture, use HEIGHT (Y)of point of intersection
+        	// to determine the weightings of each image.
+        	TerrainHeightTexture* terrainTexture = dynamic_cast<TerrainHeightTexture*>(texture);
+        	if (terrainTexture)
+        	{
+	        	// height (y) is normalised by the maximum height of terrain
+	        	// before using it to update terrain texture weights
+	        	// NOTE: 0.75 coefficient used on max height to produce
+	        	// weights which give better looking terrain
+	        	float normalisedHeight = (record.pointOfIntersection.y / (common::TERRAIN_MAX_HEIGHT * 0.75));
+        		terrainTexture->updateWeights(normalisedHeight);
+        	}
+        	// Now get the texture's textel at the given texture coordinates
+	        objectColour = texture->getTexel(record.texCoord.x, record.texCoord.y);
+        }
         else
+        {
             objectColour = material->getColour();
+        }
     else
         material = &defaultMaterial;
     // Add illumination to object for each light source in the scene
@@ -163,7 +182,6 @@ Colour Raytracer::localIllumination(const HitRecord& record)
         // Compute distance from light to point of intersection.
         // This is used to ignore any shapes that are FURTHER AWAY
         // FROM THE LIGHT SOURCE than the current object
-        // TODO: find a better way of implementing shadows correctly, WITHOUT A SQUARE ROOT
         float distanceFromLightToPoint = (record.pointOfIntersection - lightPos).length();
 
         // Store shape which the ray hit!

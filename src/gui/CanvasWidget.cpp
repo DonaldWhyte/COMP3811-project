@@ -41,7 +41,14 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 
 QColor CanvasWidget::toQColor(const Colour& col)
 {
-	return QColor(col.r * 255, col.g * 255, col.b * 255);
+	int red = col.r * 255;
+	int green = col.g * 255;
+	int blue = col.b * 255;
+	// Ensure colours are not out of bounds
+	if (red < 0) red = 0; if (red > 255) red = 255;
+	if (green < 0) green = 0; if (green > 255) green = 255;
+	if (blue < 0) blue = 0; if (blue > 255) blue = 255;
+	return QColor(red, green, blue);
 }
 
 void CanvasWidget::updateRowsToRender(int rowIndex)

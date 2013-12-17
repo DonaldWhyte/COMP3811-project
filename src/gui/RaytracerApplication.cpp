@@ -9,11 +9,13 @@
 #include "Camera.h"
 #include "ResourceManager.h"
 #include "Raytracer.h"
+#include "Common.h"
+
+#include "MultiTexture.h"
 
 using namespace raytracer;
 
 static const float TERRAIN_CELL_SIZE = 10.0f;
-static const float TERRAIN_MAX_HEIGHT = 100.0f;
 static const float SKYBOX_SIZE = 200.0f;
 
 int main(int argc, char* argv[])
@@ -23,7 +25,14 @@ int main(int argc, char* argv[])
     // Load resources
     ResourceManager* resourceManager = ResourceManager::getInstance();
     Image* terrainTextureImage = resourceManager->createImage("terrainImage", "resources/blended_terrain.tga");
-    Texture* terrainTexture = resourceManager->createTexture("terainTexture", "terrainImage");
+    //Texture* terrainTexture = resourceManager->createTexture("terainTexture", "terrainImage");
+    Texture* terrainTexture = new TerrainHeightTexture(
+	    resourceManager->createImage("terrainImage1", "resources/terrain_dirt.tga"),
+	    resourceManager->createImage("terrainImage2", "resources/terrain_grass.tga"),
+	    resourceManager->createImage("terrainImage3", "resources/terrain_rock.tga"),
+	    resourceManager->createImage("terrainImage4", "resources/terrain_snow.tga")
+    );
+    
     std::vector<Image*> skyBoxImages(6);
     skyBoxImages[0] = resourceManager->createImage("skyboxFront", "resources/miramar_ft.tga");
     skyBoxImages[1] = resourceManager->createImage("skyboxRight", "resources/miramar_rt.tga");
@@ -61,8 +70,8 @@ int main(int argc, char* argv[])
         -((TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
     shapes.push_back(shapeloaders::getTerrainFromHeightmap(
-        "resources/heightmap.tga", TERRAIN_CELL_SIZE, TERRAIN_MAX_HEIGHT,
-        terrainOffset, terrainTexture));
+        "resources/heightmap.tga", TERRAIN_CELL_SIZE,
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(SKYBOX_SIZE, skyBoxTextures));
 
