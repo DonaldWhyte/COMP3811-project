@@ -13,6 +13,7 @@
 #include "Raytracer.h"
 #include "Common.h"
 #include "TGA.h"
+#include "Octree.h"
 
 using namespace raytracer;
 
@@ -84,20 +85,6 @@ int main(int argc, char** argv)
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
-    /*shapes.push_back(new Cylinder(
-    	Vector3(5, 10, -30), Vector3(2, 2, 2), 2.5f,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-        Material::NO_REFRACTION, Colour(0.0f, 0.6f, 0.0f), NULL)
-    ));*/
-    LineList lines;
-    lines.push_back( Line(Vector3(-5, 10, -15), Vector3(-5, 10, -5)) );
-    Material lineMaterial;
-    lineMaterial.setColour(Colour(1.0f, 1.0f, 0.0f));
-    lineMaterial.setAmbientIntensity(30.0f);
-    ShapeList lineShapes = generateLines(lines, 0.25f, &lineMaterial);
-    for (unsigned int i = 0; (i < lineShapes.size()); i++)
-    	shapes.push_back(lineShapes[i]);
-
     // Load terrain heightmap
     Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -110,6 +97,17 @@ int main(int argc, char** argv)
         common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
+
+    // Construct test shapes
+    ShapeList testShapes;
+    LineList lines;
+    lines.push_back( Line(Vector3(-5, 10, -15), Vector3(-5, 10, -5)) );
+    Material lineMaterial;
+    lineMaterial.setColour(Colour(1.0f, 1.0f, 0.0f));
+    lineMaterial.setAmbientIntensity(30.0f);
+    ShapeList lineShapes = generateLines(lines, 0.25f, NULL);
+    for (unsigned int i = 0; (i < lineShapes.size()); i++)
+    	testShapes.push_back(lineShapes[i]);
 
 	// Construct renderer to render scene
 	Raytracer renderer(Camera(
@@ -128,7 +126,11 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-
+    Octree* testShapeRoot = new Octree(sceneBoundary);
+    for (unsigned int i = 0; (i < testShapes.size()); i++)
+        testShapeRoot->insert(testShapes[i]);
+    renderer.setRootTestShape(testShapeRoot);
+    renderer.showTestShapes(true);
 
     // Create object to store image output
     Colour backgroundColour(0.2f, 0.2f, 0.2f);

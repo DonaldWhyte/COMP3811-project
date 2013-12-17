@@ -7,7 +7,9 @@
 
 using namespace raytracer;
 
-Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
+Raytracer::Raytracer(const Camera& camera) :
+    camera(camera), rootShape(NULL),
+    rootTestShape(NULL), testShapesEnabled(false)
 {
     resetRayCount();
 }
@@ -15,6 +17,7 @@ Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
 Raytracer::~Raytracer()
 {
     delete rootShape;
+    delete rootTestShape;
 }
 
 bool Raytracer::raytrace(float x, float y, Colour& result)
@@ -61,10 +64,10 @@ bool Raytracer::uniformMultisample(float minX, float minY, float maxX,
 	}
 
     numPrimaryRays += (samplesPerDirection * samplesPerDirection);
-    
+
 	// Return average of all samples
     result = sum / std::max(1, hits);
-    return (hits > 0);	
+    return (hits > 0);
 }
 
 bool Raytracer::randomMultisample(float minX, float minY, float maxX, float maxY,
@@ -110,6 +113,22 @@ Camera* Raytracer::getCamera()
     return &camera;
 }
 
+bool Raytracer::showingTestShapes() const
+{
+    return testShapesEnabled;
+}
+
+void Raytracer::setRootTestShape(Shape* newRootTest)
+{
+    delete rootTestShape;
+    rootTestShape = newRootTest;
+}
+
+void Raytracer::showTestShapes(bool show)
+{
+    testShapesEnabled = show;
+}
+
 /* Help from following sources:
  * http://www.baylee-online.net/Projects/Raytracing/Algorithms/Basic-Raytrace
  * http://www.cs.jhu.edu/~cohen/RendTech99/Lectures/Ray_Tracing.bw.pdf
@@ -121,8 +140,21 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     if (depth > MAX_TRACE_DEPTH) return false;
     if (!rootShape) return false;
 
-    bool isAHit = rootShape->hit(ray, 0.00001f, MAX_RAY_DISTANCE, 0.0f, record);
-    if (isAHit)
+    // If test shapes are enabled, be sure to test intersection with those as well
+    float maxDistance = MAX_RAY_DISTANCE;
+    bool testHit = false;
+    if (testShapesEnabled)
+    {
+        testHit = rootTestShape->hit(ray, 0.0001f, maxDistance, 0.0f, record);
+        if (testHit)
+        {
+            record.colour = TEST_SHAPE_COLOUR;
+            maxDistance = record.t;
+        }
+    }
+
+    bool objectHit = rootShape->hit(ray, 0.00001f, maxDistance, 0.0f, record);
+    if (objectHit)
     {
         // Compute contributions of different physical phenoma to final colour
         Colour localColour = localIllumination(record);
@@ -133,7 +165,7 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             + (REFLECTED_REFRACTED_WEIGHT * reflectedRefractedColour);
     }
 
-    return isAHit;
+    return (testHit || objectHit);
 }
 
 Colour Raytracer::localIllumination(const HitRecord& record)
