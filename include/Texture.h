@@ -13,8 +13,6 @@ public:
 	virtual ~Texture() { }
 
     virtual const Colour& getTexel(float u, float v) const = 0;
-	virtual int getWidth() const = 0;
-	virtual int getHeight() const = 0;
 	
 };
 
@@ -26,8 +24,6 @@ public:
     ImageTexture(Image* sourceImage);
 
     const Colour& getTexel(float u, float v) const;
-    int getWidth() const;
-    int getHeight() const;
 
 private:
     Image* sourceImage;
