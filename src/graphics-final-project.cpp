@@ -17,8 +17,8 @@
 
 using namespace raytracer;
 
-static const int IMAGE_WIDTH = 500;
-static const int IMAGE_HEIGHT = 500;
+static const int IMAGE_WIDTH = 4000;
+static const int IMAGE_HEIGHT = 4000;
 
 /* Cross-platform millisecond time. */
 #if WIN32
@@ -73,7 +73,7 @@ int main(int argc, char** argv)
     // Define scene
     AABB sceneBoundary(Vector3(-10000, -10000, -10000), Vector3(10000, 10000, 10000));
     ShapeList shapes;
-    shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
+    /*shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
         Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
@@ -84,7 +84,7 @@ int main(int argc, char** argv)
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
-    ));
+    ));*/
     // Load terrain heightmap
     Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -92,20 +92,19 @@ int main(int argc, char** argv)
         0.0f,
         -((common::TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
-    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    /*shapes.push_back(shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", common::TERRAIN_CELL_SIZE,
-        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));*/
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
 
     // Construct test shapes
     ShapeList testShapes;
-    LineList lines;
-    lines.push_back( Line(Vector3(-5, 10, -15), Vector3(-5, 10, -5)) );
+    LineList lines = generateLinesFromBox(AABB(Vector3(-1, 2, -10), Vector3(1, 4, -12)));
     Material lineMaterial;
     lineMaterial.setColour(Colour(1.0f, 1.0f, 0.0f));
     lineMaterial.setAmbientIntensity(30.0f);
-    ShapeList lineShapes = generateLines(lines, 0.25f, NULL);
+    ShapeList lineShapes = generateLines(lines, 0.1f, NULL);
     for (unsigned int i = 0; (i < lineShapes.size()); i++)
     	testShapes.push_back(lineShapes[i]);
 
@@ -126,9 +125,9 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-    Octree* testShapeRoot = new Octree(sceneBoundary);
-    for (unsigned int i = 0; (i < testShapes.size()); i++)
-        testShapeRoot->insert(testShapes[i]);
+    BoundingShape* testShapeRoot = new BoundingShape(testShapes, sceneBoundary);
+    /*for (unsigned int i = 0; (i < testShapes.size()); i++)
+        testShapeRoot->insert(testShapes[i]);*/
     renderer.setRootTestShape(testShapeRoot);
     renderer.showTestShapes(true);
 
@@ -150,7 +149,6 @@ int main(int argc, char** argv)
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
             bool hit = renderer.raytrace(x, y, resultantColour);
-            // TODO: get multisampling working with non-square images! (rangeX + rangeY)
             if (hit)
                 output.set(i, j, resultantColour);
             else
