@@ -1,8 +1,8 @@
 #include <QApplication>
 #include "gui/RaytracerWindow.h"
 #include "gui/RaytracerController.h"
-#include "Raytracer.h"
 
+#include "Raytracer.h"
 #include "BoundingShape.h"
 #include "Sphere.h"
 #include "ShapeLoaders.h"
@@ -29,14 +29,14 @@ int main(int argc, char* argv[])
 	    resourceManager->createImage("terrainImage3", "resources/terrain_rock.tga"),
 	    resourceManager->createImage("terrainImage4", "resources/terrain_snow.tga")
     );
-    
+
     std::vector<Image*> skyBoxImages(6);
     skyBoxImages[0] = resourceManager->createImage("skyboxFront", "resources/miramar_ft.tga");
     skyBoxImages[1] = resourceManager->createImage("skyboxRight", "resources/miramar_rt.tga");
     skyBoxImages[2] = resourceManager->createImage("skyboxBack", "resources/miramar_bk.tga");
     skyBoxImages[3] = resourceManager->createImage("skyboxLeft", "resources/miramar_lf.tga");
     skyBoxImages[4] = resourceManager->createImage("skyboxUp", "resources/miramar_up.tga");
-    skyBoxImages[5] = resourceManager->createImage("skyboxDown", "resources/miramar_dn.tga");    
+    skyBoxImages[5] = resourceManager->createImage("skyboxDown", "resources/miramar_dn.tga");
     std::vector<Texture*> skyBoxTextures(6);
     skyBoxTextures[0] = resourceManager->createTexture("skyboxFrontTexture", "skyboxFront");
     skyBoxTextures[1] = resourceManager->createTexture("skyboxRightTexture", "skyboxRight");
@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
     ShapeList lineShapes = generateLines(lines, 0.25f, &lineMaterial);
     for (unsigned int i = 0; (i < lineShapes.size()); i++)
     	shapes.push_back(lineShapes[i]);
-    
+
     // Load terrain heightmap
     Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -102,8 +102,8 @@ int main(int argc, char* argv[])
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
-    ));    
-    
+    ));
+
     // Construct QT application
 	QApplication app(argc, argv);
 	// Create raytracer controller and window
@@ -112,7 +112,7 @@ int main(int argc, char* argv[])
 	// Show window and execute application
 	window.show();
 	app.exec();
-	
+
 	// Clean up resources
 	resourceManager->clearAll();
 	delete resourceManager;
