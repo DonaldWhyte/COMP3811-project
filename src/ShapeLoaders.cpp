@@ -32,6 +32,20 @@ float getHeight(Image* image, int x, int y, float maxHeight)
     return image->get(x, y).r * maxHeight;
 }
 
+#define NUM_REGIONS 7
+Vector2 computeTerrainTexCoord(int x, int y, float height, float maxHeight)
+{
+	float regionSize = maxHeight / NUM_REGIONS;
+	int region = round(height / regionSize);
+
+	float normalisedRegionSize = regionSize / maxHeight;
+	float regionStart = normalisedRegionSize * region;
+    float texX = ((x % 2) != 0) ? regionStart : regionStart + normalisedRegionSize;
+    float texY = ((y % 2) != 0) ? 0.0f : 1.0f;
+    
+	return Vector2(texX, texY);
+}
+
 Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
     float cellSize, float maxHeight, const Vector3& offset, Texture* texture)
 {
@@ -64,9 +78,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
                 if (vert.position.z > maxPoint.z) maxPoint.z = vert.position.z;
 
                 // Vertices in mesh grid alternate having 0 and 1 for tex coords
-                float texX = ((x % 2) == 0) ? 0.0f : 1.0f;
-                float texY = ((y % 2) == 0) ? 0.0f : 1.0f;
-                vert.texCoord = Vector2(texX, texY);
+                vert.texCoord = computeTerrainTexCoord(x, y, pointHeight, maxHeight);
                 // Compute normal vector using central differencing
                 float hLeft, hRight, hDown, hUp;
                 if (x > 0) hLeft = getHeight(heightMap, x - 1, y, maxHeight);
