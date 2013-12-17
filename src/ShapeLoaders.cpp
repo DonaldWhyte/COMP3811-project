@@ -85,7 +85,7 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
         delete heightMap; // no longer need height map
 
         // Material only has ambient and diffuse (no specular or reflection!)
-        Material material(2.0f, 0.6f, 0.0f, 0.0f, Material::NO_REFLECTION,
+        Material material(2.0f, 1.0f, 0.0f, 0.0f, Material::NO_REFLECTION,
             Material::NO_REFRACTION, Colour(0.2f, 0.7f, 0.2f), texture);
         // Construct mesh to hold the terrain's vertices
         ResourceManager* resourceManager = ResourceManager::getInstance();

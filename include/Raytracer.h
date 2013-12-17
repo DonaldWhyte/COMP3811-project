@@ -17,7 +17,7 @@ static const float REFLECTED_REFRACTED_WEIGHT = 0.5f;
 // to the final colour of a surface.
 static const float LOCAL_ILLUMINATION_WEIGHT = (1 - REFLECTED_REFRACTED_WEIGHT);
 // Used to prevent floating point error affecting shadow casting
-static const float SHADOW_RAY_DISTANCE_THRESHOLD = 0.00001f;
+static const float SHADOW_RAY_DISTANCE_THRESHOLD = 0.1f;
 
 class Raytracer
 {
