@@ -121,7 +121,6 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-    //BoundingShape* testShapeRoot = new BoundingShape(testShapes, sceneBoundary);
     Octree* testShapeRoot = new Octree(sceneBoundary);
     for (unsigned int i = 0; (i < testShapes.size()); i++)
         testShapeRoot->insert(testShapes[i]);
@@ -146,12 +145,6 @@ int main(int argc, char** argv)
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
             bool hit = renderer.raytrace(x, y, resultantColour);
-
-            /*float minX = static_cast<float>(i) / output.getWidth();
-            float minY = static_cast<float>(j) / output.getHeight();
-            float maxX = static_cast<float>(i + 1) / output.getWidth();
-            float maxY = static_cast<float>(j + 1) / output.getHeight();
-            bool hit = renderer.uniformMultisample(minX, minY, maxX, maxY, 3, resultantColour);*/
             if (hit)
                 output.set(i, j, resultantColour);
             else

@@ -19,10 +19,8 @@ int main(int argc, char* argv[])
 {
     // Seed random number generator for varying results
     srand(time(NULL));
-    // Load resources
+      // Load resources
     ResourceManager* resourceManager = ResourceManager::getInstance();
-    Image* terrainTextureImage = resourceManager->createImage("terrainImage", "resources/blended_terrain.tga");
-    //Texture* terrainTexture = resourceManager->createTexture("terainTexture", "terrainImage");
     Texture* terrainTexture = new TerrainHeightTexture(
 	    resourceManager->createImage("terrainImage1", "resources/terrain_dirt.tga"),
 	    resourceManager->createImage("terrainImage2", "resources/terrain_grass.tga"),
@@ -59,20 +57,6 @@ int main(int argc, char* argv[])
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
     ));
-    /*shapes.push_back(new Cylinder(
-    	Vector3(5, 10, -30), Vector3(2, 2, 2), 2.5f,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-        Material::NO_REFRACTION, Colour(0.0f, 0.6f, 0.0f), NULL)
-    ));*/
-    LineList lines;
-    lines.push_back( Line(Vector3(-5, 10, -15), Vector3(-5, 10, -5)) );
-    Material lineMaterial;
-    lineMaterial.setColour(Colour(1.0f, 1.0f, 0.0f));
-    lineMaterial.setAmbientIntensity(30.0f);
-    ShapeList lineShapes = generateLines(lines, 0.25f, &lineMaterial);
-    for (unsigned int i = 0; (i < lineShapes.size()); i++)
-    	shapes.push_back(lineShapes[i]);
-
     // Load terrain heightmap
     Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -80,13 +64,21 @@ int main(int argc, char* argv[])
         0.0f,
         -((common::TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
-    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    Shape* terrain = shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", common::TERRAIN_CELL_SIZE,
-        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture);
+    shapes.push_back(terrain);
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
 
-	// Construct raytracer to render scene
+    // Construct test shapes
+    ShapeList testShapes;
+    LineList lines = dynamic_cast<Octree*>(terrain)->getBoundingLines();
+    ShapeList lineShapes = generateLines(lines, 0.3f, NULL);
+    for (unsigned int i = 0; (i < lineShapes.size()); i++)
+    	testShapes.push_back(lineShapes[i]);
+
+	// Construct renderer to render scene
 	Raytracer renderer(Camera(
         Vector3(0, 5.0f, 0), // position
         Vector3(0, 0, -1), // direction
@@ -103,6 +95,11 @@ int main(int argc, char* argv[])
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
+    Octree* testShapeRoot = new Octree(sceneBoundary);
+    for (unsigned int i = 0; (i < testShapes.size()); i++)
+        testShapeRoot->insert(testShapes[i]);
+    renderer.setRootTestShape(testShapeRoot);
+    renderer.showTestShapes(true);
 
     // Construct QT application
 	QApplication app(argc, argv);
