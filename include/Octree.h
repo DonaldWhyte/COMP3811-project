@@ -3,6 +3,7 @@
 
 #include "Shape.h"
 #include "AABB.h"
+#include "Line.h"
 
 namespace raytracer {
 
@@ -33,6 +34,11 @@ public:
     /* Remove all children from this node. */
     void clearChildren();
 
+    /* Return list of lines which corresponding to the bounding boxes
+     * of each subdivison of the octree. This recursively retrieves
+     * lines from all the tree's children.. */
+    LineList getBoundingLines();
+
     /* Implemented for Shape abstract class. */
     virtual const Vector3& getCentre() const;
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
@@ -40,7 +46,7 @@ public:
 
 private:
     static const unsigned int MAX_CHILDREN = 8;
-    static const unsigned int OCTREE_NODE_CAPACITY = 16;
+    static const unsigned int OCTREE_NODE_CAPACITY = 8;
 
     AABB boundary; // region of space this octree node is for
     Vector3 centre; // centre point of region this node is for

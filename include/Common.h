@@ -13,7 +13,7 @@ namespace common
 	/* Size of individual cell in vertex grid of terrain. */
 	static const float TERRAIN_CELL_SIZE = 10.0f;
 	/* Total size of one side of the sky box. */
-	static const float SKYBOX_SIZE = 200.0f;	
+	static const float SKYBOX_SIZE = 200.0f;
 
     /* Generate floating point number >= min && <= max. */
     float randomFloat(float min, float max);

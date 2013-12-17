@@ -95,6 +95,18 @@ void Octree::subdivide()
     clearShapes(); // remove shapes from this node (no longer leaf with shapes)
 }
 
+LineList Octree::getBoundingLines()
+{
+    LineList lines = generateLinesFromBox(boundary);
+    for (unsigned int i = 0; (i < numChildren); i++)
+    {
+        LineList childLines = children[i]->getBoundingLines();
+        lines.reserve(lines.size() + childLines.size()); // pre-allocate required memoery for concatenation
+        lines.insert(lines.end(), childLines.begin(), childLines.end());
+    }
+    return lines;
+}
+
 const Vector3& Octree::getCentre() const
 {
     return centre;

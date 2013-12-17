@@ -92,25 +92,23 @@ int main(int argc, char** argv)
         0.0f,
         -((common::TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
-    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    Shape* terrain = shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", common::TERRAIN_CELL_SIZE,
-        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture);
+    shapes.push_back(terrain);
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
 
     // Construct test shapes
     ShapeList testShapes;
-    LineList lines = generateLinesFromBox(AABB(Vector3(-1, 2, -10), Vector3(1, 4, -12)));
-    Material lineMaterial;
-    lineMaterial.setColour(Colour(1.0f, 1.0f, 0.0f));
-    lineMaterial.setAmbientIntensity(30.0f);
-    ShapeList lineShapes = generateLines(lines, 0.1f, NULL);
+    LineList lines = dynamic_cast<Octree*>(terrain)->getBoundingLines();
+    ShapeList lineShapes = generateLines(lines, 0.3f, NULL);
     for (unsigned int i = 0; (i < lineShapes.size()); i++)
     	testShapes.push_back(lineShapes[i]);
 
 	// Construct renderer to render scene
 	Raytracer renderer(Camera(
-        Vector3(0, 5.0f, 0), // position
+        Vector3(0, 5.0f, 90), // position
         Vector3(0, 0, -1), // direction
         Vector3(0, 1, 0), // up
         Rect(-100, 100, -100, 100), // viewing rectangle
@@ -125,9 +123,10 @@ int main(int argc, char** argv)
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-    BoundingShape* testShapeRoot = new BoundingShape(testShapes, sceneBoundary);
-    /*for (unsigned int i = 0; (i < testShapes.size()); i++)
-        testShapeRoot->insert(testShapes[i]);*/
+    //BoundingShape* testShapeRoot = new BoundingShape(testShapes, sceneBoundary);
+    Octree* testShapeRoot = new Octree(sceneBoundary);
+    for (unsigned int i = 0; (i < testShapes.size()); i++)
+        testShapeRoot->insert(testShapes[i]);
     renderer.setRootTestShape(testShapeRoot);
     renderer.showTestShapes(true);
 
@@ -149,6 +148,12 @@ int main(int argc, char** argv)
             float x = (static_cast<float>(i) + 0.5f) / output.getWidth(); // a
             float y = (static_cast<float>(j) + 0.5f) / output.getHeight(); // b
             bool hit = renderer.raytrace(x, y, resultantColour);
+
+            /*float minX = static_cast<float>(i) / output.getWidth();
+            float minY = static_cast<float>(j) / output.getHeight();
+            float maxX = static_cast<float>(i + 1) / output.getWidth();
+            float maxY = static_cast<float>(j + 1) / output.getHeight();
+            bool hit = renderer.uniformMultisample(minX, minY, maxX, maxY, 3, resultantColour);*/
             if (hit)
                 output.set(i, j, resultantColour);
             else
