@@ -11,7 +11,7 @@
 #include "Raytracer.h"
 #include "Common.h"
 
-#include "MultiTexture.h"
+#include "TerrainHeightTexture.h"
 
 using namespace raytracer;
 

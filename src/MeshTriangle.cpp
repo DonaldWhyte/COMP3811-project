@@ -1,5 +1,5 @@
 #include "MeshTriangle.h"
-#include "Common.h"
+#include "Intersection.h"
 
 using namespace raytracer;
 
@@ -41,7 +41,7 @@ bool MeshTriangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRe
     const Vertex& p2 = vertices[v2];
     const Vertex& p3 = vertices[v3];
     // Perform ray-triangle intersection test
-    bool isHit = common::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
+    bool isHit = intersection::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
     if (isHit)
         record.hitShape = this;
     return isHit;
@@ -54,7 +54,7 @@ bool MeshTriangle::shadowHit(const Ray& ray, float tMin, float tMax, float time,
     const Vertex& p1 = vertices[v1];
     const Vertex& p2 = vertices[v2];
     const Vertex& p3 = vertices[v3];
-    bool isHit = common::triangleShadowHit(
+    bool isHit = intersection::triangleShadowHit(
         p1.position, p2.position, p3.position,
         ray, tMin, tMax, time);
     if (isHit)

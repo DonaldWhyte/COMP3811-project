@@ -1,5 +1,5 @@
 #include "Triangle.h"
-#include "Common.h"
+#include "Intersection.h"
 
 using namespace raytracer;
 
@@ -17,7 +17,7 @@ const Vector3& Triangle::getCentre() const
 
 bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
 {
-    bool isHit = common::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
+    bool isHit = intersection::triangleHit(p1, p2, p3, ray, tMin, tMax, time, record);
     // Augment hit record with the material of the hit shape
     if (isHit)
         record.hitShape = this;
@@ -27,7 +27,7 @@ bool Triangle::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord
 bool Triangle::shadowHit(const Ray& ray, float tMin, float tMax,
     float time, const Shape*& occludingShape) const
 {
-    bool isHit = common::triangleShadowHit(p1, p2, p3, ray, tMin, tMax, time);
+    bool isHit = intersection::triangleShadowHit(p1, p2, p3, ray, tMin, tMax, time);
     if (isHit)
         occludingShape = this;
     return isHit;
