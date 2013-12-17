@@ -46,7 +46,7 @@ Texture* ResourceManager::createTexture(const std::string textureID,
 	TextureTable::const_iterator texIt = textures.find(imageID);
 	if (texIt != textures.end())
 		removeTexture(textureID);
-	Texture* texture = new Texture(texImage);
+	Texture* texture = new ImageTexture(texImage);
 	textures.insert( std::pair<std::string, Texture*>(textureID, texture) );
 	return texture;
 }

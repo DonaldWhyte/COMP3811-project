@@ -2,11 +2,11 @@
 
 using namespace raytracer;
 
-Texture::Texture(Image* sourceImage) : sourceImage(sourceImage)
+ImageTexture::ImageTexture(Image* sourceImage) : sourceImage(sourceImage)
 {
 }
 
-const Colour& Texture::getTexel(float u, float v) const
+const Colour& ImageTexture::getTexel(float u, float v) const
 {
     // Convert UV coordinates into pixel coordinates on source image
     int width = getWidth();
@@ -17,12 +17,12 @@ const Colour& Texture::getTexel(float u, float v) const
     return sourceImage->get(pixelX, pixelY);
 }
 
-int Texture::getWidth() const
+int ImageTexture::getWidth() const
 {
     return sourceImage->getWidth();
 }
 
-int Texture::getHeight() const
+int ImageTexture::getHeight() const
 {
     return sourceImage->getHeight();
 }
