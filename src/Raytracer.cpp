@@ -32,15 +32,51 @@ bool Raytracer::raytrace(float x, float y, Colour& result)
     return isAHit;
 }
 
-bool Raytracer::multisample(float x, float y, float range, unsigned int samples, Colour& result)
+bool Raytracer::uniformMultisample(float minX, float minY, float maxX,
+	float maxY, unsigned int samplesPerDirection, Colour& result)
 {
-    Ray ray = camera.getRayToPixel(x, y);
+	Colour sum;
+	int hits = 0;
+	// Based on desired number of samples, compute the size of the
+	// steps taken by each interval
+	float stepX = (maxX - minX) / samplesPerDirection;
+	float stepY = (maxY - minY) / samplesPerDirection;
+	for (unsigned int x = 0; (x < samplesPerDirection); x++)
+	{
+		for (unsigned int y = 0; (y < samplesPerDirection); y++)
+		{
+			// Determine sample based on current x and y coordinate on pixel's grid
+			float sampleX = minX + (x * stepX);
+			float sampleY = minY + (y * stepY);
+		    Ray sampleRay = camera.getRayToPixel(sampleX, sampleY);
+		    HitRecord record;
+		    bool isHit = recursiveTrace(sampleRay, record, 0);
+		    if (isHit)
+		    {
+		        sum += record.colour;
+		        hits += 1;
+		    }
+        }
+	}
+
+    numPrimaryRays += (samplesPerDirection * samplesPerDirection);
+    
+	// Return average of all samples
+    result = sum / std::max(1, hits);
+    return (hits > 0);	
+}
+
+bool Raytracer::randomMultisample(float minX, float minY, float maxX, float maxY,
+    unsigned int samples, Colour& result)
+{
     Colour sum;
     int hits = 0;
-
     for (unsigned int i = 0; (i < samples); i++)
     {
-        Ray sampleRay(ray.origin(), ray.direction() + (common::monteCarloDirection() * range));
+    	// Randomly generate point on viewing plane within range and cast ray to that point
+    	float sampleX = common::randomFloat(minX, maxX);
+    	float sampleY = common::randomFloat(minY, maxY);
+        Ray sampleRay = camera.getRayToPixel(sampleX, sampleY);
         HitRecord record;
         bool isHit = recursiveTrace(sampleRay, record, 0);
         if (isHit)
@@ -52,6 +88,7 @@ bool Raytracer::multisample(float x, float y, float range, unsigned int samples,
 
     numPrimaryRays += samples;
 
+	// Return average of all samples
     result = sum / std::max(1, hits);
     return (hits > 0);
 }

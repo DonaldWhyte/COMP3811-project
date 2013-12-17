@@ -28,7 +28,9 @@ public:
 
     /* Single and multisample raytracing. */
     bool raytrace(float x, float y, Colour& result);
-    bool multisample(float x, float y, float range,
+    bool uniformMultisample(float minX, float minY, float maxX, float maxY,
+    	unsigned int samplesPerDirection, Colour& result); /* produces (samplesPerDirection * samplesPerDirection) samples */
+    bool randomMultisample(float minX, float minY, float maxX, float maxY,
         unsigned int samples, Colour& result);
     /* Methods which compute the contribution of different physical
      * phenoma to the final pixel colour. */
