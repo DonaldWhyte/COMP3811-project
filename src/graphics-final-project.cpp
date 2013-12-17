@@ -47,8 +47,6 @@ int main(int argc, char** argv)
 
     // Load resources
     ResourceManager* resourceManager = ResourceManager::getInstance();
-    Image* terrainTextureImage = resourceManager->createImage("terrainImage", "resources/blended_terrain.tga");
-    //Texture* terrainTexture = resourceManager->createTexture("terainTexture", "terrainImage");
     Texture* terrainTexture = new TerrainHeightTexture(
 	    resourceManager->createImage("terrainImage1", "resources/terrain_dirt.tga"),
 	    resourceManager->createImage("terrainImage2", "resources/terrain_grass.tga"),
@@ -73,7 +71,7 @@ int main(int argc, char** argv)
     // Define scene
     AABB sceneBoundary(Vector3(-10000, -10000, -10000), Vector3(10000, 10000, 10000));
     ShapeList shapes;
-    /*shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
+    shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
         Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
     ));
@@ -84,7 +82,7 @@ int main(int argc, char** argv)
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
-    ));*/
+    ));
     // Load terrain heightmap
     Image* terrainHeightmap = resourceManager->createImage("heightmap", "resources/heightmap.tga");
     Vector3 terrainOffset(
@@ -108,7 +106,7 @@ int main(int argc, char** argv)
 
 	// Construct renderer to render scene
 	Raytracer renderer(Camera(
-        Vector3(0, 5.0f, 90), // position
+        Vector3(0, 5.0f, 0), // position
         Vector3(0, 0, -1), // direction
         Vector3(0, 1, 0), // up
         Rect(-100, 100, -100, 100), // viewing rectangle
