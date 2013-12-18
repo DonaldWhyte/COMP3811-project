@@ -30,21 +30,28 @@ bool Image::set(int x, int y, const Colour& colour)
     return true;
 }
 
-void Image::gammaCorrect(float gamma)
+void Image::setWidth(int newWidth)
 {
-    Colour temp;
-    float power = 1.0 / gamma;
-    for (int i = 0; (i < width); i++)
-    {
-        for (int j = 0; (j < height); j++)
-        {
-            temp = pixels[i][j];
-            pixels[i][j] = Colour(
-                pow(temp.r, power),
-                pow(temp.g, power),
-                pow(temp.b, power));
-        }
-    }
+	if (newWidth <= 0)
+		return;
+	pixels.resize(newWidth);
+	width = newWidth;
+}
+
+void Image::setHeight(int newHeight)
+{
+	if (newHeight <= 0)
+		return;
+	// For every column, change height
+    for (unsigned int i = 0; (i < pixels.size()); i++)
+        pixels[i].resize(newHeight);
+    height = newHeight;
+}
+
+void Image::resize(int newWidth, int newHeight)
+{
+	setWidth(newWidth);
+	setHeight(newHeight);
 }
 
 const Colour& Image::get(int x, int y) const

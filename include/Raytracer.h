@@ -37,7 +37,7 @@ public:
         unsigned int samples, Colour& result);
     /* Methods which compute the contribution of different physical
      * phenoma to the final pixel colour. */
-    Colour localIllumination(const HitRecord& record);
+    Colour localIllumination(const Material* material, const Colour& objectColour, const HitRecord& record);
     Colour reflectionAndRefraction(const Vector3& rayDirection,
         const HitRecord& record, int depth);
 
@@ -47,6 +47,11 @@ public:
     void addLight(const PointLight& light);
     /* Retrieve reference to scene's camera. */
     Camera* getCamera();
+
+    /* Enable/disable different effects. */
+    void enableLocalIllumination(bool enabled);
+    void enableReflectionAndRefraction(bool enabled);
+    void enableShadows(bool enabled);
 
     /* Enable/disable test shapes from being rendered. */
     bool showingTestShapes() const;
@@ -92,6 +97,10 @@ private:
 
     // Default material used if a shape does not have one specified
     Material defaultMaterial;
+
+	bool localIllumEnabled;
+	bool reflectRefractEnabled;
+	bool shadowsEnabled;
 
     // Statistics on raytracer performance
     unsigned int numPrimaryRays;
