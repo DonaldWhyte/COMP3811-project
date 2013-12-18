@@ -61,43 +61,12 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	updateTimer = new QTimer(this);
 	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInterface()));
 	updateTimer->start(CANVAS_UPDATE_INTERVAL);	
-	
-	// Start rendering thread
-	workerThread.start();
 }
 
 RaytracerController::~RaytracerController()
 {
 	delete worker;
 	delete updateTimer;	
-}
-
-void RaytracerController::updateInterface()
-{
-	// Redraw contents of canvas
-	window->canvasWidget->update();
-	
-	// Total rows to render
-	int totalRows = window->canvasWidget->getCanvas()->getHeight();
-	// Number of rows currently renderer
-	int rowsComplete = window->canvasWidget->getRowsToRender();
-	
-	// Construct progress message to display in status bar
-	QString message;
-	// If rendering has finished, then display finished message
-	if (rowsComplete == totalRows)
-	{
-		message = "Rendering has finished!";
-	}
-	// If there are still rows to render, show current progress
-	else
-	{
-		float progressPercentage = (static_cast<float>(rowsComplete) / totalRows) * 100;
-		std::stringstream ss;
-		ss << std::setprecision(2) << std::fixed << progressPercentage << "% complete (rendering row " << rowsComplete << " out of " << totalRows << ")";
-		message = QString::fromStdString(ss.str());
-	}
-	window->statusBar()->showMessage(message);	
 }
 
 void RaytracerController::renderStarted()
@@ -133,17 +102,21 @@ void RaytracerController::heightChanged(int newValue)
 }
 
 void RaytracerController::localIlluminationChanged(int newState)
-{	// TODO
+{
+	bool checked = (newState == Qt::Checked);
+	renderer->enableLocalIllumination(checked);
 }
 
 void RaytracerController::reflectRefractChanged(int newState)
 {
-	// TODO
+	bool checked = (newState == Qt::Checked);
+	renderer->enableReflectionAndRefraction(checked);
 }
 
 void RaytracerController::shadowsChanged(int newState)
 {
-	// TODO
+	bool checked = (newState == Qt::Checked);
+	renderer->enableShadows(checked);
 }
 
 void RaytracerController::heightmapChanged(int newIndex)
@@ -168,7 +141,14 @@ void RaytracerController::showOctreeChanged(int newState)
 
 void RaytracerController::renderButtonPressed()
 {
+	// Clear canvas and ensure it's the required size
+	/*Image* canvas = window->canvasWidget->getCanvas();
+	int width = window->widthBox->value();
+	int height = window->heightBox->value();
+	canvas->resize(width, height);*/
 	// TODO
+	// Start rendering thread
+	workerThread.start();
 }
 
 void RaytracerController::saveImage()
@@ -190,6 +170,34 @@ void RaytracerController::saveImage()
         messageBox.setStandardButtons(QMessageBox::Ok);
         messageBox.exec();
     }
+}
+
+void RaytracerController::updateInterface()
+{
+	// Redraw contents of canvas
+	window->canvasWidget->update();
+	
+	// Total rows to render
+	int totalRows = window->canvasWidget->getCanvas()->getHeight();
+	// Number of rows currently renderer
+	int rowsComplete = window->canvasWidget->getRowsToRender();
+	
+	// Construct progress message to display in status bar
+	QString message;
+	// If rendering has finished, then display finished message
+	if (rowsComplete == totalRows)
+	{
+		message = "Rendering has finished!";
+	}
+	// If there are still rows to render, show current progress
+	else
+	{
+		float progressPercentage = (static_cast<float>(rowsComplete) / totalRows) * 100;
+		std::stringstream ss;
+		ss << std::setprecision(2) << std::fixed << progressPercentage << "% complete (rendering row " << rowsComplete << " out of " << totalRows << ")";
+		message = QString::fromStdString(ss.str());
+	}
+	window->statusBar()->showMessage(message);	
 }
 
 void RaytracerController::windowClosed()

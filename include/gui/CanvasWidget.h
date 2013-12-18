@@ -6,9 +6,6 @@
 
 namespace raytracer { namespace gui {
 
-static const unsigned int CANVAS_WIDTH = 1200;
-static const unsigned int CANVAS_HEIGHT = 1200;
-
 class CanvasWidget : public QWidget
 {
 

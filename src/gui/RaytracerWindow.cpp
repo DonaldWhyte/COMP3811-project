@@ -17,8 +17,9 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	saveAction = fileMenu->addAction("&Save");
 	quitAction = fileMenu->addAction("&Quit");
 	// Create canvas widget and add to centre of window
-	// Note that it is wrapped in a scroll pane in case it'
-	canvasWidget = new CanvasWidget(CANVAS_WIDTH, CANVAS_HEIGHT);
+	// Note that it is wrapped in a scroll pane in case
+	// it's larger than the window
+	canvasWidget = new CanvasWidget(INITIAL_CANVAS_WIDTH, INITIAL_CANVAS_HEIGHT);
 	canvasScrollArea = new QScrollArea();
 	canvasScrollArea->setWidget(canvasWidget);
  	canvasScrollArea->setWidgetResizable(false);

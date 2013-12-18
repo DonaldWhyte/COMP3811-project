@@ -7,7 +7,8 @@
 
 using namespace raytracer;
 
-Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera)
+Raytracer::Raytracer(const Camera& camera) : rootShape(NULL), camera(camera),
+	localIllumEnabled(true), reflectRefractEnabled(true), shadowsEnabled(true)
 {
     resetRayCount();
 }
@@ -74,7 +75,7 @@ bool Raytracer::randomMultisample(float minX, float minY, float maxX, float maxY
     int hits = 0;
     for (unsigned int i = 0; (i < samples); i++)
     {
-    	// Randomly generate point on viewing plane within range and cast ray to that point
+    	// Randomly generate point on viewing plane within range and cast ray to that pointshadowsEnabled
     	float sampleX = common::randomFloat(minX, maxX);
     	float sampleY = common::randomFloat(minY, maxY);
         Ray sampleRay = camera.getRayToPixel(sampleX, sampleY);
@@ -124,10 +125,44 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     bool isAHit = rootShape->hit(ray, 0.00001f, MAX_RAY_DISTANCE, 0.0f, record);
     if (isAHit)
     {
+		// Get hit object's material and derive source object colour from it
+		const Material* material = record.hitShape->getMaterial();
+		Colour objectColour;
+		if (material)
+		    if (material->getTexture())
+		    {
+		    	Texture* texture = material->getTexture();
+		    	// If the texture is a multitexture, use HEIGHT (Y)of point of intersection
+		    	// to determine the weightings of each image.
+		    	TerrainHeightTexture* terrainTexture = dynamic_cast<TerrainHeightTexture*>(texture);
+		    	if (terrainTexture)
+		    	{
+			    	// height (y) is normalised by the maximum height of terrain
+			    	// before using it to update terrain texture weights
+			    	// NOTE: 0.75 coefficient used on max height to produce
+			    	// weights which give better looking terrain
+			    	float normalisedHeight = (record.pointOfIntersection.y / (common::TERRAIN_MAX_HEIGHT * 0.75));
+		    		terrainTexture->updateWeights(normalisedHeight);
+		    	}
+		    	// Now get the texture's textel at the given texture coordinates
+			    objectColour = texture->getTexel(record.texCoord.x, record.texCoord.y);
+		    }
+		    else
+		    {
+		        objectColour = material->getColour();
+		    }
+		else
+		{
+		    material = &defaultMaterial;
+		}    
         // Compute contributions of different physical phenoma to final colour
-        Colour localColour = localIllumination(record);
-        Colour reflectedRefractedColour = reflectionAndRefraction(
-            ray.direction(), record, depth);
+        Colour localColour, reflectedRefractedColour;    
+        if (localIllumEnabled)
+	        localColour = localIllumination(material, objectColour, record);
+	    else // if not enbled, just use object's colour directly
+	    	localColour = objectColour; 
+	    if (reflectRefractEnabled)
+        	reflectedRefractedColour = reflectionAndRefraction(ray.direction(), record, depth);
         // Combine computed colours into one
         record.colour = (LOCAL_ILLUMINATION_WEIGHT * localColour)
             + (REFLECTED_REFRACTED_WEIGHT * reflectedRefractedColour);
@@ -136,38 +171,9 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
     return isAHit;
 }
 
-Colour Raytracer::localIllumination(const HitRecord& record)
+Colour Raytracer::localIllumination(const Material* material, const Colour& objectColour, const HitRecord& record)
 {
     Colour localColour;
-
-    // Get hit object's material and derive source object colour from it
-    const Material* material = record.hitShape->getMaterial();
-    Colour objectColour;
-    if (material)
-        if (material->getTexture())
-        {
-        	Texture* texture = material->getTexture();
-        	// If the texture is a multitexture, use HEIGHT (Y)of point of intersection
-        	// to determine the weightings of each image.
-        	TerrainHeightTexture* terrainTexture = dynamic_cast<TerrainHeightTexture*>(texture);
-        	if (terrainTexture)
-        	{
-	        	// height (y) is normalised by the maximum height of terrain
-	        	// before using it to update terrain texture weights
-	        	// NOTE: 0.75 coefficient used on max height to produce
-	        	// weights which give better looking terrain
-	        	float normalisedHeight = (record.pointOfIntersection.y / (common::TERRAIN_MAX_HEIGHT * 0.75));
-        		terrainTexture->updateWeights(normalisedHeight);
-        	}
-        	// Now get the texture's textel at the given texture coordinates
-	        objectColour = texture->getTexel(record.texCoord.x, record.texCoord.y);
-        }
-        else
-        {
-            objectColour = material->getColour();
-        }
-    else
-        material = &defaultMaterial;
     // Add illumination to object for each light source in the scene
     for (int i = 0; (i < lights.size()); i++)
     {
@@ -176,24 +182,27 @@ Colour Raytracer::localIllumination(const HitRecord& record)
         // Ambient lighting
         localColour += (lights[i].getAmbient() * objectColour * material->ambientIntensity());
 
-        // Don't add diffuse and specular contribution from this light
-        // if the light is being blocked by another object
-        Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
-        // Compute distance from light to point of intersection.
-        // This is used to ignore any shapes that are FURTHER AWAY
-        // FROM THE LIGHT SOURCE than the current object
-        float distanceFromLightToPoint = (record.pointOfIntersection - lightPos).length();
+		if (shadowsEnabled)
+		{
+		    // Don't add diffuse and specular contribution from this light
+		    // if the light is being blocked by another object
+		    Ray lightRay( lightPos, (record.pointOfIntersection - lightPos).normalise() );
+		    // Compute distance from light to point of intersection.
+		    // This is used to ignore any shapes that are FURTHER AWAY
+		    // FROM THE LIGHT SOURCE than the current object
+		    float distanceFromLightToPoint = (record.pointOfIntersection - lightPos).length();
 
-        // Store shape which the ray hit!
-        const Shape* occludingShape = NULL;
-        bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f,
-            distanceFromLightToPoint - SHADOW_RAY_DISTANCE_THRESHOLD,
-            0.0f, occludingShape);
-        numShadowRays++;
-        // If another object has blocked light reaching current object, don't add light contribution!
-        if (shadowHit)
-            if (record.hitShape != occludingShape)
-                continue;
+		    // Store shape which the ray hit!
+		    const Shape* occludingShape = NULL;
+		    bool shadowHit = rootShape->shadowHit(lightRay, 0.00001f,
+		        distanceFromLightToPoint - SHADOW_RAY_DISTANCE_THRESHOLD,
+		        0.0f, occludingShape);
+		    numShadowRays++;
+		    // If another object has blocked light reaching current object, don't add light contribution!
+		    if (shadowHit)
+		        if (record.hitShape != occludingShape)
+		            continue;
+		}
 
         // Diffuse lighting
         float angle = lightDirection.dot(record.normal);
@@ -331,6 +340,21 @@ bool Raytracer::computeRefractedRay(const Vector3 incomingDirection,
     {
         return false;
     }
+}
+
+void Raytracer::enableLocalIllumination(bool enabled)
+{
+	localIllumEnabled = enabled;
+}
+
+void Raytracer::enableReflectionAndRefraction(bool enabled)
+{
+	reflectRefractEnabled = enabled;
+}
+
+void Raytracer::enableShadows(bool enabled)
+{
+	shadowsEnabled = enabled;
 }
 
 unsigned int Raytracer::primaryRays() const
