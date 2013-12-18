@@ -80,9 +80,9 @@ int main(int argc, char* argv[])
         0.0f,
         -((common::TERRAIN_CELL_SIZE * terrainHeightmap->getHeight()) / 2.0f)
     );
-    shapes.push_back(shapeloaders::getTerrainFromHeightmap(
+    /*shapes.push_back(shapeloaders::getTerrainFromHeightmap(
         "resources/heightmap.tga", common::TERRAIN_CELL_SIZE,
-        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));
+        common::TERRAIN_MAX_HEIGHT, terrainOffset, terrainTexture));*/
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
 

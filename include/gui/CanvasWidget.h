@@ -28,9 +28,6 @@ public slots:
 	void updateRowsToRender(int rowIndex);
 	
 private:
-	/* Convert raytracer Colour class to QColor. */
-	QColor toQColor(const Colour& col);
-
 	Image canvas;
 	unsigned int rowsToRender;
 	

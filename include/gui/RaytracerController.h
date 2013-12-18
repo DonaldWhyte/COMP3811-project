@@ -17,7 +17,9 @@ public:
 
 public slots:
 	void finishedRow(int rowIndex); /* called when row of image has finished rendering */
-	void finished(); /* called when rendering finished */
+	void renderStarted();
+	void renderFinished();
+	void saveImage();
 
 private:
 	RaytracerWindow* window;

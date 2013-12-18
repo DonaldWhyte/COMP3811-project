@@ -1,19 +1,25 @@
 #include <QCoreApplication>
 #include <QThread>
 #include <QStatusBar>
-
+#include <QAction>
+#include <QMessageBox>
+#include <QFileDialog>
 #include <sstream>
-#include <iomanip> // for std::setprecision()
+#include <iomanip> // for std::setprecision() and std::fixed
 #include "gui/RaytracerController.h"
 #include "gui/RendererWorker.h"
+#include "gui/GUICommon.h"
 
 using namespace raytracer::gui;
 
 RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* renderer)
 	: window(window), renderer(renderer)
 {
+	// Setup event handlers for menu bar
 	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
 		SIGNAL(triggered()), QCoreApplication::instance(), SLOT(quit()));
+	connect(reinterpret_cast<const QObject*>(window->getSaveAction()),
+		SIGNAL(triggered()), this, SLOT(saveImage()));
 		
 	CanvasWidget* canvasWidget = window->getCanvasWidget();
 	Image* canvas = canvasWidget->getCanvas();
@@ -22,15 +28,15 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	RendererWorker* worker = new RendererWorker(renderer, canvas);
 	worker->moveToThread(thread);
 	
-	// When thread starts, start render 
+	// When thread starts, start render and disable save action
 	connect(thread, SIGNAL(started()), worker, SLOT(render()));
+	connect(thread, SIGNAL(started()), this, SLOT(renderStarted()));
 	
 	// When worker has finished, display entire image on the canvas and close thread
 	connect(worker, SIGNAL(finishedRow(int)), canvasWidget, SLOT(updateRowsToRender(int)));	
-	connect(worker, SIGNAL(finished()), thread, SLOT(quit()));
 	// Also update raytracer window's messages
-	connect(worker, SIGNAL(finishedRow(int)), this, SLOT(finishedRow(int)));	
-	connect(worker, SIGNAL(finished()), this, SLOT(finished()));
+	connect(worker, SIGNAL(finishedRow(int)), this, SLOT(finishedRow(int)));
+	connect(worker, SIGNAL(finished()), this, SLOT(renderFinished()));
 	
 	// Delete the worker and the thread when render has finished
 	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
@@ -53,7 +59,34 @@ void RaytracerController::finishedRow(int rowIndex)
 	window->statusBar()->showMessage( QString::fromStdString(message) );
 }
 
-void RaytracerController::finished()
+void RaytracerController::renderStarted()
 {
+	window->getSaveAction()->setEnabled(false);
+}
+
+void RaytracerController::renderFinished()
+{
+	window->getSaveAction()->setEnabled(true);
 	window->statusBar()->showMessage("Raytracing has finished!");
+}
+
+void RaytracerController::saveImage()
+{
+	// Ask user where they want to save the image file
+    QString filename = QFileDialog::getSaveFileName(window,
+        tr("Save Image"), "./", tr("Image Files (*.png  *.jpg *.bmp)"));
+    // Just do nothing if the filename is empty - user cancelled operation
+    if (filename.size() == 0)
+    	return;
+   	// Generate QImage which can be saved
+   	QImage image = toQImage(window->getCanvasWidget()->getCanvas());
+    // Saves image to the file specified
+    if (!image.save(filename))
+    {
+        QMessageBox messageBox;
+        messageBox.setText("Unknown error occured when saving image!");
+        messageBox.setIcon(QMessageBox::Critical);
+        messageBox.setStandardButtons(QMessageBox::Ok);
+        messageBox.exec();
+    }
 }

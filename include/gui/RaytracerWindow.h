@@ -15,8 +15,9 @@ class RaytracerWindow : public QMainWindow
 public:
 	RaytracerWindow(Raytracer* renderer);
 	virtual ~RaytracerWindow();
-	
-	const QAction* getQuitAction() const;
+
+	QAction* getSaveAction();	
+	QAction* getQuitAction();
 	CanvasWidget* getCanvasWidget();
 	
 private:
@@ -24,6 +25,7 @@ private:
 	
 	QMenu* fileMenu;
 		QAction* quitAction;
+		QAction* saveAction;
 		
 	CanvasWidget* canvasWidget;
 
