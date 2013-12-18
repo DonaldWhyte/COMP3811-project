@@ -6,6 +6,7 @@
 #include <QTimer>
 #include "gui/RaytracerWindow.h"
 #include "gui/RendererWorker.h"
+#include "gui/DemoScene.h"
 #include "Raytracer.h"
 
 namespace raytracer { namespace gui {
@@ -19,7 +20,7 @@ class RaytracerController : public QObject
 	Q_OBJECT
 	
 public:
-	RaytracerController(RaytracerWindow* window, Raytracer* renderer);
+	RaytracerController(RaytracerWindow* window, DemoScene* scene);
 	virtual ~RaytracerController();
 
 public slots:
@@ -39,8 +40,8 @@ public slots:
 
 private:
 	RaytracerWindow* window;
+	DemoScene* scene;
 	Raytracer* renderer;
-	std::vector<Camera> cameras; // cameras to use in scene
 	
 	// Thread and worker used to perform raytracing
 	QThread* workerThread;

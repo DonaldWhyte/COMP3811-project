@@ -13,6 +13,12 @@ public:
     BoundingShape(const ShapeList& shapes, AABB& boundingBox);
     virtual ~BoundingShape();
 
+	/* Add a shape as a child of the bounding shape. */
+	void addShape(Shape* newShape);
+	/* Remove shape which is currently a child of the bounding shape.
+	 * If given shape is not a child, then it is silently ignored. */
+	bool removeShape(Shape* shapeToRemove);
+
     virtual const Vector3& getCentre() const;
     virtual bool hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const;
     virtual bool shadowHit(const Ray& ray, float tMin, float tMax, float time, const Shape*& occludingShape) const;

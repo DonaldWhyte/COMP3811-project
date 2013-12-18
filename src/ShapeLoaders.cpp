@@ -33,7 +33,8 @@ float getHeight(Image* image, int x, int y, float maxHeight)
 }
 
 Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
-    float cellSize, float maxHeight, const Vector3& offset, Texture* texture)
+    float cellSize, float maxHeight, const Vector3& offset, Texture* texture,
+    bool useOctree)
 {
     Image* heightMap = tga::readTGAFile(filename);
     if (heightMap)
@@ -105,11 +106,22 @@ Shape* shapeloaders::getTerrainFromHeightmap(const std::string& filename,
             }
         }
 
-        AABB boundingBox(minPoint, maxPoint);
-        Octree* octree = new Octree(boundingBox);
-        for (unsigned int i = 0; (i < triangles.size()); i++)
-            octree->insert(triangles[i]);
-        return octree;
+		// If flag to use an Octree to store the terrain was specified,
+		// then build the octree!
+	    AABB boundingBox(minPoint, maxPoint);
+		if (useOctree)
+		{
+		    Octree* octree = new Octree(boundingBox);
+		    for (unsigned int i = 0; (i < triangles.size()); i++)
+		        octree->insert(triangles[i]);
+		    return octree;
+		}
+		// Otherwise, just put all the triangles in a flat bounding shape
+		else
+		{
+			BoundingShape* terrain = new BoundingShape(triangles, boundingBox);
+			return terrain;
+		}
     }
     else
     {

@@ -75,9 +75,6 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	sceneSettings = new QGroupBox("Scene");
 		terrainLabel = new QLabel("Terrain Heightmap Size");
 		terrainHeightmap = new QComboBox();
-		terrainHeightmap->addItem("Small");
-		terrainHeightmap->addItem("Medium");
-		terrainHeightmap->addItem("Large");
 		sceneRowOneLayout = new QHBoxLayout();
 		sceneRowOneLayout->addWidget(terrainLabel);
 		sceneRowOneLayout->addWidget(terrainHeightmap);		

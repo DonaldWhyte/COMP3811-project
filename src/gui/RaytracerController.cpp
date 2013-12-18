@@ -11,10 +11,12 @@
 
 using namespace raytracer::gui;
 
-RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* renderer)
-	: window(window), renderer(renderer), workerThread(NULL), worker(NULL)
+// TODO: clean up thread elegantly so that there is no segmentation fault
+
+RaytracerController::RaytracerController(RaytracerWindow* window, DemoScene* scene)
+	: window(window), scene(scene), workerThread(NULL), worker(NULL)
 {		
-	// TODO: clean up thread elegantly so that there is no segmentation fault
+	renderer = scene->renderer;
 	
 	// Connect window close event to controller's event handler for said event
 	connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
@@ -38,24 +40,16 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	updateTimer = new QTimer(this);
 	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInterface()));
 	updateTimer->start(CANVAS_UPDATE_INTERVAL);	
-	
-	// Define three cameras to use for the scene
-	cameras.reserve(3);
-	cameras.push_back(Camera(
-        Vector3(0, 5.0f, 0), Vector3(0, 0, -1), Vector3(0, 1, 0),
-        Rect(-100, 100, -100, 100), 200, false));
-	cameras.push_back(Camera(
-        Vector3(-5, 0.0f, 0), Vector3(0.5, 1, -1), Vector3(0, 1, 0),
-        Rect(-100, 100, -100, 100), 200, false));        
-	cameras.push_back(Camera(
-        Vector3(-10, 10.0f, 0), Vector3(0.75, -1, -1), Vector3(0, 1, 0),
-        Rect(-100, 100, -100, 100), 200, false));        
-	// Add cameras to viewpoint combo box
-	for (unsigned int i = 0; (i < cameras.size()); i++)
+	        
+	// Add an entry to the viewpoint combo box for each camera
+	for (unsigned int i = 0; (i < scene->cameras.size()); i++)
 	{
-		std::string camName = "Camera" + common::toString(i);
+		std::string camName = "Camera " + common::toString(i + 1);
 		window->viewpoint->addItem( QString::fromStdString(camName) );
 	}
+	// Add small and large heightmaps for terrain
+	window->terrainHeightmap->addItem("Small (16x16)");
+	window->terrainHeightmap->addItem("Large (256x256)");
 }
 
 RaytracerController::~RaytracerController()
@@ -112,6 +106,7 @@ void RaytracerController::renderButtonPressed()
 	Image* canvas = canvasWidget->getCanvas();
 	worker = new RendererWorker(renderer, canvas);
 	worker->moveToThread(workerThread);
+
 	// When thread starts, start render and disable save action
 	connect(workerThread, SIGNAL(started()), worker, SLOT(render()));
 	// When worker has finished, display entire image on the canvas and close thread
@@ -123,12 +118,15 @@ void RaytracerController::renderButtonPressed()
 	connect(reinterpret_cast<const QObject*>(window->quitAction),
 		SIGNAL(triggered()), worker, SLOT(stop()));	
 
-	// Assign chosen camera and heightmap
-	// TODO: heightmap
-	Camera* currentCamera = renderer->getCamera();
-	*currentCamera = cameras[window->viewpoint->currentIndex()];
+	// Configure geometric optimisation settings
+ 	bool checked = (window->showOctree->checkState() == Qt::Checked);	
+	renderer->showTestShapes(checked);
+
+	// Assign chosen camera
+	Camera* currentCamera = renderer->getCamera();;
+	*currentCamera = scene->cameras[window->viewpoint->currentIndex()];
 	// Configure effects settings
-	bool checked = (window->localIlluminationSwitch->checkState() == Qt::Checked);
+	checked = (window->localIlluminationSwitch->checkState() == Qt::Checked);
 	renderer->enableLocalIllumination(checked);
  	checked = (window->reflectRefractSwitch->checkState() == Qt::Checked);
 	renderer->enableReflectionAndRefraction(checked);
@@ -138,6 +136,30 @@ void RaytracerController::renderButtonPressed()
 	int sampleMethodIndex = window->sampMethod->currentIndex();
 	worker->setSamplingMethod( static_cast<SamplingMethod>(sampleMethodIndex) );
 	worker->setNumSamples( window->numSamples->value() );
+	
+	// Based on geometric optimisation approach and terrain, pick which terrain to render
+	bool usingOctree = (window->useOctree->checkState() == Qt::Checked);
+	int terrainIndexOffset = (usingOctree) ? 0 : 1;
+	int chosenTerrainIndex = window->terrainHeightmap->currentIndex() * 2;	
+	Shape* terrain = NULL;
+	if (usingOctree)
+		terrain = scene->terrainVariants[chosenTerrainIndex + terrainIndexOffset];
+	else
+		terrain = scene->terrainVariants[chosenTerrainIndex + terrainIndexOffset];
+	BoundingShape* root = dynamic_cast<BoundingShape*>(renderer->getRootShape());	
+	if (root)
+	{
+		// Be sure to remove all terrian from the root of the scene
+		// so only one terrain is rendered at a time
+		for (unsigned int i = 0; (i < scene->terrainVariants.size()); i++)
+			root->removeShape(scene->terrainVariants[i]);
+		// If terrain shape was found from user's selection
+		if (terrain)
+		{
+			root->addShape(terrain);
+		}
+	}
+	
 	// Resize canvas to required size and clear it
 	int width = window->widthBox->value();
 	int height = window->heightBox->value();

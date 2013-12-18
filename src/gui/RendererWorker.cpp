@@ -45,12 +45,10 @@ void RendererWorker::render()
 	// Pick rendering method to use based on chosen sampling method
 	switch (samplingMethod)
 	{
-	case UNIFORM_MULTISAMPLING:
-		std::cout << "UNIFORM WITH " << numSamples << std::endl;	
+	case UNIFORM_MULTISAMPLING:	
 		renderingMethod = &RendererWorker::renderUniformMultisamplePixel;
 		break;
 	case RANDOM_MULTISAMPLING:
-		std::cout << "RANDOM WITH " << numSamples << std::endl;
 		renderingMethod = &RendererWorker::renderUniformMultisamplePixel;
 		break;
 	}

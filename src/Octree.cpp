@@ -81,6 +81,7 @@ void Octree::subdivide()
         children[i] = new Octree(childrenBoundaries[i]);
     numChildren = MAX_CHILDREN;
     // For all the shapes currently in this node, move them to one of the children
+    unsigned int shapesMoved = 0;
     for (unsigned int shapeIndex = 0; (shapeIndex < numShapes); shapeIndex++)
     {
         for (unsigned int childIndex = 0; (childIndex < numChildren); childIndex++)
@@ -89,7 +90,10 @@ void Octree::subdivide()
             // move onto the next by breaking out of child-loop
             Octree* child = children[childIndex];
             if (child->insert(shapes[shapeIndex]))
+            {
+            	shapesMoved++;
                 break;
+            }
         }
     }
     clearShapes(); // remove shapes from this node (no longer leaf with shapes)

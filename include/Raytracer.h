@@ -43,6 +43,7 @@ public:
 
     /* Set a new root shape in the shape hierarchy. */
     void setRootShape(Shape* newRoot);
+    Shape* getRootShape();
     /* Add another light ot the scene. */
     void addLight(const PointLight& light);
     /* Retrieve reference to scene's camera. */

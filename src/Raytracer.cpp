@@ -103,6 +103,11 @@ void Raytracer::setRootShape(Shape* newRoot)
     rootShape = newRoot;
 }
 
+Shape* Raytracer::getRootShape()
+{
+	return rootShape;
+}
+
 void Raytracer::addLight(const PointLight& light)
 {
     lights.push_back(light);
@@ -129,6 +134,8 @@ void Raytracer::showTestShapes(bool show)
     testShapesEnabled = show;
 }
 
+#include <iostream>
+
 /* Help from following sources:
  * http://www.baylee-online.net/Projects/Raytracing/Algorithms/Basic-Raytrace
  * http://www.cs.jhu.edu/~cohen/RendTech99/Lectures/Ray_Tracing.bw.pdf
@@ -152,8 +159,8 @@ bool Raytracer::recursiveTrace(const Ray& ray, HitRecord& record, int depth)
             maxDistance = record.t;
         }
     }
-
-    bool objectHit = rootShape->hit(ray, 0.00001f, maxDistance, 0.0f, record);
+   
+    bool objectHit = rootShape->hit(ray, 0.00001f, maxDistance, 0.0f, record);   
     if (objectHit)
     {
 		// Get hit object's material and derive source object colour from it

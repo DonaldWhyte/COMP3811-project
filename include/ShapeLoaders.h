@@ -13,7 +13,7 @@ namespace shapeloaders
      * by a heightmap (image). */
     Shape* getTerrainFromHeightmap(const std::string& filename,
         float cellWidth, float maxHeight, const Vector3& offset,
-        Texture* texture = NULL);
+        Texture* texture = NULL, bool useOctree = true);
 
     /* Load a textured sky box with the specified size.
      * 'skyBoxTextures' should contain exactly SIX elements,
