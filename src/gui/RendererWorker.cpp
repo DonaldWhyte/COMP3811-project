@@ -78,10 +78,8 @@ void RendererWorker::render()
 	emit finished();    
 }
 
-#include <iostream>
 void RendererWorker::stop()
 {
-	std::cout << "HELLO!" << std::endl;
 	rendering = false;
 }
 

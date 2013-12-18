@@ -82,7 +82,6 @@ RaytracerWindow::~RaytracerWindow()
 
 void RaytracerWindow::closeEvent(QCloseEvent* event)
 {
-	std::cout << "HELLO!" << std::endl;
 	emit closed();
 }
 

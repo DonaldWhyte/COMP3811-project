@@ -13,31 +13,25 @@ using namespace raytracer::gui;
 RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* renderer)
 	: window(window), renderer(renderer)
 {		
-connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
-
-	CanvasWidget* canvasWidget = window->getCanvasWidget();
-	Image* canvas = canvasWidget->getCanvas();
+	// TODO: clean up thread elegantly so that there is no segmentation fault
+	
+	// Connect window close event to controller's event handler for said event
+	connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
 	
 	// Create renderer worker and move it to another thread
+	CanvasWidget* canvasWidget = window->getCanvasWidget();
+	Image* canvas = canvasWidget->getCanvas();
 	worker = new RendererWorker(renderer, canvas);
 	worker->moveToThread(&workerThread);
 	
 	// When thread starts, start render and disable save action
 	connect(&workerThread, SIGNAL(started()), worker, SLOT(render()));
 	connect(&workerThread, SIGNAL(started()), this, SLOT(renderStarted()));
-	
 	// When worker has finished, display entire image on the canvas and close thread
 	connect(worker, SIGNAL(finishedRow(int)), canvasWidget, SLOT(updateRowsToRender(int)));	
 	// Also update raytracer window's messages
 	connect(worker, SIGNAL(finishedRow(int)), this, SLOT(finishedRow(int)));
 	connect(worker, SIGNAL(finished()), this, SLOT(renderFinished()));
-	
-	// Delete the worker and the thread when render has finished
-	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-	connect(&workerThread, SIGNAL(finished()), &workerThread, SLOT(deleteLater()));
-	// Connect application quit signal to thread's stop
-	// TODO
-	connect(QCoreApplication::instance(), SIGNAL(quit()), worker, SLOT(stop()));
 	
 	// Setup event handlers for menu bar
 	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
@@ -47,14 +41,13 @@ connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
 	connect(reinterpret_cast<const QObject*>(window->getSaveAction()),
 		SIGNAL(triggered()), this, SLOT(saveImage()));
 		
-	// TODO: clean up thread elegantly so that there is no segmentation fault
-	
-	// Start rendering!
-	workerThread.start();
-	
+	// Start timer which determines when the canvas redraws itself
 	updateTimer = new QTimer(this);
-	connect(updateTimer, SIGNAL(timeout()), window->getCanvasWidget(), SLOT(update()));
+	connect(updateTimer, SIGNAL(timeout()), canvasWidget, SLOT(update()));
 	updateTimer->start(CANVAS_UPDATE_INTERVAL);	
+	
+	// Start rendering thread
+	workerThread.start();
 }
 
 RaytracerController::~RaytracerController()
@@ -109,8 +102,7 @@ void RaytracerController::saveImage()
 
 void RaytracerController::windowClosed()
 {
-	// TODO: cleanup
-	std::cout << "HELLO!" << std::endl;
+	// Stop the worker and wait for the thread to finish
 	worker->stop();
 	workerThread.quit();
 	workerThread.wait();
