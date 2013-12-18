@@ -251,8 +251,10 @@ Colour Raytracer::localIllumination(const Material* material, const Colour& obje
         Vector3 reflectionDirection = -(lightDirection - (2.0f * angle * record.normal));
         float reflectionAngle = reflectionDirection.dot(lightDirection);
         if (reflectionAngle > 0) // only specular light from FRONT will be considered
+        {
             localColour += (lights[i].getSpecular() * material->specularIntensity()
                 * pow(reflectionAngle, material->specularExponent()));
+        }
     }
 
     return localColour;

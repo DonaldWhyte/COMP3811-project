@@ -46,7 +46,7 @@ public:
 
 private:
     static const unsigned int MAX_CHILDREN = 8;
-    static const unsigned int OCTREE_NODE_CAPACITY = 8;
+    static const unsigned int OCTREE_NODE_CAPACITY = 5;
 
     AABB boundary; // region of space this octree node is for
     Vector3 centre; // centre point of region this node is for

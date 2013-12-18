@@ -32,15 +32,19 @@ DemoScene raytracer::gui::constructDemoScene()
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
-        Material::NO_REFRACTION, Colour(0.2f, 0.6f, 0.8f), NULL)
+        Material::NO_REFRACTION, Colour(0.4f, 0.4f, 0.8f), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(-4.0f, 10.0f, -20.0f), 2.0f,
         new Material(0.5f, 3.0f, 1.0f, 20.0f, 1.0f,
         Material::NO_REFRACTION, Colour(), NULL)
     ));
     shapes.push_back(new Sphere(Vector3(0.0f, 5.0f, -15.0f), 2.0f,
-        new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
+        new Material(0.5f, 1.2f, 0.5f, 20.0f, 0.5f,
             1.6666, Colour(0.8f, 0.2f, 0.2f), NULL)
+    ));
+    shapes.push_back(new Sphere(Vector3(3.0f, 5.0f, -26.5f), 1.0f,
+        new Material(5.0f, 0.0f, 0.0f, 0.0f, 0.4f,
+        Material::NO_REFRACTION, Colour(0.9f, 0.65f, 0.0f), NULL)
     ));
     // Load skybox
     shapes.push_back(shapeloaders::getSkyBox(common::SKYBOX_SIZE, skyBoxTextures));
@@ -52,16 +56,15 @@ DemoScene raytracer::gui::constructDemoScene()
         Vector3(0, 5.0f, 0), Vector3(0, 0, -1), Vector3(0, 1, 0),
         Rect(-100, 100, -100, 100), 200, false));
 	cameras.push_back(Camera(
-        Vector3(-5, 0.0f, 0), Vector3(0.5, 1, -1), Vector3(0, 1, 0),
+        Vector3(-10, 3.0f, -10.0f), Vector3(1, 0.2f, -1), Vector3(0, 1, 0),
         Rect(-100, 100, -100, 100), 200, false));        
 	cameras.push_back(Camera(
-        Vector3(-10, 10.0f, 0), Vector3(0.75, -1, -1), Vector3(0, 1, 0),
+        Vector3(5.0f, 30.0f, -50.0f), Vector3(0.0f, -0.6f, 1), Vector3(0, 1, 0),
         Rect(-100, 100, -100, 100), 200, false));
         
     // Load all possible terrain
     std::vector<std::string> heightmapFilenames;
     heightmapFilenames.push_back("resources/heightmap.tga");
-    heightmapFilenames.push_back("resources/heightmap_large.tga");
     std::vector<Image*> heightmaps;
     for (unsigned int i = 0; (i < heightmapFilenames.size()); i++)
     	heightmaps.push_back( resourceManager->createImage("heightmap", heightmapFilenames[i]) );
@@ -81,17 +84,17 @@ DemoScene raytracer::gui::constructDemoScene()
 			common::TERRAIN_MAX_HEIGHT, terrainOffsets[i], terrainTexture, false);
 		Shape* optimisedTerrain = shapeloaders::getTerrainFromHeightmap(
 			heightmapFilenames[i], common::TERRAIN_CELL_SIZE,
-			common::TERRAIN_MAX_HEIGHT, terrainOffsets[i], terrainTexture, true);			
-	    terrainVariants.push_back(optimisedTerrain);
+			common::TERRAIN_MAX_HEIGHT, terrainOffsets[i], terrainTexture, true);
 	    terrainVariants.push_back(unoptimisedTerrain);
+        terrainVariants.push_back(optimisedTerrain);
     }
     
     // Construct test shapes
     ShapeList testShapes;
-    /*LineList lines = dynamic_cast<Octree*>(terrain)->getBoundingLines();
+    LineList lines = dynamic_cast<Octree*>(terrainVariants[1])->getBoundingLines();
     ShapeList lineShapes = generateLines(lines, 0.3f, NULL);
     for (unsigned int i = 0; (i < lineShapes.size()); i++)
-    	testShapes.push_back(lineShapes[i]);*/    
+    	testShapes.push_back(lineShapes[i]);
 	// Create renderer to render scene
 	Raytracer* renderer = new Raytracer(cameras[0]);
     renderer->setRootShape(new BoundingShape(shapes, sceneBoundary));
@@ -101,6 +104,12 @@ DemoScene raytracer::gui::constructDemoScene()
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
+    ));
+    renderer->addLight(PointLight(
+        Vector3(3.0f, 5.0f, -26.5f),
+        Colour(0.0f, 0.0f, 0.0f),
+        Colour(0.6f, 0.76f, 0.0f),
+        Colour(1.0f, 0.3f, 0.0f)
     ));
     // Add test shapes
     Octree* testShapeRoot = new Octree(sceneBoundary);
