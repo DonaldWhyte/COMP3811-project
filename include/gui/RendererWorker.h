@@ -32,6 +32,7 @@ public:
 	
 public slots:
 	void render();
+	void stop(); /* stops currently running render process */
 	
 signals:
 	void finishedRow(int rowIndex);
@@ -50,6 +51,8 @@ private:
 	
 	Raytracer* renderer;
 	Image* canvas;
+	bool rendering; // if true, worker will render
+	
 	// Determines the sampling method used and how many samples are tkaen	
 	SamplingMethod samplingMethod;
 	unsigned int numSamples;

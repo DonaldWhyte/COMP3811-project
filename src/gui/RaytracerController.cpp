@@ -1,5 +1,4 @@
 #include <QCoreApplication>
-#include <QThread>
 #include <QStatusBar>
 #include <QAction>
 #include <QMessageBox>
@@ -7,30 +6,25 @@
 #include <sstream>
 #include <iomanip> // for std::setprecision() and std::fixed
 #include "gui/RaytracerController.h"
-#include "gui/RendererWorker.h"
 #include "gui/GUICommon.h"
 
 using namespace raytracer::gui;
 
 RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* renderer)
 	: window(window), renderer(renderer)
-{
-	// Setup event handlers for menu bar
-	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
-		SIGNAL(triggered()), QCoreApplication::instance(), SLOT(quit()));
-	connect(reinterpret_cast<const QObject*>(window->getSaveAction()),
-		SIGNAL(triggered()), this, SLOT(saveImage()));
-		
+{		
+connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
+
 	CanvasWidget* canvasWidget = window->getCanvasWidget();
 	Image* canvas = canvasWidget->getCanvas();
-	// Create thread and move the renderer's work to it
-	QThread* thread = new QThread();
-	RendererWorker* worker = new RendererWorker(renderer, canvas);
-	worker->moveToThread(thread);
+	
+	// Create renderer worker and move it to another thread
+	worker = new RendererWorker(renderer, canvas);
+	worker->moveToThread(&workerThread);
 	
 	// When thread starts, start render and disable save action
-	connect(thread, SIGNAL(started()), worker, SLOT(render()));
-	connect(thread, SIGNAL(started()), this, SLOT(renderStarted()));
+	connect(&workerThread, SIGNAL(started()), worker, SLOT(render()));
+	connect(&workerThread, SIGNAL(started()), this, SLOT(renderStarted()));
 	
 	// When worker has finished, display entire image on the canvas and close thread
 	connect(worker, SIGNAL(finishedRow(int)), canvasWidget, SLOT(updateRowsToRender(int)));	
@@ -40,11 +34,33 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	
 	// Delete the worker and the thread when render has finished
 	connect(worker, SIGNAL(finished()), worker, SLOT(deleteLater()));
-	connect(thread, SIGNAL(finished()), thread, SLOT(deleteLater()));
-	// Connect application quite signal to thread's stop
+	connect(&workerThread, SIGNAL(finished()), &workerThread, SLOT(deleteLater()));
+	// Connect application quit signal to thread's stop
+	// TODO
+	connect(QCoreApplication::instance(), SIGNAL(quit()), worker, SLOT(stop()));
+	
+	// Setup event handlers for menu bar
+	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
+		SIGNAL(triggered()), QCoreApplication::instance(), SLOT(quit()));		
+	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
+		SIGNAL(triggered()), worker, SLOT(stop()));
+	connect(reinterpret_cast<const QObject*>(window->getSaveAction()),
+		SIGNAL(triggered()), this, SLOT(saveImage()));
+		
 	// TODO: clean up thread elegantly so that there is no segmentation fault
+	
 	// Start rendering!
-	thread->start();
+	workerThread.start();
+	
+	updateTimer = new QTimer(this);
+	connect(updateTimer, SIGNAL(timeout()), window->getCanvasWidget(), SLOT(update()));
+	updateTimer->start(CANVAS_UPDATE_INTERVAL);	
+}
+
+RaytracerController::~RaytracerController()
+{
+	delete worker;
+	delete updateTimer;	
 }
 
 void RaytracerController::finishedRow(int rowIndex)
@@ -89,4 +105,13 @@ void RaytracerController::saveImage()
         messageBox.setStandardButtons(QMessageBox::Ok);
         messageBox.exec();
     }
+}
+
+void RaytracerController::windowClosed()
+{
+	// TODO: cleanup
+	std::cout << "HELLO!" << std::endl;
+	worker->stop();
+	workerThread.quit();
+	workerThread.wait();
 }

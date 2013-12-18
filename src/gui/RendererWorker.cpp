@@ -6,7 +6,8 @@ using namespace gui;
 static const Colour BACKGROUND_COLOUR(0.2f, 0.2f, 0.2f);
 
 RendererWorker::RendererWorker(Raytracer* renderer, Image* canvas) :
-	renderer(renderer), canvas(canvas), samplingMethod(SINGLESAMPLING), numSamples(3)
+	renderer(renderer), canvas(canvas), rendering(false),
+	samplingMethod(SINGLESAMPLING), numSamples(3)
 {
 }
 
@@ -32,8 +33,8 @@ unsigned int RendererWorker::getNumSamples() const
 	
 void RendererWorker::render()
 {	
-	emit finished();
-	return;
+	rendering = true;
+	
     // Loop over the pixels of the image
     unsigned int canvasWidth = canvas->getWidth();
     unsigned int canvasHeight = canvas->getHeight();
@@ -57,6 +58,13 @@ void RendererWorker::render()
 	{
 		for (unsigned int i = 0; (i < canvasWidth); i++)
         {
+        	// If rendering has stopped, emit a finished signal and return from function
+        	if (!rendering)
+        	{
+        		emit finished();
+        		return;
+        	}
+        		
         	Colour resultantColour;
         	bool hit = ((*this).*renderingMethod)(i, j, canvasWidth, canvasHeight, resultantColour);
             if (hit)
@@ -68,6 +76,13 @@ void RendererWorker::render()
     }
     
 	emit finished();    
+}
+
+#include <iostream>
+void RendererWorker::stop()
+{
+	std::cout << "HELLO!" << std::endl;
+	rendering = false;
 }
 
 bool RendererWorker::renderSinglesamplePixel(int i, int j,

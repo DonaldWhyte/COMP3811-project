@@ -43,6 +43,5 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 void CanvasWidget::updateRowsToRender(int rowIndex)
 {
 	rowsToRender = rowIndex + 1;
-	update();
 }
 
