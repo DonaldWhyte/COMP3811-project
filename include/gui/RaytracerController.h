@@ -26,7 +26,20 @@ public slots:
 	void renderStarted();
 	void renderFinished();
 	void saveImage();
-	
+
+	void samplingMethodChanged(int newIndex);
+	void numSamplesChanged(int newValue);
+	void widthChanged(int newValue);
+	void heightChanged(int newValue);
+	void localIlluminationChanged(int newState);
+	void reflectRefractChanged(int newState);
+	void shadowsChanged(int newState);
+	void heightmapChanged(int newIndex);
+	void viewpointChanged(int newIndex);
+	void useOctreeChanged(int newState);
+	void showOctreeChanged(int newState);
+	void renderButtonPressed();
+
 	/* Called periodically to ensure interface represents most recent program state. */
 	void updateInterface();
 	/* Called when window has been closed. */

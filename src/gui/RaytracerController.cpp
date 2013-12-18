@@ -39,6 +39,24 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	connect(reinterpret_cast<const QObject*>(window->saveAction),
 		SIGNAL(triggered()), this, SLOT(saveImage()));
 		
+	// Event handlers for raytracer settings
+	connect(window->sampMethod, SIGNAL(currentIndexChanged(int)), this, SLOT(samplingMethodChanged(int)));
+	connect(window->numSamples, SIGNAL(valueChanged(int)), this, SLOT(numSamplesChanged(int)));
+	connect(window->widthBox, SIGNAL(valueChanged(int)), this, SLOT(widthChanged(int)));
+	connect(window->heightBox, SIGNAL(valueChanged(int)), this, SLOT(heightChanged(int)));
+	// Event handlers for effects settings
+	connect(window->localIlluminationSwitch, SIGNAL(stateChanged(int)), this, SLOT(localIlluminationChanged(int)));
+	connect(window->reflectRefractSwitch, SIGNAL(stateChanged(int)), this, SLOT(reflectRefractChanged(int)));
+	connect(window->shadowsSwitch, SIGNAL(stateChanged(int)), this, SLOT(shadowsChanged(int)));
+	// Event handlers for scene settings
+	connect(window->terrainHeightmap, SIGNAL(currentIndexChanged(int)), this, SLOT(heightmapChanged(int)));
+	connect(window->viewpoint, SIGNAL(currentIndexChanged(int)), this, SLOT(viewpointChanged(int)));
+	// Event handlers for geometric optimisation settings
+	connect(window->useOctree, SIGNAL(stateChanged(int)), this, SLOT(useOctreeChanged(int)));
+	connect(window->showOctree, SIGNAL(stateChanged(int)), this, SLOT(showOctreeChanged(int)));
+	// Event handler for render button
+	connect(window->renderButton, SIGNAL(clicked()), this, SLOT(renderButtonPressed()));
+		
 	// Start timer which determines when the canvas redraws itself
 	updateTimer = new QTimer(this);
 	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInterface()));
@@ -92,6 +110,65 @@ void RaytracerController::renderFinished()
 {
 	window->toolboxDock->setEnabled(true);
 	window->saveAction->setEnabled(true);
+}
+
+void RaytracerController::samplingMethodChanged(int newIndex)
+{
+	// TODO
+}
+
+void RaytracerController::numSamplesChanged(int newValue)
+{
+	// TODO
+}
+
+void RaytracerController::widthChanged(int newValue)
+{
+	// TODO
+}
+
+void RaytracerController::heightChanged(int newValue)
+{
+	// TODO
+}
+
+void RaytracerController::localIlluminationChanged(int newState)
+{	// TODO
+}
+
+void RaytracerController::reflectRefractChanged(int newState)
+{
+	// TODO
+}
+
+void RaytracerController::shadowsChanged(int newState)
+{
+	// TODO
+}
+
+void RaytracerController::heightmapChanged(int newIndex)
+{
+	// TODO
+}
+
+void RaytracerController::viewpointChanged(int newIndex)
+{
+	// TODO
+}
+
+void RaytracerController::useOctreeChanged(int newState)
+{
+	// TODO
+}
+
+void RaytracerController::showOctreeChanged(int newState)
+{
+	// TODO
+}
+
+void RaytracerController::renderButtonPressed()
+{
+	// TODO
 }
 
 void RaytracerController::saveImage()
