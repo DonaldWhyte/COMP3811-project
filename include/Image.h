@@ -17,6 +17,8 @@ public:
     void clear(const Colour& colour);
     bool set(int x, int y, const Colour& colour);
     /* Resizes the image to the given dimensions. */
+    void setWidth(int newWidth);
+    void setHeight(int newHeight);
     void resize(int newWidth, int newHeight);
 
     const Colour& get(int x, int y) const;

@@ -83,71 +83,42 @@ void RaytracerController::renderFinished()
 
 void RaytracerController::samplingMethodChanged(int newIndex)
 {
-	// TODO
-}
-
-void RaytracerController::numSamplesChanged(int newValue)
-{
-	// TODO
-}
-
-void RaytracerController::widthChanged(int newValue)
-{
-	// TODO
-}
-
-void RaytracerController::heightChanged(int newValue)
-{
-	// TODO
+	if (newIndex == 0) // if single sampling is used, disable num samples
+		window->numSamples->setEnabled(false);
+	else
+		window->numSamples->setEnabled(true);
 }
 
 void RaytracerController::localIlluminationChanged(int newState)
 {
 	bool checked = (newState == Qt::Checked);
-	renderer->enableLocalIllumination(checked);
-}
-
-void RaytracerController::reflectRefractChanged(int newState)
-{
-	bool checked = (newState == Qt::Checked);
-	renderer->enableReflectionAndRefraction(checked);
-}
-
-void RaytracerController::shadowsChanged(int newState)
-{
-	bool checked = (newState == Qt::Checked);
-	renderer->enableShadows(checked);
-}
-
-void RaytracerController::heightmapChanged(int newIndex)
-{
-	// TODO
-}
-
-void RaytracerController::viewpointChanged(int newIndex)
-{
-	// TODO
+	window->shadowsSwitch->setEnabled(checked);
 }
 
 void RaytracerController::useOctreeChanged(int newState)
 {
-	// TODO
-}
-
-void RaytracerController::showOctreeChanged(int newState)
-{
-	// TODO
+	bool checked = (newState == Qt::Checked);
+	window->showOctree->setEnabled(checked);
 }
 
 void RaytracerController::renderButtonPressed()
 {
-	// Clear canvas and ensure it's the required size
-	/*Image* canvas = window->canvasWidget->getCanvas();
+	// Configure effects settings
+	bool checked = (window->localIlluminationSwitch->checkState() == Qt::Checked);
+	renderer->enableLocalIllumination(checked);
+ 	checked = (window->reflectRefractSwitch->checkState() == Qt::Checked);
+	renderer->enableReflectionAndRefraction(checked);
+	checked = (window->shadowsSwitch->checkState() == Qt::Checked);
+	renderer->enableShadows(checked);
+	// Configure raytracer settings
+	int sampleMethodIndex = window->sampMethod->currentIndex();
+	worker->setSamplingMethod( static_cast<SamplingMethod>(sampleMethodIndex) );
+	worker->setNumSamples( window->numSamples->value() );
+	// Resize canvas to required size and clear it
 	int width = window->widthBox->value();
 	int height = window->heightBox->value();
-	canvas->resize(width, height);*/
-	// TODO
-	// Start rendering thread
+	window->canvasWidget->resizeAndClear(width, height);
+	// Now start rendering!
 	workerThread.start();
 }
 

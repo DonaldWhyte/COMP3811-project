@@ -20,6 +20,9 @@ public:
 	
 	/* Return number of rows the canvas widget should render. */
 	unsigned int getRowsToRender() const;
+	/* Resize the widget and its canvas to the given dimensions,
+	 * clearning any content currently on the canvas. */
+	void resizeAndClear(int width, int height);
 	
 public slots:
 	/* Makes the canvas widget only render up to row with given index.

@@ -30,13 +30,28 @@ bool Image::set(int x, int y, const Colour& colour)
     return true;
 }
 
-void Image::resize(int newWidth, int newHeight)
+void Image::setWidth(int newWidth)
 {
-	if (newWidth == 0 || newHeight == 0)
+	if (newWidth <= 0)
 		return;
 	pixels.resize(newWidth);
+	width = newWidth;
+}
+
+void Image::setHeight(int newHeight)
+{
+	if (newHeight <= 0)
+		return;
+	// For every column, change height
     for (unsigned int i = 0; (i < pixels.size()); i++)
         pixels[i].resize(newHeight);
+    height = newHeight;
+}
+
+void Image::resize(int newWidth, int newHeight)
+{
+	setWidth(newWidth);
+	setHeight(newHeight);
 }
 
 const Colour& Image::get(int x, int y) const

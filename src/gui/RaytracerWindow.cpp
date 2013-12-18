@@ -26,7 +26,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	setCentralWidget(canvasScrollArea);
 	
 	// Create each section of the toolbox
-	raytracerSettings = new QGroupBox("Raytracers");
+	raytracerSettings = new QGroupBox("Raytracer");
 		sampMethodLabel = new QLabel("Sampling Method");
 		sampMethod = new QComboBox();
 		sampMethod->addItem("Single Sample");

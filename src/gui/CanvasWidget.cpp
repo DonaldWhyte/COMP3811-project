@@ -49,3 +49,10 @@ void CanvasWidget::updateRowsToRender(int rowIndex)
 {
 	rowsToRender = rowIndex + 1;
 }
+
+void CanvasWidget::resizeAndClear(int width, int height)
+{
+	canvas.resize(width, height);
+	canvas.clear(Colour());
+	resize(width, height); // also resize itself to fit the canvas!
+}
