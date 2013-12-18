@@ -9,10 +9,15 @@
 #include <QLabel>
 #include <QPushButton>
 #include <QLayout>
+#include <QScrollArea>
+#include <QDockWidget>
 #include "Raytracer.h"
 #include "gui/CanvasWidget.h"
 
 namespace raytracer { namespace gui {
+
+static const unsigned int WINDOW_WIDTH = 1200;
+static const unsigned int WINDOW_HEIGHT = 900;
 
 class RaytracerWindow : public QMainWindow
 {
@@ -25,26 +30,15 @@ public:
 
 	/* Called when the window is closed. */
 	virtual void closeEvent(QCloseEvent* event);
-
-	/* Allows controller to connect signals produced by
-	 * these widgets to event handlers. */
-	QAction* getSaveAction();	
-	QAction* getQuitAction();
-	CanvasWidget* getCanvasWidget();
 	
-signals:
-	/* Signal emitted when the window is closed. */
-	void closed();
-	
-private:
-	Raytracer* renderer;
-	
+	/* Widget hierarchy is made public so the controller 
+	 * can easily access the widgets and connect their
+	 * signals to controller slots. */
 	QMenu* fileMenu;
 		QAction* quitAction;
 		QAction* saveAction;
-		
-	CanvasWidget* canvasWidget;		
-		
+	QScrollArea* canvasScrollArea;
+		CanvasWidget* canvasWidget;
 	QDockWidget* toolboxDock;
 		QWidget* toolboxWidget;
 		QBoxLayout* toolboxLayout;
@@ -79,6 +73,13 @@ private:
 					QCheckBox* useOctree;
 					QCheckBox* showOctree;
 			QPushButton* renderButton;
+	
+signals:
+	/* Signal emitted when the window is closed. */
+	void closed();
+	
+private:
+	Raytracer* renderer;
 
 };
 

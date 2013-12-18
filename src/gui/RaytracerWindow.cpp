@@ -1,7 +1,6 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QMenu>
-#include <QDockWidget>
 #include <QLabel>
 #include "gui/RaytracerWindow.h"
 
@@ -11,14 +10,19 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 {
 	// Set title and size of window
 	setWindowTitle("COMP3811 Graphics Project -- Raytracer (Donald Whyte)");
-	resize(800, 600);
+	setFixedSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+	resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	// Create menus
 	fileMenu = menuBar()->addMenu("&File");
 	saveAction = fileMenu->addAction("&Save");
 	quitAction = fileMenu->addAction("&Quit");
 	// Create canvas widget and add to centre of window
+	// Note that it is wrapped in a scroll pane in case it'
 	canvasWidget = new CanvasWidget(CANVAS_WIDTH, CANVAS_HEIGHT);
-	setCentralWidget(canvasWidget);
+	canvasScrollArea = new QScrollArea();
+	canvasScrollArea->setWidget(canvasWidget);
+ 	canvasScrollArea->setWidgetResizable(false);
+	setCentralWidget(canvasScrollArea);
 	
 	// Create each section of the toolbox
 	raytracerSettings = new QGroupBox("Raytracers");
@@ -57,8 +61,11 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		raytracerSettings->setLayout(raytracerSettingsLayout);
 	effectsSettings = new QGroupBox("Effects");
 		localIlluminationSwitch = new QCheckBox("Local Illumination");
+		localIlluminationSwitch->setChecked(true);
 		reflectRefractSwitch = new QCheckBox("Reflection/Refraction");
+		reflectRefractSwitch->setChecked(true);		
 		shadowsSwitch = new QCheckBox("Shadows");
+		shadowsSwitch->setChecked(true);		
 		effectsSettingsLayout = new QVBoxLayout();
 		effectsSettingsLayout->addWidget(localIlluminationSwitch);
 		effectsSettingsLayout->addWidget(reflectRefractSwitch);
@@ -87,6 +94,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sceneSettings->setLayout(sceneSettingsLayout);
 	geometricOptSettings = new QGroupBox("Geometric Optimisation");
 		useOctree = new QCheckBox("Enable Octree");
+		useOctree->setChecked(true);
 		showOctree = new QCheckBox("Show Octree");
 		geometricOptSettingsLayout = new QVBoxLayout();
 		geometricOptSettingsLayout->addWidget(useOctree);
@@ -102,6 +110,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	toolboxLayout->addWidget(renderButton);	
 	// Create toolbox dock to the right of the canvas
 	toolboxDock = new QDockWidget("Settings");
+	toolboxDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
 	toolboxWidget = new QWidget();
 	toolboxWidget->setLayout(toolboxLayout);
 	toolboxDock->setWidget(toolboxWidget);
@@ -114,7 +123,8 @@ RaytracerWindow::~RaytracerWindow()
 	delete saveAction;
 	delete fileMenu;
 	
-	delete canvasWidget;	
+	delete canvasWidget;
+	delete canvasScrollArea;
 	
 	delete renderButton;
 	delete showOctree;
@@ -156,7 +166,3 @@ void RaytracerWindow::closeEvent(QCloseEvent* event)
 {
 	emit closed();
 }
-
-QAction* RaytracerWindow::getSaveAction() { return saveAction; }
-QAction* RaytracerWindow::getQuitAction() { return quitAction; }
-CanvasWidget* RaytracerWindow::getCanvasWidget() { return canvasWidget; }

@@ -40,8 +40,12 @@ void CanvasWidget::paintEvent(QPaintEvent* event)
 			painter.drawPoint(x, y);
 }
 
+unsigned int CanvasWidget::getRowsToRender() const
+{
+	return rowsToRender;
+}
+
 void CanvasWidget::updateRowsToRender(int rowIndex)
 {
 	rowsToRender = rowIndex + 1;
 }
-

@@ -19,31 +19,29 @@ RaytracerController::RaytracerController(RaytracerWindow* window, Raytracer* ren
 	connect(window, SIGNAL(closed()), this, SLOT(windowClosed()));
 	
 	// Create renderer worker and move it to another thread
-	CanvasWidget* canvasWidget = window->getCanvasWidget();
+	CanvasWidget* canvasWidget = window->canvasWidget;
 	Image* canvas = canvasWidget->getCanvas();
 	worker = new RendererWorker(renderer, canvas);
 	worker->moveToThread(&workerThread);
-	
 	// When thread starts, start render and disable save action
 	connect(&workerThread, SIGNAL(started()), worker, SLOT(render()));
-	connect(&workerThread, SIGNAL(started()), this, SLOT(renderStarted()));
 	// When worker has finished, display entire image on the canvas and close thread
 	connect(worker, SIGNAL(finishedRow(int)), canvasWidget, SLOT(updateRowsToRender(int)));	
-	// Also update raytracer window's messages
-	connect(worker, SIGNAL(finishedRow(int)), this, SLOT(finishedRow(int)));
+	// Connect start and end of thread to the event handlers in this controllers
+	connect(&workerThread, SIGNAL(started()), this, SLOT(renderStarted()));
 	connect(worker, SIGNAL(finished()), this, SLOT(renderFinished()));
 	
 	// Setup event handlers for menu bar
-	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
+	connect(reinterpret_cast<const QObject*>(window->quitAction),
 		SIGNAL(triggered()), QCoreApplication::instance(), SLOT(quit()));		
-	connect(reinterpret_cast<const QObject*>(window->getQuitAction()),
+	connect(reinterpret_cast<const QObject*>(window->quitAction),
 		SIGNAL(triggered()), worker, SLOT(stop()));
-	connect(reinterpret_cast<const QObject*>(window->getSaveAction()),
+	connect(reinterpret_cast<const QObject*>(window->saveAction),
 		SIGNAL(triggered()), this, SLOT(saveImage()));
 		
 	// Start timer which determines when the canvas redraws itself
 	updateTimer = new QTimer(this);
-	connect(updateTimer, SIGNAL(timeout()), canvasWidget, SLOT(update()));
+	connect(updateTimer, SIGNAL(timeout()), this, SLOT(updateInterface()));
 	updateTimer->start(CANVAS_UPDATE_INTERVAL);	
 	
 	// Start rendering thread
@@ -56,27 +54,44 @@ RaytracerController::~RaytracerController()
 	delete updateTimer;	
 }
 
-void RaytracerController::finishedRow(int rowIndex)
+void RaytracerController::updateInterface()
 {
-	// Construct progress messge to display in status bar
-	int totalRows = window->getCanvasWidget()->getCanvas()->getHeight();
-	float progressPercentage = (static_cast<float>(rowIndex) / totalRows) * 100;
-	std::stringstream ss;
-	ss << std::setprecision(2) << std::fixed << progressPercentage << "% complete (rendering row " << rowIndex + 1 << " out of " << totalRows << ")";
-	std::string message = ss.str();
+	// Redraw contents of canvas
+	window->canvasWidget->update();
 	
-	window->statusBar()->showMessage( QString::fromStdString(message) );
+	// Total rows to render
+	int totalRows = window->canvasWidget->getCanvas()->getHeight();
+	// Number of rows currently renderer
+	int rowsComplete = window->canvasWidget->getRowsToRender();
+	
+	// Construct progress message to display in status bar
+	QString message;
+	// If rendering has finished, then display finished message
+	if (rowsComplete == totalRows)
+	{
+		message = "Rendering has finished!";
+	}
+	// If there are still rows to render, show current progress
+	else
+	{
+		float progressPercentage = (static_cast<float>(rowsComplete) / totalRows) * 100;
+		std::stringstream ss;
+		ss << std::setprecision(2) << std::fixed << progressPercentage << "% complete (rendering row " << rowsComplete << " out of " << totalRows << ")";
+		message = QString::fromStdString(ss.str());
+	}
+	window->statusBar()->showMessage(message);	
 }
 
 void RaytracerController::renderStarted()
 {
-	window->getSaveAction()->setEnabled(false);
+	window->toolboxDock->setEnabled(false);
+	window->saveAction->setEnabled(false);
 }
 
 void RaytracerController::renderFinished()
 {
-	window->getSaveAction()->setEnabled(true);
-	window->statusBar()->showMessage("Raytracing has finished!");
+	window->toolboxDock->setEnabled(true);
+	window->saveAction->setEnabled(true);
 }
 
 void RaytracerController::saveImage()
@@ -88,7 +103,7 @@ void RaytracerController::saveImage()
     if (filename.size() == 0)
     	return;
    	// Generate QImage which can be saved
-   	QImage image = toQImage(window->getCanvasWidget()->getCanvas());
+   	QImage image = toQImage(window->canvasWidget->getCanvas());
     // Saves image to the file specified
     if (!image.save(filename))
     {

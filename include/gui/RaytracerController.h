@@ -11,7 +11,7 @@
 namespace raytracer { namespace gui {
 
 /* How long the canvas waits before drawing itself (in milliseconds). */
-static const unsigned int CANVAS_UPDATE_INTERVAL = 100;
+static const unsigned int CANVAS_UPDATE_INTERVAL = 1000;
 
 class RaytracerController : public QObject
 {
@@ -23,11 +23,13 @@ public:
 	virtual ~RaytracerController();
 
 public slots:
-	void finishedRow(int rowIndex); /* called when row of image has finished rendering */
 	void renderStarted();
 	void renderFinished();
 	void saveImage();
 	
+	/* Called periodically to ensure interface represents most recent program state. */
+	void updateInterface();
+	/* Called when window has been closed. */
 	void windowClosed();
 
 private:

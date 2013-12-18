@@ -6,8 +6,8 @@
 
 namespace raytracer { namespace gui {
 
-static const unsigned int CANVAS_WIDTH = 500;
-static const unsigned int CANVAS_HEIGHT = 500;
+static const unsigned int CANVAS_WIDTH = 1200;
+static const unsigned int CANVAS_HEIGHT = 1200;
 
 class CanvasWidget : public QWidget
 {
@@ -20,6 +20,9 @@ public:
 	Image* getCanvas();
 	/* Override paint event so it draws the contents of the canvas image. */
 	virtual void paintEvent(QPaintEvent* event);
+	
+	/* Return number of rows the canvas widget should render. */
+	unsigned int getRowsToRender() const;
 	
 public slots:
 	/* Makes the canvas widget only render up to row with given index.
