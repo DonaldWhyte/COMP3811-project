@@ -24,6 +24,7 @@ private:
 	
 	QMenu* fileMenu;
 		QAction* quitAction;
+		
 	CanvasWidget* canvasWidget;
 
 };

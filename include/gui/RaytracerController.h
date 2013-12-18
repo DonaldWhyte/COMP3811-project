@@ -15,6 +15,10 @@ class RaytracerController : public QObject
 public:
 	RaytracerController(RaytracerWindow* window, Raytracer* renderer);
 
+public slots:
+	void finishedRow(int rowIndex); /* called when row of image has finished rendering */
+	void finished(); /* called when rendering finished */
+
 private:
 	RaytracerWindow* window;
 	Raytracer* renderer;
