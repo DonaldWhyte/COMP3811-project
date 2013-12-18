@@ -1,6 +1,7 @@
 #ifndef DW_RAYTRACER_COMMON_H
 #define DW_RAYTRACER_COMMON_H
 
+#include <sstream>
 #include "Vector3.h"
 
 namespace raytracer {
@@ -17,8 +18,15 @@ namespace common
 
     /* Generate floating point number >= min && <= max. */
     float randomFloat(float min, float max);
-    /* Generate random 3D vector inside a circle using Monte Carlo method. */
-    Vector3 monteCarloDirection();
+    
+    /* Convert type T into a string. */
+	template<typename T>
+	std::string toString(const T& t)
+	{
+		std::stringstream sstream;
+		sstream << t;
+		return sstream.str();
+	}
 
 }
 

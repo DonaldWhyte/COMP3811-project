@@ -77,7 +77,7 @@ void RendererWorker::render()
         emit finishedRow(j);
     }
     
-	emit finished();    
+	emit finished();
 }
 
 void RendererWorker::stop()

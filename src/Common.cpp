@@ -17,19 +17,3 @@ float common::randomFloat(float min, float max)
     randomNumber += min;
     return randomNumber;
 }
-
-Vector3 common::monteCarloDirection()
-{
-    while (true)
-    {
-        Vector3 vector(randomFloat(-1.0f, 1.0f),
-            randomFloat(-1.0f, 1.0f), randomFloat(-1.0f, 1.0f));
-        float length = vector.length();
-        // If length of vector is bad, do another loop to generate another random vector
-        if ((length > 1.0f) || (length < 0.1f))
-            continue;
-        // Normalise vector before returning so only direction is returned
-        return vector.normalise();
-    }
-    return Vector3();
-}

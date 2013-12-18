@@ -40,9 +40,10 @@ public slots:
 private:
 	RaytracerWindow* window;
 	Raytracer* renderer;
+	std::vector<Camera> cameras; // cameras to use in scene
 	
 	// Thread and worker used to perform raytracing
-	QThread workerThread;
+	QThread* workerThread;
 	RendererWorker* worker;
 	// Timer with periodically tells the canvas widget to redraw its content
 	QTimer* updateTimer;

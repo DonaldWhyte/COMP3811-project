@@ -82,10 +82,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sceneRowOneLayout->addWidget(terrainLabel);
 		sceneRowOneLayout->addWidget(terrainHeightmap);		
 		viewpointLabel = new QLabel("Viewpoint");
-		viewpoint = new QComboBox();
-		viewpoint->addItem("One");
-		viewpoint->addItem("Two");
-		viewpoint->addItem("Three");		
+		viewpoint = new QComboBox();		
 		sceneRowTwoLayout = new QHBoxLayout();
 		sceneRowTwoLayout->addWidget(viewpointLabel);
 		sceneRowTwoLayout->addWidget(viewpoint);			
