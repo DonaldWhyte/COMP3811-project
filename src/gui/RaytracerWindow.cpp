@@ -1,6 +1,8 @@
 #include <QStatusBar>
 #include <QMenuBar>
 #include <QMenu>
+#include <QDockWidget>
+#include <QLabel>
 #include "gui/RaytracerWindow.h"
 
 using namespace raytracer::gui;
@@ -9,10 +11,6 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 {
 	// Set title and size of window
 	setWindowTitle("COMP3811 Graphics Project -- Raytracer (Donald Whyte)");
-	this->setFixedSize(800, 800);
-	resize(800, 800); // TODO
-	// Disable resizing
-	this->statusBar()->setSizeGripEnabled(false);
 	// Create menus
 	fileMenu = menuBar()->addMenu("&File");
 	saveAction = fileMenu->addAction("&Save");
@@ -20,6 +18,11 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	// Create canvas widget and add to centre of window
 	canvasWidget = new CanvasWidget(CANVAS_WIDTH, CANVAS_HEIGHT);
 	setCentralWidget(canvasWidget);
+	
+	// Create toolbox dock to the right of the canvas
+	QDockWidget* toolbox = new QDockWidget("Settings");
+	toolbox->setWidget(new QLabel("HELLO!"));	
+	addDockWidget(Qt::RightDockWidgetArea, toolbox);
 }
 
 RaytracerWindow::~RaytracerWindow()

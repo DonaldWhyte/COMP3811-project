@@ -32,6 +32,8 @@ unsigned int RendererWorker::getNumSamples() const
 	
 void RendererWorker::render()
 {	
+	emit finished();
+	return;
     // Loop over the pixels of the image
     unsigned int canvasWidth = canvas->getWidth();
     unsigned int canvasHeight = canvas->getHeight();
