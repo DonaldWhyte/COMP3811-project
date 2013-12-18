@@ -55,7 +55,18 @@ public:
             (point.z >= bounds[0].z && point.z <= bounds[1].z)
         );
     }
-
+    
+	/* Return true if given bounding boxes intersect. */
+	inline bool aabbsCollide(const AABB& other)
+	{
+		return(bounds[1].x > other.bounds[0].x &&
+			bounds[0].x < other.bounds[1].x &&
+			bounds[1].y > other.bounds[0].y &&
+			bounds[0].y < other.bounds[1].y &&
+			bounds[1].z > other.bounds[0].z &&
+			bounds[0].z < other.bounds[1].z);	
+	}
+    
     Vector3 bounds[2]; // 0 = min, 1 = max
 
 };
