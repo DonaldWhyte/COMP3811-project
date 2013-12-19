@@ -39,9 +39,16 @@ public slots:
 	void windowClosed();
 
 private:
+	/* Start a new rendering process. */
+	void startRender();
+	/* Cancels a current rendering process. */
+	void cancelRender();
+
 	RaytracerWindow* window;
 	DemoScene* scene;
 	Raytracer* renderer;
+
+	bool rendering; // set to true when there is a render in progress
 	
 	// Thread and worker used to perform raytracing
 	QThread* workerThread;

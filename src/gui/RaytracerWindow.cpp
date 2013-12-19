@@ -39,6 +39,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		numSamples = new QSpinBox();
 		numSamples->setRange(1, 10);
 		numSamples->setValue(1);
+		numSamples->setEnabled(false);
 		rayRowTwoLayout = new QHBoxLayout();
 		rayRowTwoLayout->addWidget(numSamplesLabel);
 		rayRowTwoLayout->addWidget(numSamples);

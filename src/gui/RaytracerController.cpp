@@ -14,7 +14,7 @@ using namespace raytracer::gui;
 // TODO: clean up thread elegantly so that there is no segmentation fault
 
 RaytracerController::RaytracerController(RaytracerWindow* window, DemoScene* scene)
-	: window(window), scene(scene), workerThread(NULL), worker(NULL)
+	: window(window), scene(scene), rendering(false), workerThread(NULL), worker(NULL)
 {		
 	renderer = scene->renderer;
 	
@@ -62,14 +62,27 @@ RaytracerController::~RaytracerController()
 
 void RaytracerController::renderStarted()
 {
-	window->toolboxDock->setEnabled(false);
+	// Disable all settings EXCEPT for render button
+	// Change render button to "cancel"
+	window->raytracerSettings->setEnabled(false);
+	window->effectsSettings->setEnabled(false);
+	window->sceneSettings->setEnabled(false);
+	window->geometricOptSettings->setEnabled(false);
+	window->renderButton->setText("CANCEL");
+
 	window->saveAction->setEnabled(false);
+	rendering = true;
 }
 
 void RaytracerController::renderFinished()
 {
-	window->toolboxDock->setEnabled(true);
+	window->raytracerSettings->setEnabled(true);
+	window->effectsSettings->setEnabled(true);
+	window->sceneSettings->setEnabled(true);
+	window->geometricOptSettings->setEnabled(true);
+	window->renderButton->setText("RENDER");
 	window->saveAction->setEnabled(true);
+	rendering = false;
 }
 
 void RaytracerController::samplingMethodChanged(int newIndex)
@@ -93,6 +106,14 @@ void RaytracerController::useOctreeChanged(int newState)
 }
 
 void RaytracerController::renderButtonPressed()
+{
+	if (rendering)
+		cancelRender();
+	else
+		startRender();
+}
+
+void RaytracerController::startRender()
 {
 	// Wait for current worker thread to finish, then create a new thread
 	if (workerThread && !workerThread->isFinished())
@@ -183,10 +204,18 @@ void RaytracerController::renderButtonPressed()
 	int height = window->heightBox->value();
 	window->canvasWidget->resizeAndClear(width, height);
 	// START RENDERING!
-	workerThread->start();
+	workerThread->start();	
+}
 
-	window->widthBox->setValue(500);
-	window->heightBox->setValue(500);
+void RaytracerController::cancelRender()
+{
+	// TODO
+	if (workerThread && !workerThread->isFinished())
+	{
+		worker->stop();
+		workerThread->quit();
+		workerThread->wait();
+	}
 }
 
 void RaytracerController::saveImage()
