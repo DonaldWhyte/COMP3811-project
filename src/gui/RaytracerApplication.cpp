@@ -25,7 +25,6 @@ int main(int argc, char* argv[])
 	// Clean up resources
 	delete scene.renderer;
 	ResourceManager* resourceManager = ResourceManager::getInstance();
-	resourceManager->clearAll();
 	delete resourceManager;
 
 	return 0;

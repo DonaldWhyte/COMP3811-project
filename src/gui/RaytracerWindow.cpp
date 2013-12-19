@@ -117,6 +117,9 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	toolboxWidget->setLayout(toolboxLayout);
 	toolboxDock->setWidget(toolboxWidget);
 	addDockWidget(Qt::RightDockWidgetArea, toolboxDock);
+
+	// Show empty message so message bar at the bottom appears straight away
+	statusBar()->showMessage("");
 }
 
 RaytracerWindow::~RaytracerWindow()

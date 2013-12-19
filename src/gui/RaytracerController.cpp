@@ -55,9 +55,12 @@ RaytracerController::RaytracerController(RaytracerWindow* window, DemoScene* sce
 
 RaytracerController::~RaytracerController()
 {
-	worker->deleteLater();
-	workerThread->deleteLater();
-	delete updateTimer;	
+	if (worker)
+		worker->deleteLater();
+	if (workerThread)
+		workerThread->deleteLater();
+	if (updateTimer)
+		updateTimer->deleteLater();	
 }
 
 void RaytracerController::renderStarted()
@@ -251,12 +254,12 @@ void RaytracerController::updateInterface()
 	
 	// Construct progress message to display in status bar
 	QString message;
-	// If rendering has finished, then display finished message
-	if (rowsComplete == totalRows)
+	// If rendering has finished (either by 'rendering' flag being
+	// false or all the image being rendered), clear message
+	if (!rendering || rowsComplete == totalRows)
 	{
-		message = "Rendering has finished!";
+		message = "";
 	}
-	// If there are still rows to render, show current progress
 	else
 	{
 		float progressPercentage = (static_cast<float>(rowsComplete) / totalRows) * 100;
@@ -270,7 +273,11 @@ void RaytracerController::updateInterface()
 void RaytracerController::windowClosed()
 {
 	// Stop the worker and wait for the thread to finish
-	worker->stop();
-	workerThread->quit();
-	workerThread->wait();
+	if (worker)
+		worker->stop();
+	if (workerThread)
+	{
+		workerThread->quit();
+		workerThread->wait();
+	}
 }
