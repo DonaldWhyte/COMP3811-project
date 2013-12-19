@@ -169,12 +169,24 @@ void RaytracerController::renderButtonPressed()
 		renderer->setRootTestShape(scene->octreeLines[terrainOctreeIndex], false);
 	}
 
+	/* Clear all lights from the scene, then add the ones which are enabled. */
+	renderer->removeAllLights();
+	checked = (window->lightOneSwitch->checkState() == Qt::Checked);
+	if (checked)
+		renderer->addLight(scene->lights[0]);
+	checked = (window->lightTwoSwitch->checkState() == Qt::Checked);
+	if (checked)
+		renderer->addLight(scene->lights[1]);
+
 	// Resize canvas to required size and clear it
 	int width = window->widthBox->value();
 	int height = window->heightBox->value();
 	window->canvasWidget->resizeAndClear(width, height);
 	// START RENDERING!
 	workerThread->start();
+
+	window->widthBox->setValue(500);
+	window->heightBox->setValue(500);
 }
 
 void RaytracerController::saveImage()

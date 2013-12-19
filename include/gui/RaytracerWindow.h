@@ -64,6 +64,8 @@ public:
 					QCheckBox* shadowsSwitch;
 			QGroupBox* sceneSettings;
 				QBoxLayout* sceneSettingsLayout;
+					QCheckBox* lightOneSwitch;
+					QCheckBox* lightTwoSwitch;
 					QBoxLayout* sceneRowOneLayout;
 						QLabel* terrainLabel;
 						QComboBox* terrainHeightmap;

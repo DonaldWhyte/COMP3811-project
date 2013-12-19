@@ -104,14 +104,15 @@ DemoScene raytracer::gui::constructDemoScene()
 	// Create renderer to render scene
 	Raytracer* renderer = new Raytracer(cameras[0]);
     renderer->setRootShape(new BoundingShape(shapes, sceneBoundary));
-    // Add light source
-    renderer->addLight(PointLight(
+    // Add light sources 
+    std::vector<PointLight> pointLights;
+    pointLights.push_back(PointLight(
         Vector3(-100, 70, 100),
         Colour(0.2f, 0.2f, 0.2f),
         Colour(0.4f, 0.4f, 0.4f),
         Colour(1.0f, 1.0f, 1.0f)
     ));
-    renderer->addLight(PointLight(
+    pointLights.push_back(PointLight(
         Vector3(3.0f, 5.0f, -26.5f),
         Colour(0.0f, 0.0f, 0.0f),
         Colour(0.6f, 0.76f, 0.0f),
@@ -121,7 +122,7 @@ DemoScene raytracer::gui::constructDemoScene()
     renderer->showTestShapes(false);
     
 	// Return the entire scene
-	DemoScene scene = { renderer, cameras, terrainVariants, octreeLines, };
+	DemoScene scene = { renderer, cameras, terrainVariants, octreeLines, pointLights };
 	return scene;
 }
         

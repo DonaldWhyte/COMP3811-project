@@ -114,6 +114,11 @@ void Raytracer::addLight(const PointLight& light)
     lights.push_back(light);
 }
 
+void Raytracer::removeAllLights()
+{
+    lights.clear();
+}
+
 Camera* Raytracer::getCamera()
 {
     return &camera;

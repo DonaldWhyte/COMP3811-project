@@ -46,6 +46,8 @@ public:
     Shape* getRootShape();
     /* Add another light ot the scene. */
     void addLight(const PointLight& light);
+    /* Remove all lights from scene. */
+    void removeAllLights();
     /* Retrieve reference to scene's camera. */
     Camera* getCamera();
 

@@ -26,6 +26,8 @@ struct DemoScene
 	// visualise the octree used to partition the terrain contained in
 	// terrainVariants[i].
 	ShapeList octreeLines; 
+	// All lights in scene
+	std::vector<PointLight> lights;
 };
 
 DemoScene constructDemoScene();

@@ -14,7 +14,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	resize(WINDOW_WIDTH, WINDOW_HEIGHT);
 	// Create menus
 	fileMenu = menuBar()->addMenu("&File");
-	saveAction = fileMenu->addAction("&Save");
+	saveAction = fileMenu->addAction("&Save Image");
 	quitAction = fileMenu->addAction("&Quit");
 	// Create canvas widget and add to centre of window
 	// Note that it is wrapped in a scroll pane in case
@@ -45,11 +45,11 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sizeLabel = new QLabel("Size");	
 		widthBox = new QSpinBox();
 		widthBox->setRange(50, 4000);
-		numSamples->setValue(500);
+		widthBox->setValue(500);
 		xLabel = new QLabel("x");
 		heightBox = new QSpinBox();
 		heightBox->setRange(50, 4000);
-		numSamples->setValue(500);
+		heightBox->setValue(500);	
 		rayRowThreeLayout = new QHBoxLayout();	
 		rayRowThreeLayout->addWidget(sizeLabel);
 		rayRowThreeLayout->addWidget(widthBox);
@@ -73,7 +73,11 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		effectsSettingsLayout->addWidget(shadowsSwitch);
 		effectsSettings->setLayout(effectsSettingsLayout);
 	sceneSettings = new QGroupBox("Scene");
-		terrainLabel = new QLabel("Terrain Heightmap Size");
+		lightOneSwitch = new QCheckBox("Sky Light Enabled");
+		lightOneSwitch->setCheckState(Qt::Checked);
+		lightTwoSwitch = new QCheckBox("Yellow Light Enabled");
+		lightTwoSwitch->setCheckState(Qt::Checked);
+		terrainLabel = new QLabel("Terrain");
 		terrainHeightmap = new QComboBox();
 		sceneRowOneLayout = new QHBoxLayout();
 		sceneRowOneLayout->addWidget(terrainLabel);
@@ -84,13 +88,15 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sceneRowTwoLayout->addWidget(viewpointLabel);
 		sceneRowTwoLayout->addWidget(viewpoint);			
 		sceneSettingsLayout = new QVBoxLayout();
+		sceneSettingsLayout->addWidget(lightOneSwitch);
+		sceneSettingsLayout->addWidget(lightTwoSwitch);
 		sceneSettingsLayout->addLayout(sceneRowOneLayout);
 		sceneSettingsLayout->addLayout(sceneRowTwoLayout);
 		sceneSettings->setLayout(sceneSettingsLayout);
 	geometricOptSettings = new QGroupBox("Geometric Optimisation");
 		useOctree = new QCheckBox("Enable Octree");
 		useOctree->setChecked(true);
-		showOctree = new QCheckBox("Show Octree");
+		showOctree = new QCheckBox("Show Octree (very slow)");
 		geometricOptSettingsLayout = new QVBoxLayout();
 		geometricOptSettingsLayout->addWidget(useOctree);
 		geometricOptSettingsLayout->addWidget(showOctree);
@@ -132,6 +138,8 @@ RaytracerWindow::~RaytracerWindow()
 	delete terrainHeightmap;
 	delete terrainLabel;
 	delete sceneRowOneLayout;
+	delete lightOneSwitch;
+	delete lightTwoSwitch;
 	delete sceneSettingsLayout;
 	delete sceneSettings;
 	delete shadowsSwitch;
