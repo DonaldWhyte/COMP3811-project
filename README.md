@@ -89,3 +89,10 @@ All effects and lights enabled.
 Terrain: High Peaks
 Viewpoint: Camera 2
 Octree enabled (but not visible)
+
+Sampling: Single Sampling
+Dimensions: 1000 x 1000
+All effects and ONLY SKLY LIGHT enabled.
+Terrain: Varied
+Viewpoint: Camera 1
+Octree enabled (but not visible)

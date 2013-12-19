@@ -225,14 +225,14 @@ void RaytracerController::saveImage()
 {
 	// Ask user where they want to save the image file
     QString filename = QFileDialog::getSaveFileName(window,
-        tr("Save Image"), "./", tr("Image Files (*.png  *.jpg *.bmp)"));
+        tr("Save Image"), "./", tr("Image Files (*.png)"));
     // Just do nothing if the filename is empty - user cancelled operation
     if (filename.size() == 0)
     	return;
    	// Generate QImage which can be saved
    	QImage image = toQImage(window->canvasWidget->getCanvas());
     // Saves image to the file specified
-    if (!image.save(filename))
+    if (!image.save(filename, "PNG"))
     {
         QMessageBox messageBox;
         messageBox.setText("Unknown error occured when saving image!");
