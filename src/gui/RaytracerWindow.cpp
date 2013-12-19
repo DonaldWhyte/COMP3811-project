@@ -46,11 +46,11 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sizeLabel = new QLabel("Size");	
 		widthBox = new QSpinBox();
 		widthBox->setRange(50, 4000);
-		widthBox->setValue(500);
+		widthBox->setValue(1000);
 		xLabel = new QLabel("x");
 		heightBox = new QSpinBox();
 		heightBox->setRange(50, 4000);
-		heightBox->setValue(500);	
+		heightBox->setValue(1000);	
 		rayRowThreeLayout = new QHBoxLayout();	
 		rayRowThreeLayout->addWidget(sizeLabel);
 		rayRowThreeLayout->addWidget(widthBox);
