@@ -44,8 +44,8 @@ Geometric Optimisation:
 			Sampling: Uniform Multisampling with 2 Samples
 			Dimensions: 200 x 200
 			All effects disabled
-			Terrain: Low Terrain
-			Viewpoint: Camera 1
+			Terrain: Low/Shallow
+			Viewpoint: Camera 2
 			Octree enabled and visible
 
 Other features:

@@ -209,7 +209,7 @@ void RaytracerController::startRender()
 
 void RaytracerController::cancelRender()
 {
-	// TODO
+	// Stops rendering and quits thread!
 	if (workerThread && !workerThread->isFinished())
 	{
 		worker->stop();
