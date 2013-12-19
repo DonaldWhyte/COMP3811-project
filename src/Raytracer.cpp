@@ -97,9 +97,10 @@ bool Raytracer::randomMultisample(float minX, float minY, float maxX, float maxY
     return (hits > 0);
 }
 
-void Raytracer::setRootShape(Shape* newRoot)
+void Raytracer::setRootShape(Shape* newRoot, bool deletePrevious)
 {
-    delete rootShape; // delete the old root shape!
+    if (deletePrevious)
+        delete rootShape; // delete the old root shape if specified!
     rootShape = newRoot;
 }
 
@@ -123,9 +124,10 @@ bool Raytracer::showingTestShapes() const
     return testShapesEnabled;
 }
 
-void Raytracer::setRootTestShape(Shape* newRootTest)
+void Raytracer::setRootTestShape(Shape* newRootTest, bool deletePrevious)
 {
-    delete rootTestShape;
+    if (deletePrevious)
+        delete rootTestShape;
     rootTestShape = newRootTest;
 }
 
@@ -133,8 +135,6 @@ void Raytracer::showTestShapes(bool show)
 {
     testShapesEnabled = show;
 }
-
-#include <iostream>
 
 /* Help from following sources:
  * http://www.baylee-online.net/Projects/Raytracing/Algorithms/Basic-Raytrace

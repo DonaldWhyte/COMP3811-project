@@ -42,7 +42,7 @@ public:
         const HitRecord& record, int depth);
 
     /* Set a new root shape in the shape hierarchy. */
-    void setRootShape(Shape* newRoot);
+    void setRootShape(Shape* newRoot, bool deletePrevious = true);
     Shape* getRootShape();
     /* Add another light ot the scene. */
     void addLight(const PointLight& light);
@@ -60,7 +60,7 @@ public:
     /* Sets a new test shape for the raytracer to render.
      * The Raytracer instance takes ownership of the shape
      * and deletes it when the raytracer is destroyed. */
-    void setRootTestShape(Shape* newRootTest);
+    void setRootTestShape(Shape* newRootTest, bool deletePrevious = true);
 
     /* Accessors for statistics on trace. */
     unsigned int primaryRays() const;

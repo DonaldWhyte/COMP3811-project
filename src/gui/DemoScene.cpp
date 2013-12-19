@@ -28,7 +28,7 @@ DemoScene raytracer::gui::constructDemoScene()
 	skyBoxTextures[4] = resourceManager->createTexture("skyboxUpTexture", "skyboxUp");
 	skyBoxTextures[5] = resourceManager->createTexture("skyboxDownTexture", "skyboxDown");
     // Define scene
-    AABB sceneBoundary(Vector3(-10000, -10000, -10000), Vector3(10000, 10000, 10000));
+    AABB sceneBoundary(Vector3(-1000, -1000, -1000), Vector3(1000, 1000, 1000));
     ShapeList shapes;
     shapes.push_back(new Sphere(Vector3(0.0f, 8.0f, -25.0f), 2.0f,
         new Material(0.5f, 1.2f, 0.5f, 20.0f, Material::NO_REFLECTION,
@@ -65,6 +65,8 @@ DemoScene raytracer::gui::constructDemoScene()
     // Load all possible terrain
     std::vector<std::string> heightmapFilenames;
     heightmapFilenames.push_back("resources/heightmap.tga");
+    heightmapFilenames.push_back("resources/heightmap2.tga");
+    heightmapFilenames.push_back("resources/heightmap3.tga");
     std::vector<Image*> heightmaps;
     for (unsigned int i = 0; (i < heightmapFilenames.size()); i++)
     	heightmaps.push_back( resourceManager->createImage("heightmap", heightmapFilenames[i]) );
@@ -89,12 +91,16 @@ DemoScene raytracer::gui::constructDemoScene()
         terrainVariants.push_back(optimisedTerrain);
     }
     
-    // Construct test shapes
-    ShapeList testShapes;
-    LineList lines = dynamic_cast<Octree*>(terrainVariants[1])->getBoundingLines();
-    ShapeList lineShapes = generateLines(lines, 0.3f, NULL);
-    for (unsigned int i = 0; (i < lineShapes.size()); i++)
-    	testShapes.push_back(lineShapes[i]);
+    // Construct test shapes (lines of each terrain's octree)
+    ShapeList octreeLines;
+    for (unsigned int i = 0; (i < terrainVariants.size()); i += 2) // go in 2s so unoptimised terrain is skipped
+    {
+        LineList lines = dynamic_cast<Octree*>(terrainVariants[i + 1])->getBoundingLines();
+        ShapeList lineShapes = generateLines(lines, 0.4f, NULL);
+        BoundingShape* rootOfLines = new BoundingShape(lineShapes, sceneBoundary);
+        octreeLines.push_back(rootOfLines);
+    }
+
 	// Create renderer to render scene
 	Raytracer* renderer = new Raytracer(cameras[0]);
     renderer->setRootShape(new BoundingShape(shapes, sceneBoundary));
@@ -111,15 +117,11 @@ DemoScene raytracer::gui::constructDemoScene()
         Colour(0.6f, 0.76f, 0.0f),
         Colour(1.0f, 0.3f, 0.0f)
     ));
-    // Add test shapes
-    Octree* testShapeRoot = new Octree(sceneBoundary);
-    for (unsigned int i = 0; (i < testShapes.size()); i++)
-        testShapeRoot->insert(testShapes[i]);
-    renderer->setRootTestShape(testShapeRoot);
+    // Disable test shapes at start
     renderer->showTestShapes(false);
     
 	// Return the entire scene
-	DemoScene scene = { renderer, cameras, terrainVariants };
+	DemoScene scene = { renderer, cameras, terrainVariants, octreeLines, };
 	return scene;
 }
         

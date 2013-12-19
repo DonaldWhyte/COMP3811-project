@@ -48,8 +48,9 @@ RaytracerController::RaytracerController(RaytracerWindow* window, DemoScene* sce
 		window->viewpoint->addItem( QString::fromStdString(camName) );
 	}
 	// Add small and large heightmaps for terrain
-	window->terrainHeightmap->addItem("Small (16x16)");
-	window->terrainHeightmap->addItem("Large (256x256)");
+	window->terrainHeightmap->addItem("Varied");
+	window->terrainHeightmap->addItem("Low/Shallow");
+	window->terrainHeightmap->addItem("High Peaks");
 }
 
 RaytracerController::~RaytracerController()
@@ -118,7 +119,7 @@ void RaytracerController::renderButtonPressed()
 	connect(reinterpret_cast<const QObject*>(window->quitAction),
 		SIGNAL(triggered()), worker, SLOT(stop()));	
 
-	// Configure geometric optimisation settings
+	// Configure octree visualisation
  	bool checked = (window->showOctree->checkState() == Qt::Checked);	
 	renderer->showTestShapes(checked);
 
@@ -139,17 +140,17 @@ void RaytracerController::renderButtonPressed()
 	
 	// Based on geometric optimisation approach and terrain, pick which terrain to render
 	bool usingOctree = (window->useOctree->checkState() == Qt::Checked);
-	int terrainIndexOffset = (usingOctree) ? 0 : 1;
-	int chosenTerrainIndex = window->terrainHeightmap->currentIndex() * 2;	
+	int terrainIndexOffset = (usingOctree) ? 1 : 0;
+	int chosenTerrainIndex = window->terrainHeightmap->currentIndex() * 2;
 	Shape* terrain = NULL;
 	if (usingOctree)
 		terrain = scene->terrainVariants[chosenTerrainIndex + terrainIndexOffset];
 	else
 		terrain = scene->terrainVariants[chosenTerrainIndex + terrainIndexOffset];
-	BoundingShape* root = dynamic_cast<BoundingShape*>(renderer->getRootShape());	
+	BoundingShape* root = dynamic_cast<BoundingShape*>(renderer->getRootShape());
 	if (root)
 	{
-		// Be sure to remove all terrian from the root of the scene
+		// Be sure to remove all terrain from the root of the scene
 		// so only one terrain is rendered at a time
 		for (unsigned int i = 0; (i < scene->terrainVariants.size()); i++)
 			root->removeShape(scene->terrainVariants[i]);
@@ -159,12 +160,19 @@ void RaytracerController::renderButtonPressed()
 			root->addShape(terrain);
 		}
 	}
-	
+
+	// If renderer is also showing test shapes, set octree lines for the
+	// terrain being rendered now
+	if (renderer->showingTestShapes())
+	{
+		int terrainOctreeIndex = window->terrainHeightmap->currentIndex();
+		renderer->setRootTestShape(scene->octreeLines[terrainOctreeIndex], false);
+	}
+
 	// Resize canvas to required size and clear it
 	int width = window->widthBox->value();
 	int height = window->heightBox->value();
 	window->canvasWidget->resizeAndClear(width, height);
-	
 	// START RENDERING!
 	workerThread->start();
 }

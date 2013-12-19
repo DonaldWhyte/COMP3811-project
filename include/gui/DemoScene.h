@@ -21,7 +21,11 @@ struct DemoScene
 {
 	Raytracer* renderer; // object which performs the actual rendering
 	std::vector<Camera> cameras; // every viewpoint the scene has
-	ShapeList terrainVariants; // eveyr terrain which can be rendered
+	ShapeList terrainVariants; // contains each terrain to be rendered
+	// An element at index i is a BoundingShape which contains lines that
+	// visualise the octree used to partition the terrain contained in
+	// terrainVariants[i].
+	ShapeList octreeLines; 
 };
 
 DemoScene constructDemoScene();
