@@ -2,6 +2,8 @@
 
 Final project for CR31 module Computer Graphics for University of Leeds.
 
+See the [**Screenshots**](#screenshots) section for examples of the scenes this experimental raytracer program can render.
+
 ### Features
 
 Raytracing:
@@ -126,6 +128,14 @@ sudo apt-get install \
 | **Viewpoint** | Camera 1 |
 | All effects and **only** yellow light enabled | |
 | Octree enabled (but not visible) | |
+
+### Screenshots
+
+[![raytracer-experiments](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot1.jpg)](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot1.jpg)
+
+[![raytracer-experiments](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot2.jpg)](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot2.jpg)
+
+[![raytracer-experiments](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot3.jpg)](https://github.com/DonaldWhyte/raytracer-experiments/raw/master/screenshots/screenshot3.jpg)
 
 ### Credit
 
