@@ -2,7 +2,7 @@
 
 Final project for CR31 module Computer Graphics for University of Leeds.
 
-## Features
+### Features
 
 Raytracing:
 
@@ -45,7 +45,7 @@ Other features:
 * Save rendered images to files
 * Configure different parameters of the scene
 
-## Instructions
+### Instructions
 
 This program demonstrates the basic raytracing and terrain engine I developed
 through a demo scene. This scene consists of four spheres, terrain and a sky
@@ -68,7 +68,37 @@ the check box "Use Octree". It is possible to see how the Octree has
 split the space up into regions by checking "Show Octree". Bear in mind
 doing this will drasticly reduce rendering times.
 
-## Parameters for Especially Nice Looking Images1
+### Building and Running
+
+```
+# Generate makefile and run it
+./qt-build project
+
+# Subsequent builds (don't need to run 'project' command,
+# since makefile is already generated)
+./qt-build
+
+# Running the build executable will open up a GUI which can render a 
+# number of scenes with configurable parameters (e.g. camera location)
+./raytracer-experiments
+```
+
+Note that the Qt4 development libraries must be installed in a place the compiler will be able to pick up the required headers and static libraries. the `qt4-qmake` command line tool must also be installed to generate the project's makefile.
+
+On Ubuntu, the required Qt4 packages can be installed using the following command:
+
+```
+sudo apt-get install \
+    libqt4-dev \
+    libqt4-dev-bin \
+    libqt4-opengl-dev \
+    libqtwebkit-dev \
+    qt4-linguist-tools \
+    qt4-qmake \
+```
+
+
+### Parameters for Especially Nice Looking Images
 
 | **Property** | **Value** |
 | --- | --- |
@@ -94,10 +124,10 @@ doing this will drasticly reduce rendering times.
 | **Dimensions** | 1000 x 1000 | 
 | **Terrain** | Varied |
 | **Viewpoint** | Camera 1 |
-| All effects and only sky light enabled | |
+| All effects and **only** yellow light enabled | |
 | Octree enabled (but not visible) | |
 
-## Credit
+### Credit
 
 Credit goes to the following sources for the invaluable help they gave:
 
