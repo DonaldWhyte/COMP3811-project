@@ -30,29 +30,32 @@ unsigned int RendererWorker::getNumSamples() const
 {
 	return numSamples;
 }
-	
+
 void RendererWorker::render()
-{	
+{
 	rendering = true;
-	
+
     // Loop over the pixels of the image
     unsigned int canvasWidth = canvas->getWidth();
     unsigned int canvasHeight = canvas->getHeight();
     Colour resultantColour;
-   
+
 	// By defualt, render single sampled pixels
 	PixelRenderingMethod renderingMethod = &RendererWorker::renderSinglesamplePixel;
 	// Pick rendering method to use based on chosen sampling method
 	switch (samplingMethod)
 	{
-	case UNIFORM_MULTISAMPLING:	
+    case SINGLESAMPLING:
+        // do nothing
+        break;
+	case UNIFORM_MULTISAMPLING:
 		renderingMethod = &RendererWorker::renderUniformMultisamplePixel;
 		break;
 	case RANDOM_MULTISAMPLING:
 		renderingMethod = &RendererWorker::renderUniformMultisamplePixel;
 		break;
 	}
-	
+
 	// Render using the chosen pixel rendering method
 	for (unsigned int j = 0; (j < canvasHeight); j++)
 	{
@@ -64,7 +67,7 @@ void RendererWorker::render()
         		emit finished();
         		return;
         	}
-        		
+
         	Colour resultantColour;
         	bool hit = ((*this).*renderingMethod)(i, j, canvasWidth, canvasHeight, resultantColour);
             if (hit)
@@ -74,7 +77,7 @@ void RendererWorker::render()
         }
         emit finishedRow(j);
     }
-    
+
 	emit finished();
 }
 

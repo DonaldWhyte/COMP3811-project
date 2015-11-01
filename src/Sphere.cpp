@@ -14,7 +14,7 @@ const Vector3& Sphere::getCentre() const
     return centre;
 }
 
-bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& record) const
+bool Sphere::hit(const Ray& ray, float tMin, float tMax, float /*time*/, HitRecord& record) const
 {
     Vector3 temp = ray.origin() - centre;
 
@@ -59,7 +59,7 @@ bool Sphere::hit(const Ray& ray, float tMin, float tMax, float time, HitRecord& 
 }
 
 bool Sphere::shadowHit(const Ray& ray, float tMin, float tMax,
-    float time, const Shape*& occludingShape) const
+    float /*time*/, const Shape*& occludingShape) const
 {
     Vector3 temp = ray.origin() - centre;
 
