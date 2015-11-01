@@ -24,7 +24,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	canvasScrollArea->setWidget(canvasWidget);
  	canvasScrollArea->setWidgetResizable(false);
 	setCentralWidget(canvasScrollArea);
-	
+
 	// Create each section of the toolbox
 	raytracerSettings = new QGroupBox("Raytracer");
 		sampMethodLabel = new QLabel("Sampling Method");
@@ -32,7 +32,7 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		sampMethod->addItem("Single Sample");
 		sampMethod->addItem("Uniform Multisampling");
 		sampMethod->addItem("Random Multisampling");
-		rayRowOneLayout = new QHBoxLayout();		
+		rayRowOneLayout = new QHBoxLayout();
 		rayRowOneLayout->addWidget(sampMethodLabel);
 		rayRowOneLayout->addWidget(sampMethod);
 		numSamplesLabel = new QLabel("# Samples");
@@ -43,15 +43,15 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		rayRowTwoLayout = new QHBoxLayout();
 		rayRowTwoLayout->addWidget(numSamplesLabel);
 		rayRowTwoLayout->addWidget(numSamples);
-		sizeLabel = new QLabel("Size");	
+		sizeLabel = new QLabel("Size");
 		widthBox = new QSpinBox();
 		widthBox->setRange(50, 4000);
 		widthBox->setValue(1000);
 		xLabel = new QLabel("x");
 		heightBox = new QSpinBox();
 		heightBox->setRange(50, 4000);
-		heightBox->setValue(1000);	
-		rayRowThreeLayout = new QHBoxLayout();	
+		heightBox->setValue(1000);
+		rayRowThreeLayout = new QHBoxLayout();
 		rayRowThreeLayout->addWidget(sizeLabel);
 		rayRowThreeLayout->addWidget(widthBox);
 		rayRowThreeLayout->addWidget(xLabel);
@@ -59,15 +59,15 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		raytracerSettingsLayout = new QVBoxLayout();
 		raytracerSettingsLayout->addLayout(rayRowOneLayout);
 		raytracerSettingsLayout->addLayout(rayRowTwoLayout);
-		raytracerSettingsLayout->addLayout(rayRowThreeLayout);		
+		raytracerSettingsLayout->addLayout(rayRowThreeLayout);
 		raytracerSettings->setLayout(raytracerSettingsLayout);
 	effectsSettings = new QGroupBox("Effects");
 		localIlluminationSwitch = new QCheckBox("Local Illumination");
 		localIlluminationSwitch->setChecked(true);
 		reflectRefractSwitch = new QCheckBox("Reflection/Refraction");
-		reflectRefractSwitch->setChecked(true);		
+		reflectRefractSwitch->setChecked(true);
 		shadowsSwitch = new QCheckBox("Shadows");
-		shadowsSwitch->setChecked(true);		
+		shadowsSwitch->setChecked(true);
 		effectsSettingsLayout = new QVBoxLayout();
 		effectsSettingsLayout->addWidget(localIlluminationSwitch);
 		effectsSettingsLayout->addWidget(reflectRefractSwitch);
@@ -82,12 +82,12 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 		terrainHeightmap = new QComboBox();
 		sceneRowOneLayout = new QHBoxLayout();
 		sceneRowOneLayout->addWidget(terrainLabel);
-		sceneRowOneLayout->addWidget(terrainHeightmap);		
+		sceneRowOneLayout->addWidget(terrainHeightmap);
 		viewpointLabel = new QLabel("Viewpoint");
-		viewpoint = new QComboBox();		
+		viewpoint = new QComboBox();
 		sceneRowTwoLayout = new QHBoxLayout();
 		sceneRowTwoLayout->addWidget(viewpointLabel);
-		sceneRowTwoLayout->addWidget(viewpoint);			
+		sceneRowTwoLayout->addWidget(viewpoint);
 		sceneSettingsLayout = new QVBoxLayout();
 		sceneSettingsLayout->addWidget(lightOneSwitch);
 		sceneSettingsLayout->addWidget(lightTwoSwitch);
@@ -108,8 +108,8 @@ RaytracerWindow::RaytracerWindow(Raytracer* renderer) : renderer(renderer)
 	toolboxLayout->addWidget(raytracerSettings);
 	toolboxLayout->addWidget(effectsSettings);
 	toolboxLayout->addWidget(sceneSettings);
-	toolboxLayout->addWidget(geometricOptSettings);	
-	toolboxLayout->addWidget(renderButton);	
+	toolboxLayout->addWidget(geometricOptSettings);
+	toolboxLayout->addWidget(renderButton);
 	// Create toolbox dock to the right of the canvas
 	toolboxDock = new QDockWidget("Settings");
 	toolboxDock->setFeatures(QDockWidget::NoDockWidgetFeatures);
@@ -127,10 +127,10 @@ RaytracerWindow::~RaytracerWindow()
 	delete quitAction;
 	delete saveAction;
 	delete fileMenu;
-	
+
 	delete canvasWidget;
 	delete canvasScrollArea;
-	
+
 	delete renderButton;
 	delete showOctree;
 	delete useOctree;
@@ -169,7 +169,7 @@ RaytracerWindow::~RaytracerWindow()
 	delete toolboxDock;
 }
 
-void RaytracerWindow::closeEvent(QCloseEvent* event)
+void RaytracerWindow::closeEvent(QCloseEvent* /*event*/)
 {
 	emit closed();
 }
